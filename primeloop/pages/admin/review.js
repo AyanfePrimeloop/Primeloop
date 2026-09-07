@@ -5,6 +5,7 @@ export default function ReviewQueue() {
   const { loading } = useRequireRole('admin');
   const [regular, setRegular] = useState([]);
   const [onboarding, setOnboarding] = useState([]);
+  const [links, setLinks] = useState([]);
   const [busyId, setBusyId] = useState(null);
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export default function ReviewQueue() {
     const data = await res.json();
     setRegular(data.regular || []);
     setOnboarding(data.onboarding || []);
+    setLinks(data.links || []);
   }
 
   async function decide(type, id, decision) {
@@ -35,10 +37,38 @@ export default function ReviewQueue() {
     <div className="app">
       <h1 style={{ fontSize: 24, fontWeight: 600 }}>Review queue</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
-        Everything here was routed to manual review — either the verification setting for this
-        action is Manual, it landed in the AI-sampled group that skips AI, or it's attempt 3+
-        on an onboarding action (forced manual after repeated tries).
+        Link reviews are held back automatically before ever reaching engagers. Task and onboarding
+        submissions land here when the verification setting is Manual, an AI-sampled check was
+        skipped, or it's attempt 3+ on an onboarding action (forced manual after repeated tries).
       </p>
+
+      <div className="section">
+        <div className="section-head">
+          <h2>Link reviews</h2>
+          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{links.length} pending</span>
+        </div>
+        <p style={{ padding: '0 20px', fontSize: 12.5, color: 'var(--ink-mute)', marginTop: 12 }}>
+          The automated check flagged these — the link didn't load, or its domain doesn't match the
+          platform paid for. None of these have gone live to engagers yet.
+        </p>
+        {links.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
+        {links.map((t) => (
+          <div key={t.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>
+                {t.task_code} <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>· {t.platform} · {t.action} · qty {t.quantity_needed}</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 2, wordBreak: 'break-all' }}>{t.post_link}</div>
+              {t.link_check_reason && (
+                <div style={{ fontSize: 11.5, color: 'var(--warn)', marginTop: 4 }}>{t.link_check_reason}</div>
+              )}
+            </div>
+            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5 }}>Open link</a>
+            <button className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)' }} disabled={busyId === t.id} onClick={() => decide('link', t.id, 'rejected')}>Reject</button>
+            <button className="btn" style={{ borderColor: 'var(--good)', color: 'var(--good)' }} disabled={busyId === t.id} onClick={() => decide('link', t.id, 'approved')}>Approve — open to engagers</button>
+          </div>
+        ))}
+      </div>
 
       <div className="section">
         <div className="section-head">

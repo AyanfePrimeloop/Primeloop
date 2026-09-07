@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { verifyTransaction } from '../../../lib/paystack';
+import { checkPostLink } from '../../../lib/checkPostLink';
 
 // Paystack sends raw body — we need it unparsed to verify the signature.
 export const config = { api: { bodyParser: false } };
@@ -50,7 +51,14 @@ export default async function handler(req, res) {
 
     if (!order) return res.status(200).json({ received: true, note: 'Order not found' });
 
-    // 4. Create the tasks now that money has actually landed
+    // 4. Check the post link once, before creating any tasks from this order —
+    //    a bad link should never reach engagers, and there's no reason to
+    //    check it once per action when it's the same link for every task.
+    const linkCheck = await checkPostLink(order.post_link, order.platform);
+
+    // 5. Create the tasks now that money has actually landed. Good links
+    //    open immediately; bad ones go straight to the admin link-review
+    //    queue instead of ever reaching an engager.
     const lineItems = event.data.metadata?.line_items || [];
     for (const item of lineItems) {
       const taskCode = generateTaskCode(order.platform);
@@ -66,11 +74,13 @@ export default async function handler(req, res) {
         target_account_handle: item.targetAccountHandle || null,
         // Gold/Platinum get a 15-minute head start before the task opens to everyone
         tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-        status: 'open',
+        status: linkCheck.ok ? 'open' : 'pending_review',
+        link_check_reason: linkCheck.ok ? null : linkCheck.reason,
       });
     }
 
-    // 5. (Phase 2) Trigger WhatsApp Cloud API alert to relevant engagers here.
+    // 6. (Phase 2) Trigger WhatsApp Cloud API alert to relevant engagers here
+    //    — only for tasks that actually opened, obviously.
   }
 
   return res.status(200).json({ received: true });

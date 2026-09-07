@@ -13,6 +13,11 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
 - **Migration 2** (`supabase/migration_2_verification_and_onboarding.sql`) — the
   verification toggle and engager onboarding test system
 - **Migration 3** (`supabase/migration_3_auth.sql`) — the admins table
+- **Migration 4** (`supabase/migration_4_link_check.sql`) — adds automated post-link
+  checking. When a task is created, the link is checked automatically (does it load?
+  does the domain match the platform paid for?). Good links open immediately; bad ones
+  go to a new **"Link reviews"** section on `/admin/review` instead of ever reaching
+  engagers (`lib/checkPostLink.js`).
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)
@@ -44,6 +49,8 @@ It walks through every single click, assuming zero coding background.
    toggle and onboarding test tables.
 3b. Run a third query with the entire contents of `supabase/migration_3_auth.sql` —
     this adds the admins table.
+3c. Run a fourth query with the entire contents of `supabase/migration_4_link_check.sql`
+    — this adds automated post-link checking.
 
 ### Step 1a — Create the screenshot storage bucket
 

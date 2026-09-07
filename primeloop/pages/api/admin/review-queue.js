@@ -3,8 +3,8 @@ import { applyRegularVerdict } from '../../../lib/regularSubmissionEffects';
 import { recomputeOnboardingStatus } from '../../../lib/onboardingProgress';
 import { requireAdmin } from '../../../lib/requireAdmin';
 
-// GET  -> { regular: [...pending task submissions...], onboarding: [...pending onboarding submissions...] }
-// POST -> body: { type: 'regular' | 'onboarding', id, decision: 'approved' | 'rejected' }
+// GET  -> { regular: [...], onboarding: [...], links: [...pending_review tasks...] }
+// POST -> body: { type: 'regular' | 'onboarding' | 'link', id, decision: 'approved' | 'rejected' }
 export default async function handler(req, res) {
   const auth = await requireAdmin(req);
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
@@ -24,6 +24,13 @@ export default async function handler(req, res) {
       .order('submitted_at', { ascending: true });
     if (obErr) return res.status(500).json({ error: obErr.message });
 
+    const { data: links, error: linkErr } = await supabaseAdmin
+      .from('tasks')
+      .select('*')
+      .eq('status', 'pending_review')
+      .order('created_at', { ascending: true });
+    if (linkErr) return res.status(500).json({ error: linkErr.message });
+
     // Attach an attempt count to each onboarding item so the admin can see
     // "this is attempt 4" at a glance, matching the forced-manual-review rule.
     const withAttempts = await Promise.all(
@@ -39,13 +46,29 @@ export default async function handler(req, res) {
       })
     );
 
-    return res.status(200).json({ regular: regular || [], onboarding: withAttempts });
+    return res.status(200).json({ regular: regular || [], onboarding: withAttempts, links: links || [] });
   }
 
   if (req.method === 'POST') {
     const { type, id, decision } = req.body;
     if (!['approved', 'rejected'].includes(decision)) {
       return res.status(400).json({ error: 'decision must be approved or rejected' });
+    }
+
+    if (type === 'link') {
+      const { data: task } = await supabaseAdmin.from('tasks').select('*').eq('id', id).single();
+      if (!task) return res.status(404).json({ error: 'Task not found' });
+      if (task.status !== 'pending_review') {
+        return res.status(409).json({ error: 'This task was already resolved' });
+      }
+      // Approved -> opens to engagers now. Rejected -> stays closed permanently;
+      // reach out to the client manually to get a working link (no automated
+      // client notification exists yet — same as how you'd handle it today).
+      await supabaseAdmin
+        .from('tasks')
+        .update({ status: decision === 'approved' ? 'open' : 'rejected' })
+        .eq('id', id);
+      return res.status(200).json({ ok: true });
     }
 
     if (type === 'regular') {
@@ -88,7 +111,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, progress });
     }
 
-    return res.status(400).json({ error: 'type must be regular or onboarding' });
+    return res.status(400).json({ error: 'type must be regular, onboarding, or link' });
   }
 
   return res.status(405).end();

@@ -53,6 +53,7 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
 7. A pop-up may appear asking about "Row Level Security." Click **Run and enable RLS**.
 8. Repeat steps 4–6 for `supabase/migration_2_verification_and_onboarding.sql`.
 9. Repeat steps 4–6 for `supabase/migration_3_auth.sql`.
+10. Repeat steps 4–6 for `supabase/migration_4_link_check.sql`.
 
 Your filing cabinet now has all its folders and labels ready.
 
