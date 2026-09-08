@@ -11,6 +11,7 @@ export default function EngagerDashboard() {
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [approved, setApproved] = useState([]);
+  const [pending, setPending] = useState([]);
   const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
@@ -34,10 +35,11 @@ export default function EngagerDashboard() {
     // see the "engagers see own submissions" policy in schema.sql.
     const { data: submissions } = await supabase
       .from('submissions')
-      .select('id, submitted_at, tasks(task_code, platform, action, price_per_unit)')
-      .eq('final_status', 'approved')
+      .select('id, submitted_at, final_status, tasks(task_code, platform, action, price_per_unit)')
+      .in('final_status', ['approved', 'pending'])
       .order('submitted_at', { ascending: false });
-    setApproved(submissions || []);
+    setApproved((submissions || []).filter((s) => s.final_status === 'approved'));
+    setPending((submissions || []).filter((s) => s.final_status === 'pending'));
 
     const { data: payouts } = await supabase
       .from('payouts')
@@ -115,6 +117,28 @@ export default function EngagerDashboard() {
               Open post
             </a>
             <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="section">
+        <div className="section-head">
+          <h2>Pending review</h2>
+          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{pending.length} waiting</span>
+        </div>
+        <p style={{ padding: '0 20px', fontSize: 12.5, color: 'var(--ink-mute)', marginTop: 12 }}>
+          You've already submitted proof for these — no need to submit again. They'll move to
+          Approved tasks once reviewed.
+        </p>
+        {pending.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing waiting right now.</p>}
+        {pending.map((s) => (
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
+              <span style={{ color: 'var(--ink-mute)', marginLeft: 8, textTransform: 'capitalize' }}>{s.tasks?.platform} · {s.tasks?.action}</span>
+            </div>
+            <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
+            <span className="badge" style={{ background: 'var(--warn-soft)', color: 'var(--warn)' }}>Waiting for review</span>
           </div>
         ))}
       </div>
