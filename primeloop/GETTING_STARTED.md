@@ -192,6 +192,19 @@ If all seven steps worked, your whole system is wired together correctly.
 
 ---
 
+## Part 9b — Turn on automatic weekly payouts
+
+1. In Vercel, go to Settings → Environment Variables → Add New.
+2. Name it `CRON_SECRET`. For the value, type any long random string yourself — mash your
+   keyboard for 20+ characters, it just needs to be hard to guess. Set Type to Config or
+   Secret, either works here. Save.
+3. Redeploy (Deployments → three dots → Redeploy).
+4. That's it — Vercel will now automatically call your payout route every Friday, using the
+   schedule already set in `vercel.json`. You can confirm it's registered under your
+   project's "Cron Jobs" tab in Vercel once it's deployed.
+5. You can still run `npm run payout-run` manually from your computer any time you want an
+   extra payout outside the normal schedule.
+
 ## Part 10 — Going properly live
 
 Once you've tested everything and you're ready for real clients and real engagers:

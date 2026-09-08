@@ -29,5 +29,9 @@ export async function requireEngager(req) {
     .maybeSingle();
   if (!engager) return { error: 'No engager profile linked to this account', status: 403 };
 
+  if (engager.status === 'dismissed') {
+    return { error: 'Your account has been dismissed. Contact an admin if you believe this is a mistake.', status: 403 };
+  }
+
   return { user: userData.user, engager };
 }

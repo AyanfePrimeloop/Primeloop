@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
@@ -34,6 +35,7 @@ export default function AdminPricing() {
 
   return (
     <div className="app">
+      <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: 24, fontWeight: 600 }}>Pricing management</h1>
         <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{me?.email}</span>

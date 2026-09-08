@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 export default function ReviewQueue() {
@@ -35,6 +36,7 @@ export default function ReviewQueue() {
 
   return (
     <div className="app">
+      <AdminNav />
       <h1 style={{ fontSize: 24, fontWeight: 600 }}>Review queue</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Link reviews are held back automatically before ever reaching engagers. Task and onboarding

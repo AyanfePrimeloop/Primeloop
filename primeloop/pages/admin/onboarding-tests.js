@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 export default function OnboardingTestsAdmin() {
@@ -36,6 +37,7 @@ export default function OnboardingTestsAdmin() {
 
   return (
     <div className="app">
+      <AdminNav />
       <h1 style={{ fontSize: 24, fontWeight: 600 }}>Engager onboarding tests</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Post a real, permanent test post for each platform. New engagers must complete every action below on it before they can claim real, paid tasks.

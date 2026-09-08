@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
@@ -36,6 +37,7 @@ export default function VerificationSettings() {
 
   return (
     <div className="app">
+      <AdminNav />
       <h1 style={{ fontSize: 24, fontWeight: 600 }}>Verification settings</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Everything starts on Manual. Turn on AI checking only where it's worth the cost — see the cost math in the README.

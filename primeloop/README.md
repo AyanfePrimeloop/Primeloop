@@ -22,6 +22,15 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   policy so engagers can see their own payout history. The engager dashboard now shows
   three stats (total earned, already paid, pending next payout) plus a full history of
   approved tasks with amounts.
+- **Automated weekly payout** via Vercel Cron (`vercel.json`, `pages/api/cron/weekly-payout.js`)
+  — runs itself every Friday, no manual step needed. The manual `npm run payout-run` fallback
+  still works too, for one-off runs outside the schedule.
+- **Admin engager management** at `/admin/engagers` — the warn/dismiss workflow from your
+  original process now has an actual page. Setting an engager to "dismissed" immediately
+  blocks them from submitting anything, enforced centrally (`lib/requireEngager.js`).
+- **Admin task board** at `/admin/tasks` — a full view of every task, not just the ones
+  needing review, with filters and a manual close option.
+- All admin pages now share a navigation bar (`components/AdminNav.js`) linking between them.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)
