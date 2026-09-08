@@ -38,7 +38,10 @@ export default async function handler(req, res) {
 
     const lineAmount = rule.client_price * item.quantity;
     amountTotal += lineAmount;
-    lineItems.push({ ...item, price_per_unit: rule.client_price });
+    // IMPORTANT: this is what becomes tasks.price_per_unit later, which is
+    // what engagers see and what the weekly payout script pays them —
+    // it must be the engager's rate, never the client's price.
+    lineItems.push({ ...item, engager_payout: rule.engager_payout });
   }
 
   // 2. Find or create the client record

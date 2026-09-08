@@ -70,7 +70,10 @@ export default function EngagerDashboard() {
             </div>
             <div style={{ textTransform: 'capitalize' }}>{t.action}</div>
             <div><span className="badge">{t.quantity_filled}/{t.quantity_needed}</span></div>
-            <div style={{ fontFamily: 'var(--mono)' }}>₦{t.price_per_unit}</div>
+            <div style={{ fontFamily: 'var(--mono)' }} title="What you earn for this task">₦{t.price_per_unit}</div>
+            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5, textDecoration: 'none', textAlign: 'center' }}>
+              Open post
+            </a>
             <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
           </div>
         ))}

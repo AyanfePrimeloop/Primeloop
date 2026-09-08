@@ -70,7 +70,7 @@ export default async function handler(req, res) {
         post_link: order.post_link,
         action: item.action,
         quantity_needed: item.quantity,
-        price_per_unit: item.price_per_unit,
+        price_per_unit: item.engager_payout,
         target_account_handle: item.targetAccountHandle || null,
         // Gold/Platinum get a 15-minute head start before the task opens to everyone
         tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),

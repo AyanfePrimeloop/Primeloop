@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { requireAdmin } from '../../../lib/requireAdmin';
+import { checkPostLink } from '../../../lib/checkPostLink';
 
 // Body: { clientEmail, platform, postLink, action, quantity, targetAccountHandle? }
 export default async function handler(req, res) {
@@ -35,6 +36,8 @@ export default async function handler(req, res) {
   const prefix = { facebook: 'FB', instagram: 'IG', tiktok: 'TT', youtube: 'YT', x: 'XT' }[platform] || 'PL';
   const taskCode = `${prefix}-${Math.floor(1000 + Math.random() * 8999)}-${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
 
+  const linkCheck = await checkPostLink(postLink, platform);
+
   const { data: task, error } = await supabaseAdmin
     .from('tasks')
     .insert({
@@ -44,10 +47,11 @@ export default async function handler(req, res) {
       post_link: postLink,
       action,
       quantity_needed: quantity,
-      price_per_unit: rule.client_price,
+      price_per_unit: rule.engager_payout,
       target_account_handle: targetAccountHandle || null,
       tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-      status: 'open',
+      status: linkCheck.ok ? 'open' : 'pending_review',
+      link_check_reason: linkCheck.ok ? null : linkCheck.reason,
     })
     .select()
     .single();
