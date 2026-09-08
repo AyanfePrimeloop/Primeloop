@@ -10,10 +10,8 @@ export default function OnboardingTest() {
 
   const [test, setTest] = useState(null);
   const [progress, setProgress] = useState({ approvedActions: [] });
-  const [currentAction, setCurrentAction] = useState(null);
-  const [file, setFile] = useState(null);
-  const [result, setResult] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
+  // Per-action state, keyed by action name: { file, result, submitting }
+  const [actionState, setActionState] = useState({});
 
   useEffect(() => {
     if (!platform || loading) return;
@@ -22,44 +20,49 @@ export default function OnboardingTest() {
       .then((d) => {
         if (d.test) {
           setTest(d.test);
-          setCurrentAction(d.test.required_actions[0]);
+          const initial = {};
+          d.test.required_actions.forEach((a) => (initial[a] = { file: null, result: null, submitting: false }));
+          setActionState(initial);
         }
       });
   }, [platform, loading]);
 
-  async function submitAction() {
-    if (!file || !currentAction) {
-      setResult({ error: 'Choose a screenshot first.' });
+  function setFileFor(action, file) {
+    setActionState((s) => ({ ...s, [action]: { ...s[action], file } }));
+  }
+
+  async function submitAction(action) {
+    const entry = actionState[action];
+    if (!entry?.file) {
+      setActionState((s) => ({ ...s, [action]: { ...s[action], result: { error: 'Choose a screenshot first.' } } }));
       return;
     }
-    setSubmitting(true);
-    const { base64: imageBase64, mediaType } = await compressImageFile(file);
+    setActionState((s) => ({ ...s, [action]: { ...s[action], submitting: true } }));
+
+    const { base64: imageBase64, mediaType } = await compressImageFile(entry.file);
     const res = await authedFetch('/api/onboarding/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ platform, action: currentAction, imageBase64, imageMediaType: mediaType }),
+      body: JSON.stringify({ platform, action, imageBase64, imageMediaType: mediaType }),
     });
     const data = await res.json();
-    setSubmitting(false);
-    setResult(data);
-    if (data.progress) {
-      setProgress(data.progress);
-      const next = test.required_actions.find((a) => !data.progress.approvedActions.includes(a));
-      setCurrentAction(next || null);
-    }
-    setFile(null);
+
+    setActionState((s) => ({ ...s, [action]: { file: null, result: data, submitting: false } }));
+    if (data.progress) setProgress(data.progress);
   }
 
   if (loading || !test) return <div className="app"><p style={{ padding: 20 }}>Loading onboarding test...</p></div>;
 
   const allDone = progress.allApproved;
+  const remainingActions = test.required_actions.filter((a) => !progress.approvedActions?.includes(a));
 
   return (
     <div className="app">
       <h1 style={{ fontSize: 24, fontWeight: 600, textTransform: 'capitalize' }}>{platform} onboarding test</h1>
       <p style={{ color: 'var(--ink-soft)' }}>
-        Signed in as {me?.engager?.code}. Complete each action below on our test post, then upload proof.
-        This confirms your account before you can claim real, paid tasks on {platform}.
+        Signed in as {me?.engager?.code}. Complete every action below on our test post, then upload proof for
+        each one — you can submit them all now, no need to wait between actions. This confirms your account
+        before you can claim real, paid tasks on {platform}.
       </p>
 
       <div className="section">
@@ -93,26 +96,31 @@ export default function OnboardingTest() {
           </p>
         </div>
       ) : (
-        <div className="section">
-          <div className="section-head"><h2>Submit proof: {currentAction}</h2></div>
-          <div style={{ padding: 20 }}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Screenshot of your {currentAction}</label>
-              <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
-            </div>
-            <button className="btn primary" onClick={submitAction} disabled={submitting}>
-              {submitting ? 'Checking...' : `Submit ${currentAction} proof`}
-            </button>
-            {result && (
-              <p style={{ marginTop: 12, fontSize: 13, color: result.error ? 'var(--warn)' : result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
-                {result.error || `${result.verdict.toUpperCase()}${result.reason ? ': ' + result.reason : ''}`}
-                {result.attemptNumber > 2 && result.verdict === 'pending' && (
-                  <span> This is attempt {result.attemptNumber} — an admin will review it directly.</span>
+        remainingActions.map((action) => {
+          const entry = actionState[action] || {};
+          return (
+            <div className="section" key={action}>
+              <div className="section-head"><h2 style={{ textTransform: 'capitalize' }}>Submit proof: {action}</h2></div>
+              <div style={{ padding: 20 }}>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Screenshot of your {action}</label>
+                  <input type="file" accept="image/*" onChange={(e) => setFileFor(action, e.target.files[0])} />
+                </div>
+                <button className="btn primary" onClick={() => submitAction(action)} disabled={entry.submitting}>
+                  {entry.submitting ? 'Checking...' : `Submit ${action} proof`}
+                </button>
+                {entry.result && (
+                  <p style={{ marginTop: 12, fontSize: 13, color: entry.result.error ? 'var(--warn)' : entry.result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
+                    {entry.result.error || `${entry.result.verdict.toUpperCase()}${entry.result.reason ? ': ' + entry.result.reason : ''}`}
+                    {entry.result.attemptNumber > 2 && entry.result.verdict === 'pending' && (
+                      <span> This is attempt {entry.result.attemptNumber} — an admin will review it directly.</span>
+                    )}
+                  </p>
                 )}
-              </p>
-            )}
-          </div>
-        </div>
+              </div>
+            </div>
+          );
+        })
       )}
     </div>
   );
