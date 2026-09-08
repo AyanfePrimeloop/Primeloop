@@ -10,9 +10,14 @@ export default function EngagerDashboard() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [approved, setApproved] = useState([]);
+  const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
-    if (!loading) loadTasks();
+    if (!loading) {
+      loadTasks();
+      loadEarnings();
+    }
   }, [loading]);
 
   async function loadTasks() {
@@ -22,6 +27,23 @@ export default function EngagerDashboard() {
       .eq('status', 'open')
       .order('created_at', { ascending: false });
     setTasks(data || []);
+  }
+
+  async function loadEarnings() {
+    // RLS already restricts this to the logged-in engager's own rows —
+    // see the "engagers see own submissions" policy in schema.sql.
+    const { data: submissions } = await supabase
+      .from('submissions')
+      .select('id, submitted_at, tasks(task_code, platform, action, price_per_unit)')
+      .eq('final_status', 'approved')
+      .order('submitted_at', { ascending: false });
+    setApproved(submissions || []);
+
+    const { data: payouts } = await supabase
+      .from('payouts')
+      .select('amount')
+      .eq('status', 'paid');
+    setTotalPaid((payouts || []).reduce((sum, p) => sum + Number(p.amount), 0));
   }
 
   async function submitProof() {
@@ -40,6 +62,7 @@ export default function EngagerDashboard() {
     setSubmitting(false);
     setResult(data);
     loadTasks();
+    loadEarnings();
   }
 
   async function handleLogout() {
@@ -49,6 +72,8 @@ export default function EngagerDashboard() {
 
   if (loading) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
 
+  const totalEarned = approved.reduce((sum, s) => sum + Number(s.tasks?.price_per_unit || 0), 0);
+
   return (
     <div className="app">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -56,6 +81,21 @@ export default function EngagerDashboard() {
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
           {me?.engager?.code} — {me?.engager?.full_name}
           <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, margin: '16px 0 20px' }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Total earned (approved)</div>
+          <div style={{ fontSize: 22, fontWeight: 600 }}>₦{totalEarned.toLocaleString()}</div>
+        </div>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Already paid out</div>
+          <div style={{ fontSize: 22, fontWeight: 600 }}>₦{totalPaid.toLocaleString()}</div>
+        </div>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Pending next payout</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--good)' }}>₦{Math.max(0, totalEarned - totalPaid).toLocaleString()}</div>
         </div>
       </div>
 
@@ -75,6 +115,24 @@ export default function EngagerDashboard() {
               Open post
             </a>
             <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="section">
+        <div className="section-head">
+          <h2>Approved tasks</h2>
+          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{approved.length} total</span>
+        </div>
+        {approved.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing approved yet — complete a task above to see it here.</p>}
+        {approved.map((s) => (
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
+              <span style={{ color: 'var(--ink-mute)', marginLeft: 8, textTransform: 'capitalize' }}>{s.tasks?.platform} · {s.tasks?.action}</span>
+            </div>
+            <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
+            <div style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--good)' }}>+₦{s.tasks?.price_per_unit}</div>
           </div>
         ))}
       </div>

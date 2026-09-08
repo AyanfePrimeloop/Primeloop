@@ -212,5 +212,11 @@ create policy "clients see own orders" on orders
     client_id in (select id from clients where auth_user_id = auth.uid())
   );
 
+-- Engagers can see their own payouts (needed for the earnings total on their dashboard)
+create policy "engagers see own payouts" on payouts
+  for select using (
+    engager_id in (select id from engagers where auth_user_id = auth.uid())
+  );
+
 -- NOTE: admin dashboard operations should go through the service-role key
 -- (server-side only, via lib/supabaseAdmin.js) which bypasses RLS entirely.

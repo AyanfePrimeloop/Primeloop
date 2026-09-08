@@ -54,6 +54,7 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
 8. Repeat steps 4–6 for `supabase/migration_2_verification_and_onboarding.sql`.
 9. Repeat steps 4–6 for `supabase/migration_3_auth.sql`.
 10. Repeat steps 4–6 for `supabase/migration_4_link_check.sql`.
+11. Repeat steps 4–6 for `supabase/migration_5_engager_earnings.sql`.
 
 Your filing cabinet now has all its folders and labels ready.
 

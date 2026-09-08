@@ -18,6 +18,10 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   does the domain match the platform paid for?). Good links open immediately; bad ones
   go to a new **"Link reviews"** section on `/admin/review` instead of ever reaching
   engagers (`lib/checkPostLink.js`).
+- **Migration 5** (`supabase/migration_5_engager_earnings.sql`) — adds the missing RLS
+  policy so engagers can see their own payout history. The engager dashboard now shows
+  three stats (total earned, already paid, pending next payout) plus a full history of
+  approved tasks with amounts.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)
@@ -51,6 +55,8 @@ It walks through every single click, assuming zero coding background.
     this adds the admins table.
 3c. Run a fourth query with the entire contents of `supabase/migration_4_link_check.sql`
     — this adds automated post-link checking.
+3d. Run a fifth query with the entire contents of `supabase/migration_5_engager_earnings.sql`
+    — this lets engagers see their own earnings.
 
 ### Step 1a — Create the screenshot storage bucket
 
