@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import Logo from '../components/Logo';
+import WhatsAppButton from '../components/WhatsAppButton';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
 
@@ -10,6 +12,7 @@ export default function ClientLanding() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
   useEffect(() => {
     fetch(`/api/admin/pricing?platform=${platform}`)
@@ -59,12 +62,62 @@ export default function ClientLanding() {
 
   return (
     <div className="app">
-      <h1 style={{ fontSize: 28, fontWeight: 600 }}>Real people. Real engagement.</h1>
-      <p style={{ color: 'var(--ink-soft)' }}>
-        No bots. Every like, comment and share comes from a trained, verified engager.
-      </p>
+      <div className="hero">
+        <Logo size={40} light />
+        <div className="hero-eyebrow" style={{ marginTop: 18 }}>
+          1,200+ real trained Nigerian engagers · Facebook, Instagram, TikTok, YouTube, X
+        </div>
+        <h1>Real people. Real engagement. Posts that actually take off.</h1>
+        <p>
+          No bots, no fake accounts that get you flagged. Every like, comment and share comes
+          from a trained, verified engager — and you watch it happen live.
+        </p>
+        <div className="hero-ctas">
+          <a href="#order" className="btn accent" style={{ textDecoration: 'none' }}>See packages</a>
+          <button className="btn" style={{ background: 'transparent', color: '#c4c9ec', borderColor: 'rgba(255,255,255,.25)' }} onClick={() => setShowVerifyInfo(true)}>
+            How verification works
+          </button>
+        </div>
+        <div className="trust-row">
+          <div className="trust-item"><span className="n">98.6%</span> approval rate</div>
+          <div className="trust-item"><span className="n">4–12 min</span> to first engagement</div>
+          <div className="trust-item"><span className="n">100%</span> money-back guarantee</div>
+          <div className="trust-item"><span className="n">5</span> platforms live</div>
+        </div>
+      </div>
 
-      <div className="section">
+      {showVerifyInfo && (
+        <div className="section" style={{ padding: 20, background: 'var(--paper)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: 16 }}>How verification works</h3>
+            <button className="btn" style={{ fontSize: 11.5 }} onClick={() => setShowVerifyInfo(false)}>Close</button>
+          </div>
+          <div className="step-row"><div className="step-num">1</div><div><strong>Engager completes your task</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>A real, trained engager account does the action.</div></div></div>
+          <div className="step-row"><div className="step-num">2</div><div><strong>Screenshot proof submitted</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Uploaded straight from their device.</div></div></div>
+          <div className="step-row"><div className="step-num">3</div><div><strong>Checked automatically</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Confirms the action was really done on your post and screens for duplicates.</div></div></div>
+          <div className="step-row"><div className="step-num">4</div><div><strong>You watch it happen live</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Your progress updates in real time as engagements are approved.</div></div></div>
+        </div>
+      )}
+
+      <div className="proof-strip">
+        <div className="proof-card">
+          <div className="stars">★★★★★</div>
+          <div className="quote">"Comments looked genuinely like customers, not spam."</div>
+          <div className="who">Chidinma O., skincare brand</div>
+        </div>
+        <div className="proof-card">
+          <div className="stars">★★★★★</div>
+          <div className="quote">"I can actually see the progress bar move instead of just hoping it's working."</div>
+          <div className="who">Tunde A., content creator</div>
+        </div>
+        <div className="proof-card">
+          <div className="stars">★★★★★</div>
+          <div className="quote">"Switched from a bot panel after a page warning. No issues since."</div>
+          <div className="who">Grace E., small business owner</div>
+        </div>
+      </div>
+
+      <div className="section" id="order">
         <div className="section-head">
           <h2>Build your order</h2>
         </div>
@@ -122,6 +175,12 @@ export default function ClientLanding() {
           {errorMsg && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{errorMsg}</p>}
         </div>
       </div>
+
+      <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--ink-mute)', marginTop: 10 }}>
+        Already ordered? <a href="/client-login" style={{ color: 'var(--navy)' }}>Track your order</a>
+      </p>
+
+      <WhatsAppButton />
     </div>
   );
 }

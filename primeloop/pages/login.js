@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
 import { authedFetch } from '../lib/authClient';
+import Logo from '../components/Logo';
 
 export default function Login() {
   const router = useRouter();
@@ -24,12 +25,16 @@ export default function Login() {
     setLoading(false);
     if (data.role === 'admin') router.push('/admin/pricing');
     else if (data.role === 'engager') router.push('/engager/dashboard');
-    else setError("This login isn't set up as an admin or engager account yet.");
+    else if (data.role === 'client') router.push('/client/dashboard');
+    else setError("This login isn't set up on Primeloop yet.");
   }
 
   return (
     <div className="app" style={{ maxWidth: 380 }}>
-      <h1 style={{ fontSize: 22, fontWeight: 600 }}>Log in</h1>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+        <Logo size={44} />
+      </div>
+      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Log in</h1>
       <div className="section" style={{ padding: 20 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Email</label>
@@ -45,6 +50,9 @@ export default function Login() {
         {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
         <p style={{ fontSize: 12.5, marginTop: 14 }}>
           New engager? <a href="/signup">Create an account</a>
+        </p>
+        <p style={{ fontSize: 12.5, marginTop: 6 }}>
+          Tracking an order as a client? <a href="/client-login">Use your order email instead</a>
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
+import Logo from '../../components/Logo';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -79,7 +80,10 @@ export default function EngagerDashboard() {
   return (
     <div className="app">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600 }}>Open tasks</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Logo size={28} />
+          <h1 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Open tasks</h1>
+        </div>
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
           {me?.engager?.code} — {me?.engager?.full_name}
           <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>

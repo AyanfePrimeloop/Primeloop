@@ -20,9 +20,12 @@ export default function OrderSuccess() {
       <div className="section" style={{ padding: 30 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600, marginBottom: 12 }}>Thank you</h1>
         <p style={{ color: 'var(--ink-soft)', fontSize: 14 }}>{status}</p>
-        <a href="/" className="btn primary" style={{ display: 'inline-block', marginTop: 20, textDecoration: 'none' }}>
-          Back to home
+        <a href="/client-login" className="btn primary" style={{ display: 'inline-block', marginTop: 20, textDecoration: 'none' }}>
+          Track this order
         </a>
+        <p style={{ marginTop: 10 }}>
+          <a href="/" style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>Back to home</a>
+        </p>
       </div>
     </div>
   );

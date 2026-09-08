@@ -25,9 +25,16 @@ export default async function handler(req, res) {
     .eq('email', clientEmail)
     .maybeSingle();
   if (!client) {
+    let authUserId = null;
+    try {
+      const { data: authUser } = await supabaseAdmin.auth.admin.createUser({ email: clientEmail, email_confirm: true });
+      authUserId = authUser?.user?.id || null;
+    } catch (e) {
+      // Task creation shouldn't be blocked if login creation fails for any reason.
+    }
     const { data: newClient } = await supabaseAdmin
       .from('clients')
-      .insert({ email: clientEmail })
+      .insert({ email: clientEmail, auth_user_id: authUserId })
       .select()
       .single();
     client = newClient;

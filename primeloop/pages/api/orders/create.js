@@ -44,16 +44,27 @@ export default async function handler(req, res) {
     lineItems.push({ ...item, engager_payout: rule.engager_payout });
   }
 
-  // 2. Find or create the client record
+  // 2. Find or create the client record — also create a real login for them
+  //    (no password needed, they'll use a magic link at /client-login later)
+  //    so they can come back and track this order without any extra signup step.
   let { data: client } = await supabaseAdmin
     .from('clients')
     .select('*')
     .eq('email', email)
     .maybeSingle();
   if (!client) {
+    let authUserId = null;
+    try {
+      const { data: authUser } = await supabaseAdmin.auth.admin.createUser({ email, email_confirm: true });
+      authUserId = authUser?.user?.id || null;
+    } catch (e) {
+      // If account creation fails for any reason, the order still proceeds —
+      // dashboard login can be set up manually later, checkout should never
+      // be blocked by this.
+    }
     const { data: newClient, error: clientErr } = await supabaseAdmin
       .from('clients')
-      .insert({ email })
+      .insert({ email, auth_user_id: authUserId })
       .select()
       .single();
     if (clientErr) return res.status(500).json({ error: clientErr.message });

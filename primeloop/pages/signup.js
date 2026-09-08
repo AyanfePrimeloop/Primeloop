@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
+import Logo from '../components/Logo';
 
 export default function Signup() {
   const router = useRouter();
@@ -46,7 +47,10 @@ export default function Signup() {
 
   return (
     <div className="app" style={{ maxWidth: 420 }}>
-      <h1 style={{ fontSize: 22, fontWeight: 600 }}>Create your engager account</h1>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+        <Logo size={44} />
+      </div>
+      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Create your engager account</h1>
       <div className="section" style={{ padding: 20 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Full name</label>

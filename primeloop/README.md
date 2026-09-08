@@ -31,6 +31,15 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
 - **Admin task board** at `/admin/tasks` — a full view of every task, not just the ones
   needing review, with filters and a manual close option.
 - All admin pages now share a navigation bar (`components/AdminNav.js`) linking between them.
+- **Client landing page** (`/`) now has the full hero, trust stats, social proof, and a
+  "How verification works" explainer — ported from the design prototype.
+- **Engager recruitment landing page** at `/join` — hero, earnings calculator, payout proof,
+  how-it-works steps, linking into `/signup`.
+- **Client dashboard** — every client checkout now automatically creates a real (passwordless)
+  login for them. They log in at `/client-login` with a magic link emailed to them, and see
+  every order with a live progress bar and per-action breakdown at `/client/dashboard`.
+- Shared branding components (`components/Logo.js`, `components/WhatsAppButton.js`) used
+  across every public and dashboard page for consistency.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)
