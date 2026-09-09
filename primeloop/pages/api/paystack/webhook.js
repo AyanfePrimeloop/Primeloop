@@ -75,6 +75,7 @@ export default async function handler(req, res) {
           quantity_needed: item.quantity,
           price_per_unit: item.engager_payout,
           target_account_handle: item.targetAccountHandle || null,
+          special_instructions: order.special_instructions,
           // Gold/Platinum get a 15-minute head start before the task opens to everyone
           tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
           status: linkCheck.ok ? 'open' : 'pending_review',

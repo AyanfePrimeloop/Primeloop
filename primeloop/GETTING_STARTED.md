@@ -56,6 +56,12 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
 10. Repeat steps 4–6 for `supabase/migration_4_link_check.sql`.
 11. Repeat steps 4–6 for `supabase/migration_5_engager_earnings.sql`.
 12. Repeat steps 4–6 for `supabase/migration_6_referrals.sql`.
+13. Repeat steps 4–6 for `supabase/migration_7_special_instructions.sql`.
+14. Repeat steps 4–6 for `supabase/migration_8_super_admin.sql`.
+15. Run this one separately, with your own admin email, to make yourself a super-admin:
+    ```sql
+    update admins set role = 'super_admin' where email = 'you@email.com';
+    ```
 
 Your filing cabinet now has all its folders and labels ready.
 
@@ -159,6 +165,10 @@ You do it once, manually, right now.
 6. Click **Run**.
 7. Go to your live link + `/login`, log in with the email and password from step 2.
    You should land on the admin pricing page. **You're now an admin.**
+8. This makes you a regular admin. To also become a **super-admin** (needed for `/admin/admins`
+   and `/admin/accounting`), run the SQL from Step 15 back in Part 1 with your own email. Once
+   deployed, you can invite every other admin from the `/admin/admins` page instead of
+   repeating this manual SQL step — that's only needed once, for the very first one.
 
 ---
 

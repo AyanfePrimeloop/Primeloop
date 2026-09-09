@@ -13,23 +13,23 @@ export default function JoinAsEngager() {
   return (
     <div className="app">
       <div className="hero">
-        <Logo size={40} light />
-        <div className="hero-eyebrow" style={{ marginTop: 18 }}>Facebook · Instagram · TikTok · YouTube · X</div>
-        <h1>Earn from your phone, doing what you already do.</h1>
-        <p>
+        <div className="fade-in"><Logo size={40} light /></div>
+        <div className="hero-eyebrow fade-in-delay-1" style={{ marginTop: 18 }}>Facebook · Instagram · TikTok · YouTube · X</div>
+        <h1 className="fade-in-delay-1">Earn from your phone, doing what you already do.</h1>
+        <p className="fade-in-delay-2">
           Like, comment, share and follow on real tasks. Get paid every week, straight to your
           bank or Opay — no experience, no startup cost.
         </p>
-        <div className="hero-ctas">
-          <a href="#signup" className="btn accent" style={{ textDecoration: 'none' }}>Start earning today</a>
+        <div className="hero-ctas fade-in-delay-3">
+          <a href="#signup" className="btn accent pulse" style={{ textDecoration: 'none' }}>Start earning today</a>
         </div>
-        <div className="trust-row">
+        <div className="trust-row fade-in-delay-3">
           <div className="trust-item"><span className="n">1,200+</span> active engagers</div>
           <div className="trust-item"><span className="n">Every Friday</span> automatic payout</div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 20 }}>
+      <div className="grid-main-side">
         <div>
           <div className="section">
             <div className="section-head"><h2>How it works</h2></div>

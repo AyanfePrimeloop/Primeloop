@@ -7,6 +7,8 @@ const LINKS = [
   { href: '/admin/pricing', label: 'Pricing' },
   { href: '/admin/verification', label: 'Verification' },
   { href: '/admin/onboarding-tests', label: 'Onboarding tests' },
+  { href: '/admin/admins', label: 'Admins' },
+  { href: '/admin/accounting', label: 'Accounting' },
 ];
 
 export default function AdminNav() {

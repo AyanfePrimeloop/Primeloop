@@ -41,7 +41,7 @@ export default function AdminPricing() {
         <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{me?.email}</span>
       </div>
 
-      <div style={{ display: 'flex', gap: 6, margin: '16px 0' }}>
+      <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
         {PLATFORMS.map((p) => (
           <button
             key={p}

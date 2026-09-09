@@ -97,11 +97,13 @@ export default function EngagerDashboard() {
         </div>
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
           {me?.engager?.code} — {me?.engager?.full_name}
+          <a href="/choose-dashboard" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Switch dashboard</a>
+          <a href="/engager/bank-details" className="btn" style={{ marginLeft: 10, fontSize: 11.5, textDecoration: 'none' }}>Bank details</a>
           <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, margin: '16px 0 20px' }}>
+      <div className="grid-3" style={{ margin: '16px 0 20px' }}>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
           <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Total earned (approved)</div>
           <div style={{ fontSize: 22, fontWeight: 600 }}>₦{totalEarned.toLocaleString()}</div>
@@ -132,6 +134,14 @@ export default function EngagerDashboard() {
               Open post
             </a>
             <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+            {t.special_instructions && (
+              <div style={{
+                gridColumn: '1 / -1', fontSize: 12, color: 'var(--ink-soft)', background: 'var(--paper)',
+                borderRadius: 6, padding: '8px 10px', marginTop: 4,
+              }}>
+                <strong style={{ color: 'var(--ink)' }}>Client note:</strong> {t.special_instructions}
+              </div>
+            )}
           </div>
         ))}
       </div>

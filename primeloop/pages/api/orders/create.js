@@ -7,7 +7,7 @@ import { initializeTransaction } from '../../../lib/paystack';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { email, platform, postLink, items } = req.body;
+  const { email, platform, postLink, items, specialInstructions } = req.body;
   if (!email || !platform || !postLink || !items?.length) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -83,6 +83,7 @@ export default async function handler(req, res) {
       amount_total: amountTotal,
       paystack_reference: reference,
       payment_status: 'pending',
+      special_instructions: specialInstructions || null,
     })
     .select()
     .single();

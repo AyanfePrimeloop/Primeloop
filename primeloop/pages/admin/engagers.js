@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
+import { downloadCSV } from '../../lib/csvExport';
 
 const TIERS = ['bronze', 'silver', 'gold', 'platinum'];
 const STATUSES = ['active', 'warned', 'dismissed'];
@@ -33,18 +34,39 @@ export default function AdminEngagers() {
     load();
   }
 
+  function exportCSV() {
+    downloadCSV(
+      `primeloop-engagers-${statusFilter || 'all'}-${new Date().toISOString().slice(0, 10)}`,
+      engagers.map((e) => ({
+        code: e.code,
+        full_name: e.full_name,
+        whatsapp: e.whatsapp,
+        tier: e.tier,
+        status: e.status,
+        tasks_completed: e.tasks_completed,
+        tasks_approved: e.tasks_approved,
+        approval_rate: e.approval_rate,
+        verified_platforms: (e.engager_platform_accounts || []).filter((p) => p.verification_status === 'verified').map((p) => p.platform).join('; '),
+        created_at: e.created_at,
+      }))
+    );
+  }
+
   if (loading) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
 
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Engagers</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: 24, fontWeight: 600 }}>Engagers</h1>
+        <button className="btn" onClick={exportCSV}>Download CSV</button>
+      </div>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Your warning policy: first warning, discard the submission, then dismissal if it continues.
         Change status here when that happens.
       </p>
 
-      <div style={{ display: 'flex', gap: 6, margin: '16px 0' }}>
+      <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
         <button className="btn" style={!statusFilter ? { background: 'var(--navy)', color: '#fff' } : {}} onClick={() => setStatusFilter('')}>All</button>
         {STATUSES.map((s) => (
           <button key={s} className="btn" style={statusFilter === s ? { background: 'var(--navy)', color: '#fff' } : {}} onClick={() => setStatusFilter(s)}>
@@ -56,7 +78,7 @@ export default function AdminEngagers() {
       <div className="section">
         {engagers.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>No engagers found.</p>}
         {engagers.map((e) => (
-          <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+          <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: '1px solid var(--line)', fontSize: 13, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--navy)' }}>{e.code}</div>
               <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{e.full_name} · {e.whatsapp}</div>

@@ -8,31 +8,33 @@ const authCheckClient = createClient(
 
 export default async function handler(req, res) {
   const token = (req.headers.authorization || '').replace('Bearer ', '');
-  if (!token) return res.status(200).json({ role: null });
+  if (!token) return res.status(200).json({ role: null, roles: [] });
 
   const { data: userData } = await authCheckClient.auth.getUser(token);
-  if (!userData?.user) return res.status(200).json({ role: null });
+  if (!userData?.user) return res.status(200).json({ role: null, roles: [] });
 
-  const { data: adminRow } = await supabaseAdmin
-    .from('admins')
-    .select('*')
-    .eq('auth_user_id', userData.user.id)
-    .maybeSingle();
-  if (adminRow) return res.status(200).json({ role: 'admin', email: userData.user.email });
+  // A single email/login CAN be linked to more than one role (e.g. someone
+  // who's both an engager and placed a client order with the same email).
+  // We check all three and return everything found, rather than stopping
+  // at the first match — the login page then asks which dashboard to open
+  // if there's more than one.
+  const [{ data: adminRow }, { data: engagerRow }, { data: clientRow }] = await Promise.all([
+    supabaseAdmin.from('admins').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
+    supabaseAdmin.from('engagers').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
+    supabaseAdmin.from('clients').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
+  ]);
 
-  const { data: engagerRow } = await supabaseAdmin
-    .from('engagers')
-    .select('*')
-    .eq('auth_user_id', userData.user.id)
-    .maybeSingle();
-  if (engagerRow) return res.status(200).json({ role: 'engager', engager: engagerRow });
+  const roles = [];
+  if (adminRow) roles.push('admin');
+  if (engagerRow) roles.push('engager');
+  if (clientRow) roles.push('client');
 
-  const { data: clientRow } = await supabaseAdmin
-    .from('clients')
-    .select('*')
-    .eq('auth_user_id', userData.user.id)
-    .maybeSingle();
-  if (clientRow) return res.status(200).json({ role: 'client', client: clientRow });
-
-  return res.status(200).json({ role: null });
+  return res.status(200).json({
+    role: roles[0] || null, // kept for backward compatibility with single-role checks
+    roles,
+    email: userData.user.email,
+    admin: adminRow || null,
+    engager: engagerRow || null,
+    client: clientRow || null,
+  });
 }

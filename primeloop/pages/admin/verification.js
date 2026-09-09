@@ -43,7 +43,7 @@ export default function VerificationSettings() {
         Everything starts on Manual. Turn on AI checking only where it's worth the cost — see the cost math in the README.
       </p>
 
-      <div style={{ display: 'flex', gap: 6, margin: '16px 0' }}>
+      <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
         {PLATFORMS.map((p) => (
           <button
             key={p}

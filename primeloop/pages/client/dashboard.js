@@ -46,6 +46,7 @@ export default function ClientDashboard() {
         </div>
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
           {me?.client?.email}
+          <a href="/choose-dashboard" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Switch dashboard</a>
           <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>
         </div>
       </div>
@@ -88,7 +89,7 @@ export default function ClientDashboard() {
                     </div>
                     <div style={{ fontSize: 11.5, color: 'var(--ink-mute)', whiteSpace: 'nowrap' }}>{totalFilled}/{totalNeeded} done</div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${tasks.length || 1}, 1fr)`, gap: 10 }}>
+                  <div className="grid-tasks">
                     {tasks.map((t) => (
                       <div key={t.id} style={{ background: 'var(--paper)', borderRadius: 8, padding: '10px 12px' }}>
                         <div style={{ fontSize: 16, fontWeight: 600 }}>{t.quantity_filled}</div>

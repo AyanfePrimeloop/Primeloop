@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   const auth = await requireAdmin(req);
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
-  const { clientEmail, platform, postLink, action, quantity, targetAccountHandle } = req.body;
+  const { clientEmail, platform, postLink, action, quantity, targetAccountHandle, specialInstructions } = req.body;
 
   const { data: rule } = await supabaseAdmin
     .from('pricing_rules')
@@ -57,6 +57,7 @@ export default async function handler(req, res) {
       quantity_needed: quantity,
       price_per_unit: rule.engager_payout,
       target_account_handle: targetAccountHandle || null,
+      special_instructions: specialInstructions || null,
       tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       status: linkCheck.ok ? 'open' : 'pending_review',
       link_check_reason: linkCheck.ok ? null : linkCheck.reason,

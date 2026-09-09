@@ -10,6 +10,7 @@ export default function ClientLanding() {
   const [selected, setSelected] = useState({}); // { like: { checked, qty } }
   const [postLink, setPostLink] = useState('');
   const [email, setEmail] = useState('');
+  const [specialInstructions, setSpecialInstructions] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showVerifyInfo, setShowVerifyInfo] = useState(false);
@@ -48,7 +49,7 @@ export default function ClientLanding() {
     const res = await fetch('/api/orders/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, platform, postLink, items }),
+      body: JSON.stringify({ email, platform, postLink, items, specialInstructions }),
     });
     const data = await res.json();
     setLoading(false);
@@ -63,22 +64,22 @@ export default function ClientLanding() {
   return (
     <div className="app">
       <div className="hero">
-        <Logo size={40} light />
-        <div className="hero-eyebrow" style={{ marginTop: 18 }}>
+        <div className="fade-in"><Logo size={40} light /></div>
+        <div className="hero-eyebrow fade-in-delay-1" style={{ marginTop: 18 }}>
           1,200+ real trained Nigerian engagers · Facebook, Instagram, TikTok, YouTube, X
         </div>
-        <h1>Real people. Real engagement. Posts that actually take off.</h1>
-        <p>
+        <h1 className="fade-in-delay-1">Real people. Real engagement. Posts that actually take off.</h1>
+        <p className="fade-in-delay-2">
           No bots, no fake accounts that get you flagged. Every like, comment and share comes
           from a trained, verified engager — and you watch it happen live.
         </p>
-        <div className="hero-ctas">
-          <a href="#order" className="btn accent" style={{ textDecoration: 'none' }}>See packages</a>
+        <div className="hero-ctas fade-in-delay-3">
+          <a href="#order" className="btn accent pulse" style={{ textDecoration: 'none' }}>See packages</a>
           <button className="btn" style={{ background: 'transparent', color: '#c4c9ec', borderColor: 'rgba(255,255,255,.25)' }} onClick={() => setShowVerifyInfo(true)}>
             How verification works
           </button>
         </div>
-        <div className="trust-row">
+        <div className="trust-row fade-in-delay-3">
           <div className="trust-item"><span className="n">98.6%</span> approval rate</div>
           <div className="trust-item"><span className="n">4–12 min</span> to first engagement</div>
           <div className="trust-item"><span className="n">100%</span> money-back guarantee</div>
@@ -99,7 +100,7 @@ export default function ClientLanding() {
         </div>
       )}
 
-      <div className="proof-strip">
+      <div className="proof-strip fade-in-delay-3">
         <div className="proof-card">
           <div className="stars">★★★★★</div>
           <div className="quote">"Comments looked genuinely like customers, not spam."</div>
@@ -122,7 +123,7 @@ export default function ClientLanding() {
           <h2>Build your order</h2>
         </div>
         <div style={{ padding: 20 }}>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
             {PLATFORMS.map((p) => (
               <button
                 key={p}
@@ -143,9 +144,20 @@ export default function ClientLanding() {
             <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Post link</label>
             <input style={{ width: '100%' }} value={postLink} onChange={(e) => setPostLink(e.target.value)} placeholder="https://facebook.com/..." />
           </div>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
+              Extra instructions <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>(optional)</span>
+            </label>
+            <textarea
+              style={{ width: '100%', minHeight: 70, fontFamily: 'inherit', fontSize: 13, padding: '9px 10px', border: '1px solid var(--line-strong)', borderRadius: 7, boxSizing: 'border-box' }}
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
+              placeholder="e.g. comments should mention the product name, or focus on the first photo in the carousel"
+            />
+          </div>
 
           {rules.map((r) => (
-            <div key={r.action} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
+            <div key={r.action} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
               <input
                 type="checkbox"
                 checked={!!selected[r.action]?.checked}

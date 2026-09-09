@@ -52,6 +52,33 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   A safety cap (`MAX_RECIPIENTS_PER_TASK` in `lib/notifyEngagersOfTask.js`) limits alerts to
   250 people per task for now — worth revisiting once you have real volume and a verified
   WhatsApp Business number with higher rate limits.
+- **Migration 7** (`supabase/migration_7_special_instructions.sql`) — clients can now add
+  optional extra instructions to their order, visible on the engager's task card and the
+  admin task board.
+- **Forgot password** for engagers and admins (`/forgot-password`, `/reset-password`) —
+  clients don't need this since they already use passwordless magic links.
+- **Bank details** page for engagers (`/engager/bank-details`) — verifies the account with
+  Paystack and creates the transfer recipient automatically. Without this, the weekly payout
+  script has nothing to pay into, so this is worth prompting engagers to fill in early.
+- **Multi-role login** — one email can now be linked to more than one role (e.g. an engager
+  who also placed a client order). `whoami` returns all matching roles; if there's more than
+  one, login sends them to `/choose-dashboard` to pick.
+- **Mobile responsiveness pass** — fixed the root cause of tabs/buttons overflowing off
+  narrow screens (missing `flexWrap`), added a full mobile CSS section to
+  `styles/globals.css`, and converted a few inline grid layouts to responsive CSS classes.
+- **CSV export** (`lib/csvExport.js`) — "Download CSV" buttons on `/admin/tasks` and
+  `/admin/engagers`, opens directly in Excel/Sheets.
+- **Migration 8** (`supabase/migration_8_super_admin.sql`) — multiple admins, with a
+  super-admin tier. Regular admins keep access to everything as before. Only super-admins
+  can invite new admins (`/admin/admins`) or see the financial health page (`/admin/accounting`
+  — total revenue, payouts, referral bonuses, and gross margin). **One manual step required**:
+  promote your first admin account to super_admin — the exact SQL is in the migration file's
+  comments.
+- **Visual/animation polish** on the client and engager landing pages — fade-in entrance
+  animations, a subtle gradient hero background, hover lift on cards, a pulsing primary CTA.
+  Honest limitation: no real photography was added since this environment has no internet
+  access to source images — that part is worth doing yourself once deployed (your own
+  product photos or a stock site) for the biggest remaining visual upgrade.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

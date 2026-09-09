@@ -45,7 +45,7 @@ export function useRequireRole(role) {
       const res = await authedFetch('/api/auth/whoami');
       const data = await res.json();
       if (cancelled) return;
-      if (data.role !== role) {
+      if (!(data.roles || []).includes(role)) {
         router.replace('/login');
         return;
       }

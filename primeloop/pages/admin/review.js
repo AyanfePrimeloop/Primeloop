@@ -55,7 +55,7 @@ export default function ReviewQueue() {
         </p>
         {links.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
         {links.map((t) => (
-          <div key={t.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div key={t.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>
                 {t.task_code} <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>· {t.platform} · {t.action} · qty {t.quantity_needed}</span>
@@ -79,7 +79,7 @@ export default function ReviewQueue() {
         </div>
         {regular.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
         {regular.map((s) => (
-          <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>
                 {s.tasks?.task_code} <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>· {s.tasks?.platform} · {s.tasks?.action}</span>
@@ -106,7 +106,7 @@ export default function ReviewQueue() {
         </div>
         {onboarding.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
         {onboarding.map((s) => (
-          <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 500, textTransform: 'capitalize' }}>
                 {s.platform} — {s.action}

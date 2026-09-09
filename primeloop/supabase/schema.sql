@@ -90,6 +90,7 @@ create table orders (
   amount_total numeric not null,
   paystack_reference text unique,
   payment_status text not null default 'pending', -- pending | paid | failed
+  special_instructions text,                 -- optional, how the client wants engagement structured
   created_at timestamptz not null default now()
 );
 
@@ -108,6 +109,7 @@ create table tasks (
   quantity_filled int not null default 0,
   price_per_unit numeric not null,
   target_account_handle text,                -- required for follow/subscribe tasks, used for the ledger check
+  special_instructions text,                 -- optional, how the client wants engagement structured
   tier_gate_until timestamptz,               -- Gold/Platinum-only window before opening to everyone
   status text not null default 'open',       -- open | closed | pending_review | rejected
   link_check_reason text,                    -- why the automated link check held this back, if it did

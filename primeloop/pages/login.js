@@ -23,10 +23,18 @@ export default function Login() {
     const res = await authedFetch('/api/auth/whoami');
     const data = await res.json();
     setLoading(false);
-    if (data.role === 'admin') router.push('/admin/pricing');
-    else if (data.role === 'engager') router.push('/engager/dashboard');
-    else if (data.role === 'client') router.push('/client/dashboard');
-    else setError("This login isn't set up on Primeloop yet.");
+    const roles = data.roles || [];
+    if (roles.length > 1) {
+      router.push('/choose-dashboard');
+    } else if (roles.includes('admin')) {
+      router.push('/admin/pricing');
+    } else if (roles.includes('engager')) {
+      router.push('/engager/dashboard');
+    } else if (roles.includes('client')) {
+      router.push('/client/dashboard');
+    } else {
+      setError("This login isn't set up on Primeloop yet.");
+    }
   }
 
   return (
@@ -43,6 +51,7 @@ export default function Login() {
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Password</label>
           <input type="password" style={{ width: '100%' }} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <a href="/forgot-password" style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>Forgot password?</a>
         </div>
         <button className="btn primary" style={{ width: '100%' }} onClick={handleLogin} disabled={loading}>
           {loading ? 'Logging in...' : 'Log in'}
