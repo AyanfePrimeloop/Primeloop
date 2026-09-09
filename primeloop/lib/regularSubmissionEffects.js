@@ -32,6 +32,23 @@ export async function applyRegularVerdict({ task, engager, finalStatus }) {
         target_account_handle: task.target_account_handle,
       });
     }
+
+    // Check whether this approval just pushed a REFERRED engager past their
+    // referrer's milestone — the bonus only unlocks once real work is done,
+    // so a fake signup with zero approved tasks never earns anything.
+    const newApprovedCount = engager.tasks_approved + 1;
+    const { data: pendingBonus } = await supabaseAdmin
+      .from('referral_bonuses')
+      .select('*')
+      .eq('referred_id', engager.id)
+      .eq('status', 'pending')
+      .maybeSingle();
+    if (pendingBonus && newApprovedCount >= pendingBonus.milestone_tasks) {
+      await supabaseAdmin
+        .from('referral_bonuses')
+        .update({ status: 'earned_unpaid', earned_at: new Date().toISOString() })
+        .eq('id', pendingBonus.id);
+    }
   } else if (finalStatus === 'rejected') {
     await supabaseAdmin
       .from('engagers')

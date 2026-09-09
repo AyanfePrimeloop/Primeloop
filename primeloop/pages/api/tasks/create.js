@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { requireAdmin } from '../../../lib/requireAdmin';
 import { checkPostLink } from '../../../lib/checkPostLink';
+import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
 
 // Body: { clientEmail, platform, postLink, action, quantity, targetAccountHandle? }
 export default async function handler(req, res) {
@@ -64,5 +65,14 @@ export default async function handler(req, res) {
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
+
+  if (task && linkCheck.ok) {
+    try {
+      await notifyEngagersOfTask(supabaseAdmin, task);
+    } catch (e) {
+      console.error('WhatsApp notify failed:', e.message);
+    }
+  }
+
   return res.status(200).json({ task });
 }

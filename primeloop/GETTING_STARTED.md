@@ -55,6 +55,7 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
 9. Repeat steps 4–6 for `supabase/migration_3_auth.sql`.
 10. Repeat steps 4–6 for `supabase/migration_4_link_check.sql`.
 11. Repeat steps 4–6 for `supabase/migration_5_engager_earnings.sql`.
+12. Repeat steps 4–6 for `supabase/migration_6_referrals.sql`.
 
 Your filing cabinet now has all its folders and labels ready.
 
@@ -204,6 +205,29 @@ If all seven steps worked, your whole system is wired together correctly.
    project's "Cron Jobs" tab in Vercel once it's deployed.
 5. You can still run `npm run payout-run` manually from your computer any time you want an
    extra payout outside the normal schedule.
+
+## Part 9c — Turn on WhatsApp task alerts (optional, and not instant)
+
+This one has a real waiting period built into WhatsApp's platform rules — it's not something
+either of us can skip. Budget a few days for the approval step below.
+
+1. Go to [developers.facebook.com](https://developers.facebook.com) → create a developer
+   account if you don't have one → create a new App → choose "Business" as the type.
+2. In your new app's dashboard, find "WhatsApp" in the product list and set it up. This gives
+   you a **Phone Number ID** and a **temporary access token** — for real use you'll want a
+   **permanent token** (Meta's docs walk through generating one via a System User).
+3. In Vercel, add three environment variables: `WHATSAPP_ACCESS_TOKEN`,
+   `WHATSAPP_PHONE_NUMBER_ID`, and `WHATSAPP_TEMPLATE_NAME` (use `new_task_alert` unless you
+   name your template something else in the next step).
+4. In the Meta app dashboard, go to WhatsApp → Message Templates → Create Template. Make a
+   simple template named `new_task_alert` with a body like: "New task available: {{1}} on
+   {{2}}. Action: {{3}}. {{4}} spots, ₦{{5}} each. Log in to claim it." Submit it for review.
+5. **Wait for approval** — Meta typically reviews templates within 24–48 hours, sometimes
+   longer. You'll get a notification in the dashboard once it's approved.
+6. Once approved, redeploy your site (Deployments → Redeploy). New tasks will now trigger
+   WhatsApp alerts automatically to eligible engagers.
+7. Test with one real task before relying on it — place a small test order and check that a
+   WhatsApp message actually arrives on a test engager's phone.
 
 ## Part 10 — Going properly live
 

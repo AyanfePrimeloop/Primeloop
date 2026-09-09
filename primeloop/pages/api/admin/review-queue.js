@@ -2,6 +2,7 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { applyRegularVerdict } from '../../../lib/regularSubmissionEffects';
 import { recomputeOnboardingStatus } from '../../../lib/onboardingProgress';
 import { requireAdmin } from '../../../lib/requireAdmin';
+import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
 
 // GET  -> { regular: [...], onboarding: [...], links: [...pending_review tasks...] }
 // POST -> body: { type: 'regular' | 'onboarding' | 'link', id, decision: 'approved' | 'rejected' }
@@ -64,10 +65,21 @@ export default async function handler(req, res) {
       // Approved -> opens to engagers now. Rejected -> stays closed permanently;
       // reach out to the client manually to get a working link (no automated
       // client notification exists yet — same as how you'd handle it today).
-      await supabaseAdmin
+      const newStatus = decision === 'approved' ? 'open' : 'rejected';
+      const { data: updatedTask } = await supabaseAdmin
         .from('tasks')
-        .update({ status: decision === 'approved' ? 'open' : 'rejected' })
-        .eq('id', id);
+        .update({ status: newStatus })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (newStatus === 'open' && updatedTask) {
+        try {
+          await notifyEngagersOfTask(supabaseAdmin, updatedTask);
+        } catch (e) {
+          console.error('WhatsApp notify failed:', e.message);
+        }
+      }
       return res.status(200).json({ ok: true });
     }
 

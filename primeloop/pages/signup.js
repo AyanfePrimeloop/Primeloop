@@ -30,7 +30,12 @@ export default function Signup() {
     const res = await fetch('/api/engagers/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ authUserId: data.user.id, fullName: form.fullName, whatsapp: form.whatsapp }),
+      body: JSON.stringify({
+        authUserId: data.user.id,
+        fullName: form.fullName,
+        whatsapp: form.whatsapp,
+        referredByCode: router.query.ref || null,
+      }),
     });
     const regData = await res.json();
     setLoading(false);
@@ -51,6 +56,11 @@ export default function Signup() {
         <Logo size={44} />
       </div>
       <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Create your engager account</h1>
+      {router.query.ref && (
+        <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--good)', marginTop: -8, marginBottom: 12 }}>
+          Referred by {router.query.ref}
+        </p>
+      )}
       <div className="section" style={{ padding: 20 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Full name</label>

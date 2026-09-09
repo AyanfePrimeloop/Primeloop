@@ -46,6 +46,19 @@ async function runWeeklyPayout(supabaseAdmin, paystackSecretKey) {
     totalsByEngager[s.engager_id] = (totalsByEngager[s.engager_id] || 0) + payout;
   }
 
+  // 1b. Fold in any earned-but-unpaid referral bonuses — these get paid out
+  //     alongside the referrer's normal weekly earnings, in the same transfer.
+  const { data: earnedBonuses } = await supabaseAdmin
+    .from('referral_bonuses')
+    .select('*')
+    .eq('status', 'earned_unpaid');
+
+  const bonusIdsByReferrer = {};
+  for (const b of earnedBonuses || []) {
+    totalsByEngager[b.referrer_id] = (totalsByEngager[b.referrer_id] || 0) + Number(b.bonus_amount);
+    (bonusIdsByReferrer[b.referrer_id] ||= []).push(b.id);
+  }
+
   // 2. Only pay engagers who have Paystack recipient details on file.
   for (const [engagerId, amount] of Object.entries(totalsByEngager)) {
     const { data: engager } = await supabaseAdmin
@@ -89,6 +102,15 @@ async function runWeeklyPayout(supabaseAdmin, paystackSecretKey) {
         paid_at: transfer.status ? new Date().toISOString() : null,
       })
       .eq('id', payoutRow.id);
+
+    // Mark any referral bonuses that were included in this transfer as paid,
+    // so next week's run doesn't count them again.
+    if (transfer.status && bonusIdsByReferrer[engagerId]) {
+      await supabaseAdmin
+        .from('referral_bonuses')
+        .update({ status: 'paid', paid_at: new Date().toISOString() })
+        .in('id', bonusIdsByReferrer[engagerId]);
+    }
 
     results.push({ engagerCode: engager.code, amount, status: transfer.status ? 'paid' : 'failed: ' + transfer.message });
   }

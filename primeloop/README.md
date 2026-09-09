@@ -40,6 +40,18 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   every order with a live progress bar and per-action breakdown at `/client/dashboard`.
 - Shared branding components (`components/Logo.js`, `components/WhatsAppButton.js`) used
   across every public and dashboard page for consistency.
+- **Migration 6** (`supabase/migration_6_referrals.sql`) — the engager referral system.
+  Gold/Platinum engagers get a shareable link (`/join?ref=THEIRCODE`) on their dashboard.
+  When someone signs up through it and reaches 10 approved tasks, the referrer earns a
+  bonus automatically included in their next weekly payout — no manual tracking needed.
+- **WhatsApp task alerts** (`lib/whatsapp.js`, `lib/notifyEngagersOfTask.js`) — when a task
+  opens, eligible engagers (respecting the tier early-access window and platform
+  verification) get a WhatsApp message automatically. **Important**: WhatsApp requires a
+  pre-approved message template before this will actually send anything — see
+  GETTING_STARTED.md for that setup, which involves Meta's review process and isn't instant.
+  A safety cap (`MAX_RECIPIENTS_PER_TASK` in `lib/notifyEngagersOfTask.js`) limits alerts to
+  250 people per task for now — worth revisiting once you have real volume and a verified
+  WhatsApp Business number with higher rate limits.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

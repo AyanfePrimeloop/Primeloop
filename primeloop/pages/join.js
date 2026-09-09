@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
 
 export default function JoinAsEngager() {
+  const router = useRouter();
+  const { ref } = router.query;
   const [tasksPerDay, setTasksPerDay] = useState(5);
   const weeklyEstimate = Math.round(tasksPerDay * 7 * 16);
+  const signupHref = ref ? `/signup?ref=${encodeURIComponent(ref)}` : '/signup';
 
   return (
     <div className="app">
@@ -80,7 +84,7 @@ export default function JoinAsEngager() {
                 Registration takes about 2 minutes. Your account activates immediately —
                 you can browse tasks right away.
               </p>
-              <a href="/signup" className="btn accent" style={{ width: '100%', textAlign: 'center', display: 'block', textDecoration: 'none' }}>
+              <a href={signupHref} className="btn accent" style={{ width: '100%', textAlign: 'center', display: 'block', textDecoration: 'none' }}>
                 Create my account
               </a>
               <p style={{ fontSize: 12.5, marginTop: 14, textAlign: 'center' }}>

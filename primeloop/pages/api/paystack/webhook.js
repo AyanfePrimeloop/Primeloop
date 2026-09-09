@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { verifyTransaction } from '../../../lib/paystack';
 import { checkPostLink } from '../../../lib/checkPostLink';
+import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
 
 // Paystack sends raw body — we need it unparsed to verify the signature.
 export const config = { api: { bodyParser: false } };
@@ -62,25 +63,36 @@ export default async function handler(req, res) {
     const lineItems = event.data.metadata?.line_items || [];
     for (const item of lineItems) {
       const taskCode = generateTaskCode(order.platform);
-      await supabaseAdmin.from('tasks').insert({
-        task_code: taskCode,
-        order_id: order.id,
-        client_id: order.client_id,
-        platform: order.platform,
-        post_link: order.post_link,
-        action: item.action,
-        quantity_needed: item.quantity,
-        price_per_unit: item.engager_payout,
-        target_account_handle: item.targetAccountHandle || null,
-        // Gold/Platinum get a 15-minute head start before the task opens to everyone
-        tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-        status: linkCheck.ok ? 'open' : 'pending_review',
-        link_check_reason: linkCheck.ok ? null : linkCheck.reason,
-      });
-    }
+      const { data: task } = await supabaseAdmin
+        .from('tasks')
+        .insert({
+          task_code: taskCode,
+          order_id: order.id,
+          client_id: order.client_id,
+          platform: order.platform,
+          post_link: order.post_link,
+          action: item.action,
+          quantity_needed: item.quantity,
+          price_per_unit: item.engager_payout,
+          target_account_handle: item.targetAccountHandle || null,
+          // Gold/Platinum get a 15-minute head start before the task opens to everyone
+          tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+          status: linkCheck.ok ? 'open' : 'pending_review',
+          link_check_reason: linkCheck.ok ? null : linkCheck.reason,
+        })
+        .select()
+        .single();
 
-    // 6. (Phase 2) Trigger WhatsApp Cloud API alert to relevant engagers here
-    //    — only for tasks that actually opened, obviously.
+      // 6. Alert eligible engagers now — failures here never block the
+      //    payment/order flow, since the task is already live either way.
+      if (task && linkCheck.ok) {
+        try {
+          await notifyEngagersOfTask(supabaseAdmin, task);
+        } catch (e) {
+          console.error('WhatsApp notify failed:', e.message);
+        }
+      }
+    }
   }
 
   return res.status(200).json({ received: true });
