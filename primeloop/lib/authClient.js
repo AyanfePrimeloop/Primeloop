@@ -36,9 +36,10 @@ export function useRequireRole(role) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData?.session) {
+
+    async function resolve(session) {
+      if (cancelled) return;
+      if (!session) {
         router.replace('/login');
         return;
       }
@@ -50,9 +51,24 @@ export function useRequireRole(role) {
         return;
       }
       setState({ loading: false, me: data });
-    })();
+    }
+
+    // Using onAuthStateChange instead of a one-off getSession() call —
+    // Supabase fires an INITIAL_SESSION event once it's finished both
+    // checking stored sessions AND processing any magic-link/reset tokens
+    // in the current URL. A plain getSession() call can run BEFORE that
+    // processing finishes, which was the bug: clicking a valid magic link
+    // bounced straight back to /login because the session genuinely wasn't
+    // there yet at that exact millisecond, not because it failed.
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        resolve(session);
+      }
+    });
+
     return () => {
       cancelled = true;
+      listener?.subscription?.unsubscribe();
     };
   }, [role]); // eslint-disable-line react-hooks/exhaustive-deps
 

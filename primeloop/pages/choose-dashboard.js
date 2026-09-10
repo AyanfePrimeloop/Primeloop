@@ -15,9 +15,8 @@ export default function ChooseDashboard() {
   const [roles, setRoles] = useState(null);
 
   useEffect(() => {
-    (async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData?.session) {
+    async function resolve(session) {
+      if (!session) {
         router.replace('/login');
         return;
       }
@@ -32,7 +31,14 @@ export default function ChooseDashboard() {
         return;
       }
       setRoles(data.roles);
-    })();
+    }
+
+    // Same fix as lib/authClient.js — waits for Supabase to finish
+    // processing any magic-link tokens before deciding there's no session.
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') resolve(session);
+    });
+    return () => listener?.subscription?.unsubscribe();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!roles) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
