@@ -43,6 +43,7 @@ export default async function handler(req, res) {
     return res.status(403).json({
       error: `Complete your ${task.platform} onboarding test before claiming real tasks on this platform.`,
       needsOnboarding: true,
+      platform: task.platform,
     });
   }
 

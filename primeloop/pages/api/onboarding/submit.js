@@ -30,26 +30,22 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `${action} is not part of the ${platform} onboarding test` });
   }
 
-  // Ensure the engager has a platform-account row to track status against
-  let { data: platformAccount } = await supabaseAdmin
+  // The engager must have registered their page BEFORE submitting any proof
+  // — this is what makes the uniqueness check actually mean something,
+  // instead of a blank placeholder row that anyone could fill in later.
+  const { data: platformAccount } = await supabaseAdmin
     .from('engager_platform_accounts')
     .select('*')
     .eq('engager_id', engager.id)
     .eq('platform', platform)
     .maybeSingle();
-  if (!platformAccount) {
-    const { data: created } = await supabaseAdmin
-      .from('engager_platform_accounts')
-      .insert({ engager_id: engager.id, platform, profile_link: '', test_status: 'in_progress' })
-      .select()
-      .single();
-    platformAccount = created;
-  } else {
-    await supabaseAdmin
-      .from('engager_platform_accounts')
-      .update({ test_status: 'in_progress' })
-      .eq('id', platformAccount.id);
+  if (!platformAccount || !platformAccount.profile_link) {
+    return res.status(400).json({ error: 'Register your page for this platform before submitting proof.', needsPageRegistration: true });
   }
+  await supabaseAdmin
+    .from('engager_platform_accounts')
+    .update({ test_status: 'in_progress' })
+    .eq('id', platformAccount.id);
 
   const screenshotHash = crypto.createHash('sha256').update(imageBase64).digest('hex');
 

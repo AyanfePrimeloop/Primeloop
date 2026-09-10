@@ -104,6 +104,10 @@ export default function ClientDashboard() {
         );
       })}
 
+      <p style={{ textAlign: 'center', fontSize: 13, marginTop: 20 }}>
+        Want to earn money as an engager instead? <a href="/join" style={{ color: 'var(--navy)' }}>Join here</a>
+      </p>
+
       <WhatsAppButton />
     </div>
   );

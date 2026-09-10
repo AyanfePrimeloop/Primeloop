@@ -15,14 +15,21 @@ export default function EngagerDashboard() {
   const [pending, setPending] = useState([]);
   const [totalPaid, setTotalPaid] = useState(0);
   const [referrals, setReferrals] = useState({ count: 0, earned: 0 });
+  const [verifiedPlatforms, setVerifiedPlatforms] = useState(new Set());
 
   useEffect(() => {
     if (!loading) {
       loadTasks();
       loadEarnings();
       loadReferrals();
+      loadPlatformStatus();
     }
   }, [loading]);
+
+  async function loadPlatformStatus() {
+    const { data } = await supabase.from('engager_platform_accounts').select('platform, verification_status');
+    setVerifiedPlatforms(new Set((data || []).filter((p) => p.verification_status === 'verified').map((p) => p.platform)));
+  }
 
   async function loadTasks() {
     const { data } = await supabase
@@ -97,11 +104,22 @@ export default function EngagerDashboard() {
         </div>
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
           {me?.engager?.code} — {me?.engager?.full_name}
+          <a href="/engager/profile" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Profile</a>
           <a href="/choose-dashboard" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Switch dashboard</a>
           <a href="/engager/bank-details" className="btn" style={{ marginLeft: 10, fontSize: 11.5, textDecoration: 'none' }}>Bank details</a>
           <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>
         </div>
       </div>
+
+      {!me?.engager?.paystack_recipient_code && (
+        <div className="section" style={{ padding: '14px 20px', background: 'var(--warn-soft)', border: '1px solid var(--warn)', marginTop: 16 }}>
+          <strong style={{ color: 'var(--warn)' }}>Set up your bank details before your first payout.</strong>{' '}
+          <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>
+            You can still complete tasks and earn now, but we can't pay you until this is done.
+          </span>{' '}
+          <a href="/engager/bank-details" style={{ color: 'var(--navy)', fontWeight: 600 }}>Add bank details →</a>
+        </div>
+      )}
 
       <div className="grid-3" style={{ margin: '16px 0 20px' }}>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
@@ -133,7 +151,13 @@ export default function EngagerDashboard() {
             <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5, textDecoration: 'none', textAlign: 'center' }}>
               Open post
             </a>
-            <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+            {verifiedPlatforms.has(t.platform) ? (
+              <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+            ) : (
+              <a href={`/onboarding/${t.platform}`} className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)', textDecoration: 'none', textAlign: 'center' }}>
+                Onboarding needed
+              </a>
+            )}
             {t.special_instructions && (
               <div style={{
                 gridColumn: '1 / -1', fontSize: 12, color: 'var(--ink-soft)', background: 'var(--paper)',
@@ -231,10 +255,22 @@ export default function EngagerDashboard() {
           {result && (
             <p style={{ marginTop: 12, fontSize: 13, color: result.error ? 'var(--warn)' : result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
               {result.error || `${result.verdict.toUpperCase()}: ${result.reason}`}
+              {result.needsOnboarding && result.platform && (
+                <>
+                  {' '}
+                  <a href={`/onboarding/${result.platform}`} style={{ color: 'var(--navy)', fontWeight: 600 }}>
+                    Complete {result.platform} onboarding →
+                  </a>
+                </>
+              )}
             </p>
           )}
         </div>
       </div>
+
+      <p style={{ textAlign: 'center', fontSize: 13, marginTop: 20 }}>
+        Need engagement for your own post instead? <a href="/" style={{ color: 'var(--navy)' }}>Order here</a>
+      </p>
     </div>
   );
 }

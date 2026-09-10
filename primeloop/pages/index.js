@@ -192,6 +192,18 @@ export default function ClientLanding() {
         Already ordered? <a href="/client-login" style={{ color: 'var(--navy)' }}>Track your order</a>
       </p>
 
+      <a
+        href="/join"
+        className="section"
+        style={{
+          display: 'block', padding: '18px 20px', marginTop: 20, textDecoration: 'none',
+          background: 'var(--navy)', color: '#fff', textAlign: 'center',
+        }}
+      >
+        <strong>Want to be an engager and earn money instead?</strong>
+        <div style={{ fontSize: 12.5, color: '#c4c9ec', marginTop: 4 }}>Join 1,200+ people earning from their phone →</div>
+      </a>
+
       <WhatsAppButton />
     </div>
   );

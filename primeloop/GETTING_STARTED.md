@@ -62,6 +62,7 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
     ```sql
     update admins set role = 'super_admin' where email = 'you@email.com';
     ```
+16. Repeat steps 4–6 for `supabase/migration_9_unique_pages.sql`.
 
 Your filing cabinet now has all its folders and labels ready.
 
@@ -78,6 +79,30 @@ Your filing cabinet now has all its folders and labels ready.
     - **Project URL** (looks like `https://xxxxx.supabase.co`)
     - **anon public** key (a long string of letters and numbers)
     - **service_role** key (another long string — never share this one with anyone, ever)
+
+## Part 2b — Fix the email sending limit (do this before real use)
+
+By default, Supabase sends confirmation/reset/login emails through its own shared system,
+which only allows a handful of emails per hour on the free tier. Every engager signup,
+password reset, and client "track my order" link all draw from this same small pool — so
+this limit gets hit fast with any real number of people using the site. The fix is to send
+emails through your own account with a real email provider instead.
+
+1. Sign up for a free account at [resend.com](https://resend.com) (or Brevo, or SendGrid —
+   Resend has one of the simplest free tiers, so we'll use it as the example).
+2. In Resend, go to **API Keys** → create one → copy it.
+3. Resend will also want you to verify a sending domain for anything beyond very light testing.
+   If you don't have a custom domain yet, you can start with Resend's shared testing domain to
+   get unblocked immediately, then switch to your own domain once you have one.
+4. In Supabase, go to **Authentication → Settings → SMTP Settings** (sometimes just called
+   "SMTP Provider"). Turn on **Enable Custom SMTP**.
+5. Fill in the fields using Resend's SMTP details (found in Resend's own docs under
+   "SMTP" — host, port, username, and the API key as the password).
+6. Save. From now on, all your auth emails go through your own account with far higher limits,
+   instead of Supabase's shared pool.
+7. While you're in **Authentication → Email Templates**, you can also edit the confirmation
+   and reset-password templates to mention "Primeloop" by name in the subject/body, so it's
+   even clearer to people what they're looking at.
 
 ---
 

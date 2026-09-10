@@ -31,7 +31,11 @@ export default function ForgotPassword() {
       <div className="section" style={{ padding: 20, marginTop: 16 }}>
         {sent ? (
           <p style={{ fontSize: 13.5, color: 'var(--good)' }}>
-            Check {email} for a link from Primeloop to set a new password.
+            Check <strong>{email}</strong> for an email from Primeloop (sent via Supabase Auth on
+            our behalf — look for a sender like "Supabase Auth" or "noreply@mail.app.supabase.io"
+            if you don't see "Primeloop" directly). It may land in spam or promotions, so check
+            those folders if it doesn't appear within a minute or two. Click the link inside to
+            set a new password.
           </p>
         ) : (
           <>

@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { initializeTransaction } from '../../../lib/paystack';
+import { findOrCreateAuthUser } from '../../../lib/findOrCreateAuthUser';
 
 // Body: { email, platform, postLink, items: [{ action, quantity }] }
 // items' prices are looked up server-side from pricing_rules — never trust
@@ -53,15 +54,7 @@ export default async function handler(req, res) {
     .eq('email', email)
     .maybeSingle();
   if (!client) {
-    let authUserId = null;
-    try {
-      const { data: authUser } = await supabaseAdmin.auth.admin.createUser({ email, email_confirm: true });
-      authUserId = authUser?.user?.id || null;
-    } catch (e) {
-      // If account creation fails for any reason, the order still proceeds —
-      // dashboard login can be set up manually later, checkout should never
-      // be blocked by this.
-    }
+    const authUserId = await findOrCreateAuthUser(supabaseAdmin, email);
     const { data: newClient, error: clientErr } = await supabaseAdmin
       .from('clients')
       .insert({ email, auth_user_id: authUserId })

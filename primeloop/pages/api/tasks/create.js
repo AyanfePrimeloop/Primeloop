@@ -2,6 +2,7 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { requireAdmin } from '../../../lib/requireAdmin';
 import { checkPostLink } from '../../../lib/checkPostLink';
 import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
+import { findOrCreateAuthUser } from '../../../lib/findOrCreateAuthUser';
 
 // Body: { clientEmail, platform, postLink, action, quantity, targetAccountHandle? }
 export default async function handler(req, res) {
@@ -26,13 +27,7 @@ export default async function handler(req, res) {
     .eq('email', clientEmail)
     .maybeSingle();
   if (!client) {
-    let authUserId = null;
-    try {
-      const { data: authUser } = await supabaseAdmin.auth.admin.createUser({ email: clientEmail, email_confirm: true });
-      authUserId = authUser?.user?.id || null;
-    } catch (e) {
-      // Task creation shouldn't be blocked if login creation fails for any reason.
-    }
+    const authUserId = await findOrCreateAuthUser(supabaseAdmin, clientEmail);
     const { data: newClient } = await supabaseAdmin
       .from('clients')
       .insert({ email: clientEmail, auth_user_id: authUserId })

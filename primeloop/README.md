@@ -79,6 +79,39 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   Honest limitation: no real photography was added since this environment has no internet
   access to source images — that part is worth doing yourself once deployed (your own
   product photos or a stock site) for the biggest remaining visual upgrade.
+- **Migration 9** (`supabase/migration_9_unique_pages.sql`) — prevents the same social media
+  page from being registered under two different engager accounts (the "one page, many fake
+  accounts" gaming pattern). Also fixes another missing RLS policy from the original schema
+  (engagers couldn't read their own platform verification status).
+- **Page registration before onboarding** — engagers now must submit their exact page name
+  and link before starting the onboarding test (`/onboarding/[platform]`), and changing a
+  registered page later forces re-verification. This also fixed a real gap: the system
+  previously never actually asked for or checked this at all.
+- **Multi-role login bug fixed** — if someone already had an engager account and then placed
+  a client order with the same email, the client record silently ended up with no login
+  attached (Supabase requires unique emails, and account creation was failing invisibly).
+  Fixed in `lib/findOrCreateAuthUser.js`, used by both checkout paths. If you have an existing
+  test account affected by this, either recreate the order or manually update that client
+  row's `auth_user_id` in Supabase to match the existing engager's auth ID.
+- **Onboarding link now shown proactively** — the engager dashboard checks platform
+  verification status upfront and shows an "Onboarding needed" button directly on the task,
+  instead of only mentioning it after a failed submission attempt.
+- **Engager profile page** (`/engager/profile`) — update name/WhatsApp, view all registered
+  platform pages and their verification status, with a link to update any of them (which
+  correctly triggers re-onboarding).
+- **Bank details reminder** — a clear banner on the engager dashboard when payout bank
+  details haven't been set up yet.
+- **Cross-promotion links** — "Want to be an engager?" on the client landing page/dashboard,
+  and "Want to promote your post?" on the engager landing page/dashboard.
+- **Password reset made more robust** — explicitly handles both the PKCE (`code` param) and
+  hash-based recovery link formats, and shows a clear "this link may have expired or been
+  opened on a different device" message instead of a confusing silent failure.
+- **Important — email rate limits**: Supabase's free-tier built-in email sending has a strict
+  limit (a handful of emails per hour) shared across signup confirmations, password resets,
+  and client magic links. This is very likely what caused the "email rate limit exceeded"
+  error. **The real fix is setting up Custom SMTP** with a real email provider — see
+  GETTING_STARTED.md's new step. Until that's done, expect this error to recur under any
+  real usage, not just as an edge case.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

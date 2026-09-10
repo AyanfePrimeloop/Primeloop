@@ -95,6 +95,18 @@ export default function JoinAsEngager() {
         </div>
       </div>
 
+      <a
+        href="/"
+        className="section"
+        style={{
+          display: 'block', padding: '18px 20px', marginTop: 20, textDecoration: 'none',
+          background: 'var(--navy)', color: '#fff', textAlign: 'center',
+        }}
+      >
+        <strong>Want to promote your own post instead?</strong>
+        <div style={{ fontSize: 12.5, color: '#c4c9ec', marginTop: 4 }}>Get real engagement from trained engagers →</div>
+      </a>
+
       <WhatsAppButton />
     </div>
   );
