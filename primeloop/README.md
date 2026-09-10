@@ -112,6 +112,8 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   error. **The real fix is setting up Custom SMTP** with a real email provider — see
   GETTING_STARTED.md's new step. Until that's done, expect this error to recur under any
   real usage, not just as an edge case.
+- **Favicon** — the Primeloop mark now shows in the browser tab on every page
+  (`pages/_document.js`), same design as the logo used throughout the app.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)
