@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { resolveVerdict } from '../../../lib/verificationRouter';
 import { recomputeOnboardingStatus } from '../../../lib/onboardingProgress';
-import { uploadScreenshot } from '../../../lib/storage';
+import { uploadScreenshot, validateScreenshotUpload } from '../../../lib/storage';
 import { requireEngager } from '../../../lib/requireEngager';
 
 // Body: { platform, action, imageBase64, imageMediaType }
@@ -17,6 +17,11 @@ export default async function handler(req, res) {
   const { platform, action, imageBase64, imageMediaType } = req.body;
   if (!platform || !action || !imageBase64) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const uploadCheck = validateScreenshotUpload({ base64: imageBase64, mediaType: imageMediaType });
+  if (!uploadCheck.ok) {
+    return res.status(400).json({ error: uploadCheck.reason });
   }
 
   const { data: test } = await supabaseAdmin

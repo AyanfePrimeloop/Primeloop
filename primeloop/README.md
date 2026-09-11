@@ -114,6 +114,14 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   real usage, not just as an edge case.
 - **Favicon** — the Primeloop mark now shows in the browser tab on every page
   (`pages/_document.js`), same design as the logo used throughout the app.
+- **Security hardening**: upgraded Next.js (was flagged with a known vulnerability in your
+  first deployment log), added baseline security headers (`next.config.js`), and added real
+  server-side validation on screenshot uploads and email/phone input — previously the app
+  trusted whatever the browser sent, which is bypassable by anyone calling the API directly.
+- **Legal pages** — `/terms`, `/privacy`, `/refund-policy`, linked from both landing page
+  footers. These are starting templates, not legal advice — see the note on each page.
+- **Basic analytics** via Vercel Analytics — needed to actually measure whether marketing
+  spend is working. No setup required beyond deploying; view results in your Vercel dashboard.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

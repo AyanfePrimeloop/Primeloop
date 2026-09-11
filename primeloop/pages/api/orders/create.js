@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { initializeTransaction } from '../../../lib/paystack';
 import { findOrCreateAuthUser } from '../../../lib/findOrCreateAuthUser';
+import { isValidEmail } from '../../../lib/validation';
 
 // Body: { email, platform, postLink, items: [{ action, quantity }] }
 // items' prices are looked up server-side from pricing_rules — never trust
@@ -11,6 +12,18 @@ export default async function handler(req, res) {
   const { email, platform, postLink, items, specialInstructions } = req.body;
   if (!email || !platform || !postLink || !items?.length) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Please enter a valid email address.' });
+  }
+  let postUrl;
+  try {
+    postUrl = new URL(postLink);
+  } catch {
+    return res.status(400).json({ error: 'Please enter a valid post link.' });
+  }
+  if (!['http:', 'https:'].includes(postUrl.protocol)) {
+    return res.status(400).json({ error: 'Please enter a valid post link.' });
   }
 
   // 1. Look up real prices and check Follow capacity for any follow/subscribe items

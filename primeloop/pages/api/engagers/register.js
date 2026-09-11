@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
+import { isValidNigerianPhone } from '../../../lib/validation';
 
 function generateEngagerCode(fullName) {
   const initials = (fullName || 'XX').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'XX';
@@ -13,6 +14,9 @@ export default async function handler(req, res) {
   const { authUserId, fullName, whatsapp, referredByCode } = req.body;
   if (!authUserId || !fullName || !whatsapp) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+  if (!isValidNigerianPhone(whatsapp)) {
+    return res.status(400).json({ error: 'Enter a valid Nigerian WhatsApp number, e.g. 08012345678.' });
   }
 
   const { data: existing } = await supabaseAdmin

@@ -3,7 +3,7 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { resolveVerdict } from '../../../lib/verificationRouter';
 import { isDuplicateHash } from '../../../lib/aiVerify';
 import { applyRegularVerdict } from '../../../lib/regularSubmissionEffects';
-import { uploadScreenshot } from '../../../lib/storage';
+import { uploadScreenshot, validateScreenshotUpload } from '../../../lib/storage';
 import { requireEngager } from '../../../lib/requireEngager';
 
 // Body: { taskCode, imageBase64, imageMediaType }
@@ -19,6 +19,11 @@ export default async function handler(req, res) {
   const { taskCode, imageBase64, imageMediaType } = req.body;
   if (!taskCode || !imageBase64) {
     return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const uploadCheck = validateScreenshotUpload({ base64: imageBase64, mediaType: imageMediaType });
+  if (!uploadCheck.ok) {
+    return res.status(400).json({ error: uploadCheck.reason });
   }
 
   // 1. Look up the task

@@ -204,6 +204,12 @@ export default function ClientLanding() {
         <div style={{ fontSize: 12.5, color: '#c4c9ec', marginTop: 4 }}>Join 1,200+ people earning from their phone →</div>
       </a>
 
+      <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
+        <a href="/terms" style={{ color: 'var(--ink-mute)' }}>Terms</a> ·{' '}
+        <a href="/privacy" style={{ color: 'var(--ink-mute)' }}>Privacy</a> ·{' '}
+        <a href="/refund-policy" style={{ color: 'var(--ink-mute)' }}>Refund Policy</a>
+      </p>
+
       <WhatsAppButton />
     </div>
   );
