@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { isValidNigerianPhone } from '../../../lib/validation';
+import { checkRateLimit, getClientIp } from '../../../lib/rateLimit';
 
 function generateEngagerCode(fullName) {
   const initials = (fullName || 'XX').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'XX';
@@ -11,6 +12,13 @@ function generateEngagerCode(fullName) {
 // Called right after supabase.auth.signUp() succeeds on the client.
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const ip = getClientIp(req);
+  const rateCheck = await checkRateLimit(supabaseAdmin, `signup:${ip}`, { maxAttempts: 8, windowSeconds: 3600 });
+  if (!rateCheck.allowed) {
+    return res.status(429).json({ error: 'Too many signups attempted from this connection. Please try again later.' });
+  }
+
   const { authUserId, fullName, whatsapp, referredByCode } = req.body;
   if (!authUserId || !fullName || !whatsapp) {
     return res.status(400).json({ error: 'Missing required fields' });

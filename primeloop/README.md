@@ -122,6 +122,21 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
   footers. These are starting templates, not legal advice — see the note on each page.
 - **Basic analytics** via Vercel Analytics — needed to actually measure whether marketing
   spend is working. No setup required beyond deploying; view results in your Vercel dashboard.
+- **Migration 10** (`supabase/migration_10_rate_limiting.sql`) — rate limiting on order
+  creation and engager signup, backed by Supabase itself (no external service needed).
+- **Two-factor authentication for admins** (`/admin/enable-mfa`) — real TOTP-based 2FA using
+  Supabase's native support, enforced at login (not just an optional toggle nobody uses).
+- **Manual backup export** (`/admin/accounting`, super-admin only) — downloads engagers,
+  clients, orders, and payouts as CSV. An interim safety net until you're on a Supabase plan
+  with real point-in-time recovery.
+- **Meta Pixel integration** (`lib/metaPixel.js`) — tracks page views automatically, fires a
+  Lead event on engager signup and a Purchase event on completed orders. Inactive until you
+  add `NEXT_PUBLIC_META_PIXEL_ID` — safe to deploy either way.
+- **SEO basics** — meta tags and Open Graph tags on the two public landing pages, plus
+  `robots.txt` and `sitemap.xml`.
+- **`MARKETING_PLAN.md`** and **`/ad-creatives`** — ad copy variations, targeting
+  recommendations, budget allocation, and three ready-to-use ad graphics (SVG — convert to
+  PNG/JPG via Canva or similar before uploading to Meta Ads Manager, which doesn't accept SVG).
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

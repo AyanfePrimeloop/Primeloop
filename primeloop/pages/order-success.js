@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { pixelPurchase } from '../lib/metaPixel';
 
 export default function OrderSuccess() {
   const router = useRouter();
@@ -13,6 +14,22 @@ export default function OrderSuccess() {
     // (pages/api/paystack/webhook.js) — this page is just a friendly
     // confirmation screen for the person who paid.
     setStatus('Payment received. Your task has been created and engagers can start now.');
+
+    // Fire the Purchase pixel event exactly once per order, even if this
+    // page gets refreshed or revisited — sessionStorage survives a refresh
+    // but not a new tab, which is the right scope for "don't double count".
+    const firedKey = `pixel-purchase-fired:${ref}`;
+    if (typeof window !== 'undefined' && !sessionStorage.getItem(firedKey)) {
+      fetch(`/api/orders/lookup-amount?reference=${encodeURIComponent(ref)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.amount) {
+            pixelPurchase(data.amount);
+            sessionStorage.setItem(firedKey, '1');
+          }
+        })
+        .catch(() => {});
+    }
   }, [reference, trxref]);
 
   return (

@@ -2,12 +2,19 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { initializeTransaction } from '../../../lib/paystack';
 import { findOrCreateAuthUser } from '../../../lib/findOrCreateAuthUser';
 import { isValidEmail } from '../../../lib/validation';
+import { checkRateLimit, getClientIp } from '../../../lib/rateLimit';
 
 // Body: { email, platform, postLink, items: [{ action, quantity }] }
 // items' prices are looked up server-side from pricing_rules — never trust
 // a price sent from the browser.
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const ip = getClientIp(req);
+  const rateCheck = await checkRateLimit(supabaseAdmin, `order-create:${ip}`, { maxAttempts: 15, windowSeconds: 3600 });
+  if (!rateCheck.allowed) {
+    return res.status(429).json({ error: 'Too many orders attempted from this connection. Please try again in a while, or contact us on WhatsApp.' });
+  }
 
   const { email, platform, postLink, items, specialInstructions } = req.body;
   if (!email || !platform || !postLink || !items?.length) {

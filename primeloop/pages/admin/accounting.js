@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
+import { downloadCSV } from '../../lib/csvExport';
 
 function StatCard({ label, value, color }) {
   return (
@@ -15,6 +16,7 @@ export default function Accounting() {
   const { loading, me } = useRequireRole('admin');
   const [stats, setStats] = useState(null);
   const [error, setError] = useState('');
+  const [backingUp, setBackingUp] = useState(false);
 
   const isSuperAdmin = me?.admin?.role === 'super_admin';
 
@@ -25,6 +27,18 @@ export default function Accounting() {
         .then((d) => (d.error ? setError(d.error) : setStats(d)));
     }
   }, [loading, isSuperAdmin]);
+
+  async function downloadBackup() {
+    setBackingUp(true);
+    const res = await authedFetch('/api/admin/backup');
+    const data = await res.json();
+    setBackingUp(false);
+    const dateStr = new Date().toISOString().slice(0, 10);
+    downloadCSV(`primeloop-backup-engagers-${dateStr}`, data.engagers);
+    downloadCSV(`primeloop-backup-clients-${dateStr}`, data.clients);
+    downloadCSV(`primeloop-backup-orders-${dateStr}`, data.orders);
+    downloadCSV(`primeloop-backup-payouts-${dateStr}`, data.payouts);
+  }
 
   if (loading) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
 
@@ -69,6 +83,18 @@ export default function Accounting() {
               verification costs, ad spend, or other operating expenses. Treat it as a starting
               point for a full P&L, not the whole picture.
             </p>
+          </div>
+
+          <div className="section" style={{ padding: 20 }}>
+            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 6 }}>Manual backup</div>
+            <p style={{ fontSize: 12.5, color: 'var(--ink-mute)', marginBottom: 12 }}>
+              Downloads engagers, clients, orders, and payouts as CSV files — an interim safety
+              net until you're on a Supabase plan with automated point-in-time recovery. Worth
+              doing weekly, or before any major change.
+            </p>
+            <button className="btn" onClick={downloadBackup} disabled={backingUp}>
+              {backingUp ? 'Preparing...' : 'Download full backup'}
+            </button>
           </div>
         </>
       )}

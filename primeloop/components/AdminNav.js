@@ -9,6 +9,7 @@ const LINKS = [
   { href: '/admin/onboarding-tests', label: 'Onboarding tests' },
   { href: '/admin/admins', label: 'Admins' },
   { href: '/admin/accounting', label: 'Accounting' },
+  { href: '/admin/enable-mfa', label: '2FA' },
 ];
 
 export default function AdminNav() {

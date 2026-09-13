@@ -63,6 +63,7 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
     update admins set role = 'super_admin' where email = 'you@email.com';
     ```
 16. Repeat steps 4–6 for `supabase/migration_9_unique_pages.sql`.
+17. Repeat steps 4–6 for `supabase/migration_10_rate_limiting.sql`.
 
 Your filing cabinet now has all its folders and labels ready.
 
@@ -275,6 +276,15 @@ Once you've tested everything and you're ready for real clients and real engager
 4. Repeat the webhook step (Part 6) for Live Mode.
 5. In Anthropic Console, set a monthly spend limit under **Settings → Plans & Billing** so
    your AI checking (once you turn it on) can never surprise you with a huge bill.
+
+## Part 11 — Security and marketing follow-ups
+
+1. **Enable 2FA on every admin account**: once logged in as an admin, go to `/admin/enable-mfa`
+   and follow the on-screen steps with an authenticator app (Google Authenticator, Authy, etc.).
+2. **Add your Meta Pixel ID** once you've created one (see the marketing plan for steps): in
+   Vercel, add `NEXT_PUBLIC_META_PIXEL_ID` with the Pixel ID number, redeploy.
+3. Read `MARKETING_PLAN.md` in the project root for ad copy, targeting, and budget guidance,
+   and check the `/ad-creatives` folder for ready-to-convert ad graphics.
 
 ---
 

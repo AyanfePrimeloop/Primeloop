@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
 
@@ -11,6 +12,16 @@ export default function JoinAsEngager() {
   const signupHref = ref ? `/signup?ref=${encodeURIComponent(ref)}` : '/signup';
 
   return (
+    <>
+      <Head>
+        <title>Earn Money Online in Nigeria — Join Primeloop as an Engager</title>
+        <meta name="description" content="Earn from your phone doing tasks you already do — like, comment, share and follow on Facebook, Instagram, TikTok, YouTube and X. Paid every Friday, no experience needed." />
+        <meta property="og:title" content="Earn Money From Your Phone — Join Primeloop" />
+        <meta property="og:description" content="1,200+ people already earning weekly payouts. Register in 2 minutes, no startup cost." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href="https://primeloop.app/join" />
+      </Head>
     <div className="app">
       <div className="hero">
         <div className="fade-in"><Logo size={40} light /></div>
@@ -114,5 +125,6 @@ export default function JoinAsEngager() {
 
       <WhatsAppButton />
     </div>
+    </>
   );
 }

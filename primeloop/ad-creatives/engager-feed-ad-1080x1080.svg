@@ -1,0 +1,54 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg2" cx="80%" cy="0%" r="90%">
+      <stop offset="0%" stop-color="#1d7a4c" stop-opacity="0.25"/>
+      <stop offset="45%" stop-color="#12172b"/>
+      <stop offset="100%" stop-color="#0d1024"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bg2)"/>
+
+  <!-- Logo mark -->
+  <g transform="translate(70,70)">
+    <rect width="90" height="90" rx="20" fill="#1c2340"/>
+    <circle cx="45" cy="45" r="25" fill="none" stroke="#2a335c" stroke-width="7"/>
+    <circle cx="45" cy="45" r="25" fill="none" stroke="#e0632b" stroke-width="7" stroke-linecap="round" stroke-dasharray="118 157" transform="rotate(-90 45 45)"/>
+    <polygon points="17,38 17,52 8,45" fill="#e0632b"/>
+  </g>
+  <text x="180" y="128" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="42" fill="#ffffff">Primeloop</text>
+
+  <!-- Headline -->
+  <text x="70" y="320" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="66" fill="#ffffff">Earn from</text>
+  <text x="70" y="400" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="66" fill="#ffffff">your phone.</text>
+  <text x="70" y="480" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="66" fill="#3ddc84">Today.</text>
+
+  <text x="70" y="545" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="28" fill="#c4c9ec">
+    Like, comment, share and follow — tasks you
+  </text>
+  <text x="70" y="582" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="28" fill="#c4c9ec">
+    already do. Get paid every single Friday.
+  </text>
+
+  <!-- Earnings badge -->
+  <g transform="translate(70,640)">
+    <rect width="480" height="130" rx="16" fill="#ffffff" fill-opacity="0.08" stroke="#3ddc84" stroke-width="2"/>
+    <text x="24" y="42" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="22" fill="#c4c9ec">Real engager, this week</text>
+    <text x="24" y="96" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="52" fill="#3ddc84">₦9,150 <tspan font-size="24" font-weight="400" fill="#c4c9ec">paid out</tspan></text>
+  </g>
+
+  <text x="70" y="820" font-family="Arial, Helvetica, sans-serif" font-weight="500" font-size="24" fill="#a6ade0">
+    No experience needed · No startup cost
+  </text>
+  <text x="70" y="858" font-family="Arial, Helvetica, sans-serif" font-weight="500" font-size="24" fill="#a6ade0">
+    1,200+ people already earning
+  </text>
+
+  <!-- CTA -->
+  <rect x="70" y="900" width="440" height="90" rx="45" fill="#3ddc84"/>
+  <text x="290" y="956" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="32" fill="#12172b" text-anchor="middle">Start Earning Today →</text>
+
+  <text x="70" y="1030" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="22" fill="#a6ade0">
+    Facebook · Instagram · TikTok · YouTube · X
+  </text>
+</svg>

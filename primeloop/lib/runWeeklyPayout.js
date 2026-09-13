@@ -22,6 +22,12 @@ async function paystackFetch(secretKey, path, options = {}) {
  * @returns {Promise<{engagerCode: string, amount: number, status: string}[]>}
  */
 async function runWeeklyPayout(supabaseAdmin, paystackSecretKey) {
+  // Housekeeping: sweep out rate-limit buckets older than a day — they're
+  // only ever relevant within their own short window, so nothing recent is
+  // ever touched here, this just stops the table growing forever.
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  await supabaseAdmin.from('rate_limits').delete().lt('created_at', oneDayAgo);
+
   const periodEnd = new Date();
   const periodStart = new Date(periodEnd);
   periodStart.setDate(periodStart.getDate() - 7);

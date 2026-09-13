@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
 
@@ -62,6 +63,16 @@ export default function ClientLanding() {
   }
 
   return (
+    <>
+      <Head>
+        <title>Primeloop — Real Facebook, Instagram & TikTok Engagement | No Bots</title>
+        <meta name="description" content="Get real likes, comments, shares and follows from trained Nigerian engagers — not bots. Live tracking, 100% money-back guarantee. Starting from ₦5 per engagement." />
+        <meta property="og:title" content="Primeloop — Real Social Media Engagement, No Bots" />
+        <meta property="og:description" content="Real people. Real engagement. Watch it happen live on Facebook, Instagram, TikTok, YouTube and X." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href="https://primeloop.app/" />
+      </Head>
     <div className="app">
       <div className="hero">
         <div className="fade-in"><Logo size={40} light /></div>
@@ -212,5 +223,6 @@ export default function ClientLanding() {
 
       <WhatsAppButton />
     </div>
+    </>
   );
 }

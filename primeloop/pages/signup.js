@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
 import Logo from '../components/Logo';
+import { pixelLead } from '../lib/metaPixel';
 
 export default function Signup() {
   const router = useRouter();
@@ -46,6 +47,8 @@ export default function Signup() {
       setError(regData.error);
       return;
     }
+
+    pixelLead();
 
     // If Supabase's "Confirm email" setting is OFF, signUp already returns an
     // active session and they can go straight in. If it's ON (the usual
