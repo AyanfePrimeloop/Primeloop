@@ -35,6 +35,20 @@ export default async function handler(req, res) {
   if (!task) return res.status(404).json({ error: 'Task not found' });
   if (task.status !== 'open') return res.status(409).json({ error: 'This task is already closed' });
 
+  // 1b. Block self-dealing: if this same login also has a client account,
+  // and this task belongs to an order THEY placed, they can't complete it
+  // as an engager — that would mean collecting a payout for "engaging"
+  // with their own post, which isn't real engagement.
+  const { data: ownClient } = await supabaseAdmin
+    .from('clients')
+    .select('id')
+    .eq('auth_user_id', auth.user.id)
+    .eq('id', task.client_id)
+    .maybeSingle();
+  if (ownClient) {
+    return res.status(403).json({ error: "You can't complete tasks on your own order." });
+  }
+
   // 2. Platform gate: must have PASSED the onboarding test for this platform
   //    before claiming any real, paid task on it.
   const { data: platformAccount } = await supabaseAdmin

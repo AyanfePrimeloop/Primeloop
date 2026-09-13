@@ -37,7 +37,12 @@ export default function EngagerDashboard() {
       .select('*')
       .eq('status', 'open')
       .order('created_at', { ascending: false });
-    setTasks(data || []);
+    // If this same login also has a client account, never show them tasks
+    // from their own orders — completing your own task and collecting the
+    // engager payout is a conflict of interest, not a real engagement.
+    const ownClientId = me?.client?.id;
+    const filtered = ownClientId ? (data || []).filter((t) => t.client_id !== ownClientId) : (data || []);
+    setTasks(filtered);
   }
 
   async function loadEarnings() {
