@@ -82,6 +82,20 @@ export default async function handler(req, res) {
       .single();
     if (clientErr) return res.status(500).json({ error: clientErr.message });
     client = newClient;
+  } else if (!client.auth_user_id) {
+    // Self-healing: an existing client row from before the earlier linking
+    // fix (or any other edge case) can end up with no login attached.
+    // Repair it here instead of letting it silently stay broken forever.
+    const authUserId = await findOrCreateAuthUser(supabaseAdmin, email);
+    if (authUserId) {
+      const { data: repaired } = await supabaseAdmin
+        .from('clients')
+        .update({ auth_user_id: authUserId })
+        .eq('id', client.id)
+        .select()
+        .single();
+      if (repaired) client = repaired;
+    }
   }
 
   // 3. Create the order in "pending" state — tasks are only created once

@@ -34,6 +34,18 @@ export default async function handler(req, res) {
       .select()
       .single();
     client = newClient;
+  } else if (!client.auth_user_id) {
+    // Same self-healing repair as orders/create.js — see that file for why.
+    const authUserId = await findOrCreateAuthUser(supabaseAdmin, clientEmail);
+    if (authUserId) {
+      const { data: repaired } = await supabaseAdmin
+        .from('clients')
+        .update({ auth_user_id: authUserId })
+        .eq('id', client.id)
+        .select()
+        .single();
+      if (repaired) client = repaired;
+    }
   }
 
   const prefix = { facebook: 'FB', instagram: 'IG', tiktok: 'TT', youtube: 'YT', x: 'XT' }[platform] || 'PL';
