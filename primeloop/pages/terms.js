@@ -8,16 +8,19 @@ export default function Terms() {
         <h1 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Terms of Service</h1>
       </div>
       <div className="section" style={{ padding: '24px 28px', fontSize: 14, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
-        <p style={{ fontSize: 12, color: 'var(--ink-mute)' }}>Last updated: [DATE] — Effective for all use of Primeloop.</p>
+        <p style={{ fontSize: 12, color: 'var(--ink-mute)' }}>Last updated: 13 September 2026 — Effective for all use of Primeloop.</p>
 
         <h3 style={{ color: 'var(--ink)' }}>1. What Primeloop is</h3>
         <p>
-          Primeloop ("we", "us", "the platform") connects clients who want engagement on their
-          social media posts ("Clients") with individuals who complete engagement tasks in
-          exchange for payment ("Engagers"). We are a facilitator of these connections and
-          payments — we do not own or control the social media platforms involved (Facebook,
-          Instagram, TikTok, YouTube, X), and engagement is performed by independent Engagers,
-          not by Primeloop directly.
+          Primeloop ("we", "us", "the platform") is operated by <strong>Prime-Digital Technology
+          Services</strong> (BN 8564351), a business name registered with the Corporate
+          Affairs Commission (CAC), Nigeria, with
+          registered address at 101, Olatunji Street, Ojota, Lagos, Nigeria. Primeloop connects
+          clients who want engagement on their social media posts ("Clients") with individuals
+          who complete engagement tasks in exchange for payment ("Engagers"). We are a
+          facilitator of these connections and payments — we do not own or control the social
+          media platforms involved (Facebook, Instagram, TikTok, YouTube, X), and engagement is
+          performed by independent Engagers, not by Primeloop directly.
         </p>
 
         <h3 style={{ color: 'var(--ink)' }}>2. Eligibility</h3>
@@ -86,15 +89,22 @@ export default function Terms() {
         </p>
 
         <h3 style={{ color: 'var(--ink)' }}>10. Governing law</h3>
-        <p>These terms are governed by the laws of the Federal Republic of Nigeria.</p>
+        <p>
+          These terms are governed by the laws of the Federal Republic of Nigeria. Any dispute
+          arising from these terms or use of Primeloop is subject to the exclusive jurisdiction
+          of the courts of Lagos State, Nigeria.
+        </p>
 
         <h3 style={{ color: 'var(--ink)' }}>11. Contact</h3>
-        <p>Questions about these terms can be sent via the WhatsApp button on our site.</p>
+        <p>
+          Questions about these terms can be sent to <a href="mailto:info@primeloop.app" style={{ color: 'var(--navy)' }}>info@primeloop.app</a> or via
+          the WhatsApp button on our site.
+        </p>
 
         <div style={{ marginTop: 24, padding: 14, background: 'var(--warn-soft)', borderRadius: 8, fontSize: 12.5, color: 'var(--warn)' }}>
-          This is a starting template, not legal advice. Have a Nigerian-licensed lawyer review
-          and finalize this before relying on it, especially the payment, liability, and refund
-          sections — those carry real financial and legal weight.
+          Have a Nigerian-licensed lawyer do a final review before relying on this, especially
+          the payment, liability, and refund sections — those carry real financial and legal
+          weight.
         </div>
       </div>
     </div>
