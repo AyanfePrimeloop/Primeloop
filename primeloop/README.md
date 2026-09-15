@@ -237,6 +237,11 @@ Two options:
 - **Conflict-of-interest fix**: an account that's both a client and an engager can no longer
   see or claim tasks from their own orders — hidden from their task list, and blocked at the
   API level even if attempted directly.
+- **`.gitignore` added** — was missing before, which matters now that a real local development
+  workflow is being set up (see `DEV_WORKFLOW.md`). Prevents `node_modules` and, critically,
+  `.env.local` (your live secret keys) from ever being committed to GitHub.
+- **`DEV_WORKFLOW.md`** — a guide for moving from the manual zip-upload process to Claude Code
+  with direct GitHub access, for faster and safer iteration going forward.
 
 ## Getting help
 
