@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { useRequireRole } from '../../lib/authClient';
+import { useRequireRole, authedFetch } from '../../lib/authClient';
 import Logo from '../../components/Logo';
 import WhatsAppButton from '../../components/WhatsAppButton';
 
@@ -14,20 +14,13 @@ export default function ClientDashboard() {
   }, [loading]);
 
   async function load() {
-    // RLS restricts this to the logged-in client's own orders —
-    // see the "clients see own orders" policy in schema.sql.
-    const { data: orderRows } = await supabase
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
-    setOrders(orderRows || []);
-
-    const grouped = {};
-    for (const order of orderRows || []) {
-      const { data: taskRows } = await supabase.from('tasks').select('*').eq('order_id', order.id);
-      grouped[order.id] = taskRows || [];
-    }
-    setTasksByOrder(grouped);
+    // Goes through a server-side route (lib/requireClient.js) instead of a
+    // direct RLS-only query — it can self-heal the client/login link if
+    // it's ever out of sync, instead of just silently showing nothing.
+    const res = await authedFetch('/api/client/orders');
+    const data = await res.json();
+    setOrders(data.orders || []);
+    setTasksByOrder(data.tasksByOrder || {});
   }
 
   async function handleLogout() {

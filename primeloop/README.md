@@ -229,6 +229,15 @@ Two options:
 
 ---
 
+- **Client dashboard made more robust** — was relying entirely on RLS matching `auth_user_id`
+  exactly, which could silently show "no orders" if that link was ever even slightly out of
+  sync. Now goes through a server-side route (`lib/requireClient.js`,
+  `pages/api/client/orders.js`) that self-heals the link by matching on email if the direct
+  ID match fails.
+- **Conflict-of-interest fix**: an account that's both a client and an engager can no longer
+  see or claim tasks from their own orders — hidden from their task list, and blocked at the
+  API level even if attempted directly.
+
 ## Getting help
 
 If any step above doesn't work exactly as described, share the error message with me

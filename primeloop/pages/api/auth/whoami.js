@@ -18,11 +18,30 @@ export default async function handler(req, res) {
   // We check all three and return everything found, rather than stopping
   // at the first match — the login page then asks which dashboard to open
   // if there's more than one.
-  const [{ data: adminRow }, { data: engagerRow }, { data: clientRow }] = await Promise.all([
+  const [{ data: adminRow }, { data: engagerRow }] = await Promise.all([
     supabaseAdmin.from('admins').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
     supabaseAdmin.from('engagers').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
-    supabaseAdmin.from('clients').select('*').eq('auth_user_id', userData.user.id).maybeSingle(),
   ]);
+
+  // Client lookup goes through the same self-healing logic used everywhere
+  // else a client is verified — if the direct auth_user_id link is ever
+  // missing, this repairs it by matching on email instead of just failing.
+  let clientRow = null;
+  const { data: clientById } = await supabaseAdmin.from('clients').select('*').eq('auth_user_id', userData.user.id).maybeSingle();
+  if (clientById) {
+    clientRow = clientById;
+  } else if (userData.user.email) {
+    const { data: clientByEmail } = await supabaseAdmin.from('clients').select('*').ilike('email', userData.user.email).maybeSingle();
+    if (clientByEmail) {
+      const { data: healed } = await supabaseAdmin
+        .from('clients')
+        .update({ auth_user_id: userData.user.id })
+        .eq('id', clientByEmail.id)
+        .select()
+        .single();
+      clientRow = healed || clientByEmail;
+    }
+  }
 
   const roles = [];
   if (adminRow) roles.push('admin');
