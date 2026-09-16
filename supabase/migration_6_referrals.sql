@@ -29,8 +29,10 @@ create policy "engagers see own referral bonuses" on referral_bonuses
     referrer_id in (select id from engagers where auth_user_id = auth.uid())
   );
 
--- Policy note: only Gold/Platinum engagers can refer (per your tier ladder's
--- "referral code unlocked" benefit). This is enforced in application code
--- at signup time (pages/api/engagers/register.js), not here — RLS can't
--- easily express "check the referrer's tier at the time of signup" cleanly,
--- and the check only matters once, at creation.
+-- Policy note: every engager can share their referral link and have the
+-- relationship recorded from signup (pages/api/engagers/register.js) — but
+-- only Gold/Platinum referrers actually earn a bonus, per the tier ladder's
+-- "referral code unlocked" benefit. That tier check happens in application
+-- code at the moment the referred engager hits their milestone
+-- (lib/regularSubmissionEffects.js), not here and not at signup — RLS can't
+-- easily express "check the referrer's tier as of right now" cleanly.

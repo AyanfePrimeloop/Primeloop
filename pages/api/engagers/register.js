@@ -58,19 +58,21 @@ export default async function handler(req, res) {
     code = generateEngagerCode(fullName);
   }
 
-  // Referrals only count from Gold/Platinum engagers, matching the tier
-  // ladder's "referral code unlocked" benefit — checked here, once, at
-  // signup time, since that's the only moment it actually matters.
+  // Every engager can share their link from day one — the referral
+  // relationship is recorded here regardless of the referrer's tier. The
+  // Gold/Platinum requirement for actually *earning* a bonus is still
+  // enforced, just checked later, at the moment the referred engager hits
+  // their milestone (see regularSubmissionEffects.js) instead of here at
+  // signup. That's strictly better as an anti-abuse check too — it can't be
+  // gamed by holding Gold just long enough to refer someone.
   let referrer = null;
   if (referredByCode) {
     const { data: found } = await supabaseAdmin
       .from('engagers')
-      .select('*')
+      .select('id')
       .eq('code', referredByCode)
       .maybeSingle();
-    if (found && ['gold', 'platinum'].includes(found.tier)) {
-      referrer = found;
-    }
+    if (found) referrer = found;
   }
 
   const { data: engager, error } = await supabaseAdmin
@@ -85,13 +87,6 @@ export default async function handler(req, res) {
     .select()
     .single();
   if (error) return res.status(500).json({ error: error.message });
-
-  if (referrer) {
-    await supabaseAdmin.from('referral_bonuses').insert({
-      referrer_id: referrer.id,
-      referred_id: engager.id,
-    });
-  }
 
   return res.status(200).json({ engager });
 }

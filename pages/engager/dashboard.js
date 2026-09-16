@@ -64,12 +64,9 @@ export default function EngagerDashboard() {
   }
 
   async function loadReferrals() {
-    // RLS restricts this to bonuses where the logged-in engager is the referrer.
-    const { data: bonuses } = await supabase.from('referral_bonuses').select('*');
-    const earned = (bonuses || [])
-      .filter((b) => ['earned_unpaid', 'paid'].includes(b.status))
-      .reduce((sum, b) => sum + Number(b.bonus_amount), 0);
-    setReferrals({ count: (bonuses || []).length, earned });
+    const res = await authedFetch('/api/engager/referrals');
+    const data = await res.json();
+    setReferrals({ count: data.count || 0, earned: data.earned || 0 });
   }
 
   async function submitProof() {
@@ -215,33 +212,28 @@ export default function EngagerDashboard() {
         ))}
       </div>
 
-      {['gold', 'platinum'].includes(me?.engager?.tier) ? (
-        <div className="section">
-          <div className="section-head"><h2>Refer other engagers</h2></div>
-          <div style={{ padding: 20 }}>
-            <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 12 }}>
-              Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus —
-              paid automatically with your next weekly payout.
-            </p>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-              <input
-                readOnly
-                style={{ flex: 1, fontFamily: 'var(--mono)', fontSize: 12.5 }}
-                value={typeof window !== 'undefined' ? `${window.location.origin}/join?ref=${me?.engager?.code}` : ''}
-                onClick={(e) => e.target.select()}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
-              <div><strong>{referrals.count}</strong> people referred</div>
-              <div><strong style={{ color: 'var(--good)' }}>₦{referrals.earned.toLocaleString()}</strong> earned from referrals</div>
-            </div>
+      <div className="section">
+        <div className="section-head"><h2>Refer other engagers</h2></div>
+        <div style={{ padding: 20 }}>
+          <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 12 }}>
+            {['gold', 'platinum'].includes(me?.engager?.tier)
+              ? "Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus — paid automatically with your next weekly payout."
+              : "Share your link now — every signup is tracked. Bonuses pay out once you reach Gold tier and the person you referred completes 10 approved tasks."}
+          </p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            <input
+              readOnly
+              style={{ flex: 1, fontFamily: 'var(--mono)', fontSize: 12.5 }}
+              value={typeof window !== 'undefined' ? `${window.location.origin}/join?ref=${me?.engager?.code}` : ''}
+              onClick={(e) => e.target.select()}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
+            <div><strong>{referrals.count}</strong> people referred</div>
+            <div><strong style={{ color: 'var(--good)' }}>₦{referrals.earned.toLocaleString()}</strong> earned from referrals</div>
           </div>
         </div>
-      ) : (
-        <div className="section" style={{ padding: 20, color: 'var(--ink-mute)', fontSize: 13 }}>
-          Reach Gold tier to unlock your referral link and start earning bonuses for bringing in new engagers.
-        </div>
-      )}
+      </div>
 
       <div className="section">
         <div className="section-head"><h2>Submit proof</h2></div>
