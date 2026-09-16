@@ -8,6 +8,7 @@ export default function ClientDashboard() {
   const { loading, me } = useRequireRole('client');
   const [orders, setOrders] = useState([]);
   const [tasksByOrder, setTasksByOrder] = useState({});
+  const [ordersLoading, setOrdersLoading] = useState(true);
 
   useEffect(() => {
     if (!loading) load();
@@ -17,10 +18,12 @@ export default function ClientDashboard() {
     // Goes through a server-side route (lib/requireClient.js) instead of a
     // direct RLS-only query — it can self-heal the client/login link if
     // it's ever out of sync, instead of just silently showing nothing.
+    setOrdersLoading(true);
     const res = await authedFetch('/api/client/orders');
     const data = await res.json();
     setOrders(data.orders || []);
     setTasksByOrder(data.tasksByOrder || {});
+    setOrdersLoading(false);
   }
 
   async function handleLogout() {
@@ -44,7 +47,13 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      {orders.length === 0 && (
+      {ordersLoading && (
+        <div className="section" style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mute)' }}>
+          Loading your orders...
+        </div>
+      )}
+
+      {!ordersLoading && orders.length === 0 && (
         <div className="section" style={{ padding: 20, textAlign: 'center', color: 'var(--ink-mute)' }}>
           No orders yet. <a href="/" style={{ color: 'var(--navy)' }}>Place your first order</a>
         </div>
