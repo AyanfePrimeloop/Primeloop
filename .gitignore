@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Environment variables — NEVER commit these, they contain live secrets
+# (Supabase service role key, Paystack secret key, Anthropic API key, etc.)
+.env
+.env.local
+.env.*.local
+
+# Vercel
+.vercel
+
+# OS/editor junk
+.DS_Store
+*.pem
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+*.tsbuildinfo
