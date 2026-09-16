@@ -5,6 +5,7 @@ import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
 import Faq from '../components/Faq';
 import StickyCta from '../components/StickyCta';
+import CheckIcon from '../components/CheckIcon';
 import { timeAgo } from '../lib/timeAgo';
 
 const FAQ_ITEMS = [
@@ -66,7 +67,6 @@ export default function JoinAsEngager() {
 
       <div className="hero2 fade-in-delay-1">
         <div>
-          <div className="hero2-eyebrow">1,200+ people already earning from their phone — no experience needed</div>
           <h1>Earn from your phone. Watch the payouts roll in.</h1>
           <p className="lead">
             Like, comment, share and follow on tasks you already do. Paid every Friday, straight
@@ -82,7 +82,10 @@ export default function JoinAsEngager() {
           {payouts.length === 0 && <div className="empty">Recent payouts will appear here.</div>}
           {payouts.map((p, i) => (
             <div className="feed-row" key={i}>
-              <span><b>✓ ₦{p.amount.toLocaleString()}</b> paid to {p.name}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckIcon size={11} color="var(--good)" />
+                <b>₦{p.amount.toLocaleString()}</b>&nbsp;paid to {p.name}
+              </span>
               <span className="t">{timeAgo(p.at)}</span>
             </div>
           ))}
@@ -94,8 +97,9 @@ export default function JoinAsEngager() {
         <div className="stat"><div className="n">₦0</div><div className="l">To get started</div></div>
         <div className="stat"><div className="n">2 min</div><div className="l">To register</div></div>
         <div className="badges">
-          <div className="badge">Bank or Opay</div>
-          <div className="badge">No experience needed</div>
+          <div className="badge"><CheckIcon size={11} color="#4ade80" />1,200+ already earning</div>
+          <div className="badge"><CheckIcon size={11} color="#4ade80" />Bank or Opay</div>
+          <div className="badge"><CheckIcon size={11} color="#4ade80" />No experience needed</div>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
 import Faq from '../components/Faq';
 import StickyCta from '../components/StickyCta';
+import CheckIcon from '../components/CheckIcon';
 import { timeAgo } from '../lib/timeAgo';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
@@ -117,11 +118,11 @@ export default function ClientLanding() {
 
       <div className="hero2 fade-in-delay-1">
         <div>
-          <div className="hero2-eyebrow">For creators and businesses who don't want to get burned by bot panels</div>
           <h1>Real engagement, watched in real time.</h1>
           <p className="lead">
-            No bots, no fake accounts that get you flagged. Every like, comment and share comes
-            from a trained, verified Nigerian engager — and you watch it happen.
+            Built for creators and businesses tired of bot panels that get pages flagged. No bots,
+            no fake accounts — every like, comment and share comes from a trained, verified
+            Nigerian engager, and you watch it happen live.
           </p>
           <div className="hero2-ctas">
             <a href="#order" className="cta-bold">Get engagement — from ₦6 →</a>
@@ -133,7 +134,10 @@ export default function ClientLanding() {
           {activity.length === 0 && <div className="empty">Engagements will appear here as they're delivered.</div>}
           {activity.map((a, i) => (
             <div className="feed-row" key={i}>
-              <span><b>✓ {a.platform[0].toUpperCase() + a.platform.slice(1)} {a.action}</b> verified</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckIcon size={11} color="var(--good)" />
+                <b>{a.platform[0].toUpperCase() + a.platform.slice(1)} {a.action}</b>&nbsp;verified
+              </span>
               <span className="t">{timeAgo(a.at)}</span>
             </div>
           ))}
@@ -145,8 +149,8 @@ export default function ClientLanding() {
         <div className="stat"><div className="n">4–12 min</div><div className="l">To first engagement</div></div>
         <div className="stat"><div className="n">5</div><div className="l">Platforms live</div></div>
         <div className="badges">
-          <div className="badge">Paystack secured</div>
-          <div className="badge">Verified engagers only</div>
+          <div className="badge"><CheckIcon size={11} color="#4ade80" />Paystack secured</div>
+          <div className="badge"><CheckIcon size={11} color="#4ade80" />Verified engagers only</div>
         </div>
       </div>
 
