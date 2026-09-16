@@ -70,7 +70,12 @@ export default function ClientLanding() {
         <meta property="og:title" content="Primeloop — Real Social Media Engagement, No Bots" />
         <meta property="og:description" content="Real people. Real engagement. Watch it happen live on Facebook, Instagram, TikTok, YouTube and X." />
         <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:url" content="https://primeloop.app/" />
+        <meta property="og:image" content="https://primeloop.app/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://primeloop.app/og-image.png" />
         <link rel="canonical" href="https://primeloop.app/" />
       </Head>
     <div className="app">

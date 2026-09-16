@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { supabase } from '../lib/supabaseClient';
 import Logo from '../components/Logo';
 import { pixelLead } from '../lib/metaPixel';
@@ -62,24 +63,29 @@ export default function Signup() {
 
   if (awaitingConfirmation) {
     return (
-      <div className="app" style={{ maxWidth: 420 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-          <Logo size={44} />
+      <>
+        <Head><title>Check your email — Primeloop</title></Head>
+        <div className="app" style={{ maxWidth: 420 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <Logo size={44} />
+          </div>
+          <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Check your email</h1>
+          <div className="section" style={{ padding: 20 }}>
+            <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+              We've sent a confirmation link to <strong>{form.email}</strong>. Look for an email from
+              Primeloop (it will come from Supabase's sending address on our behalf, so check your
+              spam or promotions folder if it doesn't show up in a minute or two). Click the link
+              inside, and it'll take you straight to your dashboard — no need to come back here.
+            </p>
+          </div>
         </div>
-        <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Check your email</h1>
-        <div className="section" style={{ padding: 20 }}>
-          <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-            We've sent a confirmation link to <strong>{form.email}</strong>. Look for an email from
-            Primeloop (it will come from Supabase's sending address on our behalf, so check your
-            spam or promotions folder if it doesn't show up in a minute or two). Click the link
-            inside, and it'll take you straight to your dashboard — no need to come back here.
-          </p>
-        </div>
-      </div>
+      </>
     );
   }
 
   return (
+    <>
+    <Head><title>Create your engager account — Primeloop</title></Head>
     <div className="app" style={{ maxWidth: 420 }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
         <Logo size={44} />
@@ -120,6 +126,7 @@ export default function Signup() {
         </p>
       </div>
     </div>
+    </>
   );
 }
 

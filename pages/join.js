@@ -19,7 +19,12 @@ export default function JoinAsEngager() {
         <meta property="og:title" content="Earn Money From Your Phone — Join Primeloop" />
         <meta property="og:description" content="1,200+ people already earning weekly payouts. Register in 2 minutes, no startup cost." />
         <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:url" content="https://primeloop.app/join" />
+        <meta property="og:image" content="https://primeloop.app/og-image-join.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://primeloop.app/og-image-join.png" />
         <link rel="canonical" href="https://primeloop.app/join" />
       </Head>
     <div className="app">
