@@ -86,12 +86,6 @@ export default function Privacy() {
           <a href="mailto:info@primeloop.app" style={{ color: 'var(--navy)' }}>info@primeloop.app</a> or
           via the WhatsApp button on our site.
         </p>
-
-        <div style={{ marginTop: 24, padding: 14, background: 'var(--warn-soft)', borderRadius: 8, fontSize: 12.5, color: 'var(--warn)' }}>
-          Have a Nigerian-licensed lawyer review this against current NDPA/NDPR requirements
-          before relying on it — data protection law is an area where getting it wrong carries
-          real regulatory risk.
-        </div>
       </div>
     </div>
   );

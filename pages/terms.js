@@ -100,12 +100,6 @@ export default function Terms() {
           Questions about these terms can be sent to <a href="mailto:info@primeloop.app" style={{ color: 'var(--navy)' }}>info@primeloop.app</a> or via
           the WhatsApp button on our site.
         </p>
-
-        <div style={{ marginTop: 24, padding: 14, background: 'var(--warn-soft)', borderRadius: 8, fontSize: 12.5, color: 'var(--warn)' }}>
-          Have a Nigerian-licensed lawyer do a final review before relying on this, especially
-          the payment, liability, and refund sections — those carry real financial and legal
-          weight.
-        </div>
       </div>
     </div>
   );

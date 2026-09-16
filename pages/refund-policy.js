@@ -44,11 +44,6 @@ export default function RefundPolicy() {
           2 business days and process approved refunds back to your original payment method via
           Paystack within 4 business days of approval.
         </p>
-
-        <div style={{ marginTop: 24, padding: 14, background: 'var(--warn-soft)', borderRadius: 8, fontSize: 12.5, color: 'var(--warn)' }}>
-          Have a Nigerian-licensed lawyer review the final version, since this document directly
-          affects consumer rights and chargeback disputes.
-        </div>
       </div>
     </div>
   );
