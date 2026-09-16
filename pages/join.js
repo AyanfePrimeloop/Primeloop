@@ -6,7 +6,7 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import Faq from '../components/Faq';
 import StickyCta from '../components/StickyCta';
 import CheckIcon from '../components/CheckIcon';
-import { timeAgo } from '../lib/timeAgo';
+import { timeAgo, isFresh } from '../lib/timeAgo';
 
 const FAQ_ITEMS = [
   {
@@ -78,8 +78,19 @@ export default function JoinAsEngager() {
           </div>
         </div>
         <div className="hero2-widget">
-          <div className="live-tag"><span className="dot-live" /> Live payouts</div>
-          {payouts.length === 0 && <div className="empty">Recent payouts will appear here.</div>}
+          <div className={`live-tag${payouts.length && isFresh(payouts[0].at) ? '' : ' stale'}`}>
+            <span className="dot-live" />
+            {payouts.length && isFresh(payouts[0].at) ? 'Live payouts' : 'Recent payouts'}
+          </div>
+          {payouts.length === 0 && (
+            <div className="feed-row example">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckIcon size={11} color="var(--ink-mute)" />
+                <i>Example — ₦4,200 paid to an engager</i>
+              </span>
+              <span className="t">e.g. 3m ago</span>
+            </div>
+          )}
           {payouts.map((p, i) => (
             <div className="feed-row" key={i}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -132,7 +143,7 @@ export default function JoinAsEngager() {
             </div>
           </div>
 
-          <div className="section">
+          <div className="section" id="faq">
             <div className="section-head"><h2>Questions before you join</h2></div>
             <div style={{ padding: '4px 20px 8px' }}>
               <Faq items={FAQ_ITEMS} />
@@ -142,8 +153,8 @@ export default function JoinAsEngager() {
 
         <div>
           <div className="earn-calc">
-            <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 10 }}>Tasks you can realistically do per day</div>
-            <input type="range" min="1" max="100" value={tasksPerDay} onChange={(e) => setTasksPerDay(+e.target.value)} style={{ width: '100%' }} />
+            <label htmlFor="tasks-per-day" style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 10, display: 'block' }}>Tasks you can realistically do per day</label>
+            <input id="tasks-per-day" type="range" min="1" max="100" value={tasksPerDay} onChange={(e) => setTasksPerDay(+e.target.value)} style={{ width: '100%' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, color: 'var(--ink-mute)' }}>
               <span>1</span><span>{tasksPerDay}</span><span>100</span>
             </div>
@@ -181,15 +192,16 @@ export default function JoinAsEngager() {
         }}
       >
         <strong>Want to promote your own post instead?</strong>
-        <div style={{ fontSize: 12.5, color: '#c4c9ec', marginTop: 4 }}>Get real engagement from trained engagers →</div>
+        <div style={{ fontSize: 12.5, color: 'var(--label-on-navy)', marginTop: 4 }}>Get real engagement from trained engagers →</div>
       </a>
 
       <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
-        <a href="/terms" style={{ color: 'var(--ink-mute)' }}>Terms</a> ·{' '}
-        <a href="/privacy" style={{ color: 'var(--ink-mute)' }}>Privacy</a>
+        <a href="/terms" style={{ color: 'var(--ink-soft)' }}>Terms</a> ·{' '}
+        <a href="/privacy" style={{ color: 'var(--ink-soft)' }}>Privacy</a> ·{' '}
+        <a href="/refund-policy" style={{ color: 'var(--ink-soft)' }}>Refund Policy</a>
       </p>
 
-      <WhatsAppButton />
+      <WhatsAppButton avoidSelectors={['#faq', '.earn-calc']} />
       <StickyCta label="Free to join" sublabel="Start earning" href="#signup" hideNearId="signup" />
     </div>
     </>

@@ -5,7 +5,8 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import Faq from '../components/Faq';
 import StickyCta from '../components/StickyCta';
 import CheckIcon from '../components/CheckIcon';
-import { timeAgo } from '../lib/timeAgo';
+import StarRating from '../components/StarRating';
+import { timeAgo, isFresh } from '../lib/timeAgo';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
 
@@ -66,6 +67,8 @@ export default function ClientLanding() {
     const s = selected[r.action];
     return s?.checked ? sum + s.qty * r.client_price : sum;
   }, 0);
+  const hasSelection = Object.values(selected).some((s) => s?.checked);
+  const canCheckout = !!email && !!postLink && hasSelection;
 
   async function checkout() {
     setErrorMsg('');
@@ -130,8 +133,19 @@ export default function ClientLanding() {
           </div>
         </div>
         <div className="hero2-widget">
-          <div className="live-tag"><span className="dot-live" /> Live activity</div>
-          {activity.length === 0 && <div className="empty">Engagements will appear here as they're delivered.</div>}
+          <div className={`live-tag${activity.length && isFresh(activity[0].at) ? '' : ' stale'}`}>
+            <span className="dot-live" />
+            {activity.length && isFresh(activity[0].at) ? 'Live activity' : 'Recent activity'}
+          </div>
+          {activity.length === 0 && (
+            <div className="feed-row example">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckIcon size={11} color="var(--ink-mute)" />
+                <i>Example — Instagram comment verified</i>
+              </span>
+              <span className="t">e.g. 3m ago</span>
+            </div>
+          )}
           {activity.map((a, i) => (
             <div className="feed-row" key={i}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -145,7 +159,7 @@ export default function ClientLanding() {
       </div>
 
       <div className="trust-bar2 fade-in-delay-2">
-        <div className="stat"><div className="n">98.6%</div><div className="l">Approval rate</div></div>
+        <div className="stat"><div className="n">100%</div><div className="l">Money-back guarantee</div></div>
         <div className="stat"><div className="n">4–12 min</div><div className="l">To first engagement</div></div>
         <div className="stat"><div className="n">5</div><div className="l">Platforms live</div></div>
         <div className="badges">
@@ -174,17 +188,17 @@ export default function ClientLanding() {
 
       <div className="proof-strip fade-in-delay-3">
         <div className="proof-card">
-          <div className="stars">★★★★★</div>
+          <StarRating />
           <div className="quote">"Comments looked genuinely like customers, not spam."</div>
           <div className="who">Chidinma O., skincare brand</div>
         </div>
         <div className="proof-card">
-          <div className="stars">★★★★★</div>
+          <StarRating />
           <div className="quote">"I can actually see the progress bar move instead of just hoping it's working."</div>
           <div className="who">Tunde A., content creator</div>
         </div>
         <div className="proof-card">
-          <div className="stars">★★★★★</div>
+          <StarRating />
           <div className="quote">"Switched from a bot panel after a page warning. No issues since."</div>
           <div className="who">Grace E., small business owner</div>
         </div>
@@ -209,18 +223,19 @@ export default function ClientLanding() {
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Your email</label>
-            <input style={{ width: '100%' }} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+            <label htmlFor="client-email" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Your email</label>
+            <input id="client-email" style={{ width: '100%' }} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
           </div>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Post link</label>
-            <input style={{ width: '100%' }} value={postLink} onChange={(e) => setPostLink(e.target.value)} placeholder="https://facebook.com/..." />
+            <label htmlFor="post-link" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Post link</label>
+            <input id="post-link" style={{ width: '100%' }} value={postLink} onChange={(e) => setPostLink(e.target.value)} placeholder="https://facebook.com/..." />
           </div>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
+            <label htmlFor="extra-instructions" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
               Extra instructions <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>(optional)</span>
             </label>
             <textarea
+              id="extra-instructions"
               style={{ width: '100%', minHeight: 70, fontFamily: 'inherit', fontSize: 13, padding: '9px 10px', border: '1px solid var(--line-strong)', borderRadius: 7, boxSizing: 'border-box' }}
               value={specialInstructions}
               onChange={(e) => setSpecialInstructions(e.target.value)}
@@ -231,20 +246,23 @@ export default function ClientLanding() {
           {rules.map((r) => (
             <div key={r.action} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
               <input
+                id={`engage-${r.action}`}
                 type="checkbox"
                 checked={!!selected[r.action]?.checked}
                 onChange={(e) =>
                   setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], checked: e.target.checked } }))
                 }
               />
-              <div style={{ flex: 1, textTransform: 'capitalize' }}>{r.action}</div>
+              <label htmlFor={`engage-${r.action}`} style={{ flex: 1, textTransform: 'capitalize', cursor: 'pointer' }}>{r.action}</label>
               <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>₦{r.client_price}/unit</div>
               <input
                 type="number"
+                min="1"
+                aria-label={`${r.action} quantity`}
                 style={{ width: 70 }}
                 value={selected[r.action]?.qty || 30}
                 onChange={(e) =>
-                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: +e.target.value } }))
+                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, +e.target.value) } }))
                 }
               />
             </div>
@@ -252,11 +270,19 @@ export default function ClientLanding() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 18 }}>
             <div style={{ fontSize: 24, fontWeight: 600 }}>₦{total.toLocaleString()}</div>
-            <button className="btn accent" onClick={checkout} disabled={loading}>
+            <button
+              className="btn accent"
+              onClick={checkout}
+              disabled={loading || !canCheckout}
+              style={!canCheckout ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+            >
               {loading ? 'Redirecting...' : 'Pay with Paystack'}
             </button>
           </div>
           {errorMsg && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{errorMsg}</p>}
+          <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 10, textAlign: 'right' }}>
+            Undelivered after 5 days? Full refund for that portion — no questions asked.
+          </p>
         </div>
       </div>
 
@@ -267,6 +293,7 @@ export default function ClientLanding() {
       <div className="section" style={{ marginTop: 20 }}>
         <div className="section-head"><h2>Real people, not a bot panel</h2></div>
         <div style={{ padding: 20 }} className="compare-wrap">
+          <div className="compare-hint">Swipe to see the full comparison →</div>
           <table className="compare-table">
             <thead>
               <tr>
@@ -306,7 +333,7 @@ export default function ClientLanding() {
         </div>
       </div>
 
-      <div className="section" style={{ marginTop: 20 }}>
+      <div className="section" id="faq" style={{ marginTop: 20 }}>
         <div className="section-head"><h2>Questions before you order</h2></div>
         <div style={{ padding: '4px 20px 8px' }}>
           <Faq items={FAQ_ITEMS} />
@@ -322,16 +349,16 @@ export default function ClientLanding() {
         }}
       >
         <strong>Want to be an engager and earn money instead?</strong>
-        <div style={{ fontSize: 12.5, color: '#c4c9ec', marginTop: 4 }}>Join 1,200+ people earning from their phone →</div>
+        <div style={{ fontSize: 12.5, color: 'var(--label-on-navy)', marginTop: 4 }}>Join 1,200+ people earning from their phone →</div>
       </a>
 
       <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
-        <a href="/terms" style={{ color: 'var(--ink-mute)' }}>Terms</a> ·{' '}
-        <a href="/privacy" style={{ color: 'var(--ink-mute)' }}>Privacy</a> ·{' '}
-        <a href="/refund-policy" style={{ color: 'var(--ink-mute)' }}>Refund Policy</a>
+        <a href="/terms" style={{ color: 'var(--ink-soft)' }}>Terms</a> ·{' '}
+        <a href="/privacy" style={{ color: 'var(--ink-soft)' }}>Privacy</a> ·{' '}
+        <a href="/refund-policy" style={{ color: 'var(--ink-soft)' }}>Refund Policy</a>
       </p>
 
-      <WhatsAppButton />
+      <WhatsAppButton avoidSelectors={['#order', '#faq']} />
       <StickyCta label={total > 0 ? `₦${total.toLocaleString()}` : 'From ₦6/unit'} sublabel="Real engagement" href="#order" hideNearId="order" />
     </div>
     </>
