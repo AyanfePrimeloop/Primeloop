@@ -14,8 +14,10 @@ colors:
   signal-orange-deep: "#a3441c"
   live-green: "#1d7a4c"
   live-green-soft: "#e3f5ea"
-  alert-amber: "#a3711c"
+  alert-amber: "#8f6118"
   alert-amber-soft: "#fbf1de"
+  label-on-navy: "#c4c9ec"
+  star-gold: "#8a6a1c"
 typography:
   display:
     fontFamily: "Fraunces, Georgia, serif"
@@ -116,7 +118,7 @@ The palette pairs an institutional navy with a warm orange signal, plus a status
 
 ### Tertiary
 - **Live Green** (`#1d7a4c`) / **soft** (`#e3f5ea`): The "this is really happening" color — the pulsing live dot, earnings figures, approve actions, the earnings calculator panel. Ties directly to the trading-floor metaphor: green means confirmed and moving.
-- **Alert Amber** (`#a3711c`) / **soft** (`#fbf1de`): The system's only negative/warning color. Used for reject actions, pending-review badges, and caution states. **There is no separate red/danger token** — amber carries all negative signaling.
+- **Alert Amber** (`#8f6118`) / **soft** (`#fbf1de`): The system's only negative/warning color. Used for reject actions, pending-review badges, and caution states. **There is no separate red/danger token** — amber carries all negative signaling. (Darkened from an earlier `#a3711c` to clear 4.5:1 contrast on white for bold 13px text.)
 
 ### Neutral
 - **Ink Soft** (`#454b63`): Secondary body text, descriptions, lead paragraphs.
@@ -124,6 +126,11 @@ The palette pairs an institutional navy with a warm orange signal, plus a status
 - **Paper** (`#f4f5f9`): Page background.
 - **Card** (`#ffffff`): Surface background for cards, sections, inputs.
 - **Line** (`#e3e5ee`) / **Line Strong** (`#c9cce0`): Default hairline borders/dividers; the "strong" variant marks input borders and stronger separators (table header rules).
+- **Label on Navy** (`#c4c9ec`): Secondary text/labels on the Deep Navy surface (trust-bar labels, cross-promo band captions). Documented here so it isn't reintroduced as an undocumented literal.
+- **Star Gold** (`#8a6a1c`): The testimonial star-rating color (`StarRating.js`). A muted gold rather than the web's default bright yellow, kept consistent with the system's restrained palette.
+
+### Third-Party Marks (exempt)
+The WhatsApp button uses WhatsApp's own brand green (`#25D366`), not a Primeloop token — it identifies the destination (WhatsApp), not the Primeloop brand, so it's intentionally exempt from the palette above.
 
 ### Named Rules
 **The No-Red Rule.** Negative, rejecting, or cautionary states are always Alert Amber, never a separate red. If a new state needs "danger," reach for `alert-amber` before inventing a new hue.

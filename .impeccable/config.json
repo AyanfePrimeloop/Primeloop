@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#25d366",
+        "createdAt": "2026-09-16T17:32:57.159Z",
+        "reason": "WhatsApp's own brand green, identifies the destination not the Primeloop brand — documented as an intentional exception in DESIGN.md"
+      }
+    ]
+  }
+}

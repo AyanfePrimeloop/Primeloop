@@ -64,7 +64,7 @@
       "refersTo": "button-outline",
       "description": "Neutral/secondary action; recolor border+text to Live Green or Alert Amber for approve/reject without a new variant.",
       "html": "<button class=\"ds-btn ds-btn-outline\">Cancel</button>",
-      "css": ".ds-btn-outline{background:#fff;border:1px solid #c9cce0;border-radius:7px;color:#12172b;font-size:13px;font-weight:500;padding:9px 16px;cursor:pointer;font-family:inherit;} .ds-btn-outline:hover{border-color:#8388a0;} .ds-btn-outline.ds-approve{border-color:#1d7a4c;color:#1d7a4c;} .ds-btn-outline.ds-reject{border-color:#a3711c;color:#a3711c;}"
+      "css": ".ds-btn-outline{background:#fff;border:1px solid #c9cce0;border-radius:7px;color:#12172b;font-size:13px;font-weight:500;padding:9px 16px;cursor:pointer;font-family:inherit;} .ds-btn-outline:hover{border-color:#8388a0;} .ds-btn-outline.ds-approve{border-color:#1d7a4c;color:#1d7a4c;} .ds-btn-outline.ds-reject{border-color:#8f6118;color:#8f6118;}"
     },
     {
       "name": "Text Input",
@@ -80,7 +80,7 @@
       "refersTo": "badge",
       "description": "Pill status marker; recolor background/text with the soft/solid pair of a status color.",
       "html": "<span class=\"ds-badge ds-badge-pending\">Pending review</span>",
-      "css": ".ds-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;background:#f4f5f9;color:#12172b;display:inline-block;} .ds-badge-pending{background:#fbf1de;color:#a3711c;} .ds-badge-verified{background:#e3f5ea;color:#1d7a4c;}"
+      "css": ".ds-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;background:#f4f5f9;color:#12172b;display:inline-block;} .ds-badge-pending{background:#fbf1de;color:#8f6118;} .ds-badge-verified{background:#e3f5ea;color:#1d7a4c;}"
     },
     {
       "name": "Section Card",
