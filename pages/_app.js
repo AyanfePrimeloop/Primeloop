@@ -5,17 +5,22 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { PIXEL_ID, pixelPageView } from '../lib/metaPixel';
+import { GA_MEASUREMENT_ID, gaPageView } from '../lib/ga';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!PIXEL_ID) return;
+    if (!PIXEL_ID && !GA_MEASUREMENT_ID) return;
     pixelPageView();
-    const handleRouteChange = () => pixelPageView();
+    gaPageView(router.asPath);
+    const handleRouteChange = (url) => {
+      pixelPageView();
+      gaPageView(url);
+    };
     router.events.on('routeChangeComplete', handleRouteChange);
     return () => router.events.off('routeChangeComplete', handleRouteChange);
-  }, [router.events]);
+  }, [router.events]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -37,6 +42,19 @@ export default function App({ Component, pageProps }) {
             fbq('track', 'PageView');
           `}
         </Script>
+      )}
+      {GA_MEASUREMENT_ID && (
+        <>
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `}
+          </Script>
+        </>
       )}
       <Component {...pageProps} />
       <Analytics />

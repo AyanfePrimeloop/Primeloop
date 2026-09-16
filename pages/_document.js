@@ -11,6 +11,7 @@ export default function Document() {
       <Head>
         <link rel="icon" type="image/svg+xml" href={FAVICON} />
         <meta name="theme-color" content="#1c2340" />
+        <meta name="google-site-verification" content="ILiN2IyHcGSQ21BzoZryhF0El3Txef9QBwTY9VCft6o" />
       </Head>
       <body>
         <Main />

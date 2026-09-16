@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { pixelPurchase } from '../lib/metaPixel';
+import { gaPurchase } from '../lib/ga';
 
 export default function OrderSuccess() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function OrderSuccess() {
           if (typeof window !== 'undefined' && !sessionStorage.getItem(firedKey)) {
             if (data.amount) {
               pixelPurchase(data.amount);
+              gaPurchase(data.amount, ref);
               sessionStorage.setItem(firedKey, '1');
             }
           }

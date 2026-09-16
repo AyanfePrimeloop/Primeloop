@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { supabase } from '../lib/supabaseClient';
 import Logo from '../components/Logo';
 import { pixelLead } from '../lib/metaPixel';
+import { gaSignUp } from '../lib/ga';
 
 export default function Signup() {
   const router = useRouter();
@@ -50,6 +51,7 @@ export default function Signup() {
     }
 
     pixelLead();
+    gaSignUp();
 
     // If Supabase's "Confirm email" setting is OFF, signUp already returns an
     // active session and they can go straight in. If it's ON (the usual
