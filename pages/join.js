@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
 export default function JoinAsEngager() {
   const router = useRouter();
   const { ref } = router.query;
-  const [tasksPerDay, setTasksPerDay] = useState(5);
+  const [tasksPerDay, setTasksPerDay] = useState(20);
   const weeklyEstimate = Math.round(tasksPerDay * 7 * 16);
   const signupHref = ref ? `/signup?ref=${encodeURIComponent(ref)}` : '/signup';
   const [payouts, setPayouts] = useState([]);
