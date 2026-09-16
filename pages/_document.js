@@ -12,6 +12,9 @@ export default function Document() {
         <link rel="icon" type="image/svg+xml" href={FAVICON} />
         <meta name="theme-color" content="#1c2340" />
         <meta name="google-site-verification" content="ILiN2IyHcGSQ21BzoZryhF0El3Txef9QBwTY9VCft6o" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" />
       </Head>
       <body>
         <Main />

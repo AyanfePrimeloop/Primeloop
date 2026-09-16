@@ -1,8 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
+import Faq from '../components/Faq';
+import StickyCta from '../components/StickyCta';
+import { timeAgo } from '../lib/timeAgo';
+
+const FAQ_ITEMS = [
+  {
+    q: 'Is this actually legit? How do I know I’ll get paid?',
+    a: 'Payouts run automatically every Friday to your bank account or Opay — no chasing anyone for money. 1,200+ people are already earning this way, and any payout you see above is a real, recent transfer, not a made-up example.',
+  },
+  {
+    q: 'Do I need a big following or a professional account?',
+    a: 'No. You use your own, ordinary account to like, comment, share and follow — the same things you already do on social media. There’s no follower minimum.',
+  },
+  {
+    q: 'How much can I realistically earn?',
+    a: 'It depends on how many tasks you do and your tier — Gold and Platinum engagers earn more per task. Use the calculator below for a realistic weekly estimate based on your own pace.',
+  },
+  {
+    q: 'What if my proof gets rejected?',
+    a: 'Most submissions are checked automatically within seconds. If something looks off, it goes to manual review instead of an automatic rejection — a real person looks at it before any final decision.',
+  },
+  {
+    q: 'Is there any cost to join?',
+    a: 'None. Registration is free, and your account activates immediately after you pass a short onboarding test for each platform you want to work on.',
+  },
+];
 
 export default function JoinAsEngager() {
   const router = useRouter();
@@ -10,6 +36,14 @@ export default function JoinAsEngager() {
   const [tasksPerDay, setTasksPerDay] = useState(5);
   const weeklyEstimate = Math.round(tasksPerDay * 7 * 16);
   const signupHref = ref ? `/signup?ref=${encodeURIComponent(ref)}` : '/signup';
+  const [payouts, setPayouts] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/public/recent-payouts')
+      .then((r) => r.json())
+      .then((d) => setPayouts(d.payouts || []))
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -27,27 +61,52 @@ export default function JoinAsEngager() {
         <meta name="twitter:image" content="https://primeloop.app/og-image-join.png" />
         <link rel="canonical" href="https://primeloop.app/join" />
       </Head>
-    <div className="app">
-      <div className="hero">
-        <div className="fade-in"><Logo size={40} light /></div>
-        <div className="hero-eyebrow fade-in-delay-1" style={{ marginTop: 18 }}>Facebook · Instagram · TikTok · YouTube · X</div>
-        <h1 className="fade-in-delay-1">Earn from your phone, doing what you already do.</h1>
-        <p className="fade-in-delay-2">
-          Like, comment, share and follow on real tasks. Get paid every week, straight to your
-          bank or Opay — no experience, no startup cost.
-        </p>
-        <div className="hero-ctas fade-in-delay-3">
-          <a href="#signup" className="btn accent pulse" style={{ textDecoration: 'none' }}>Start earning today</a>
+    <div className="app has-sticky-cta">
+      <div className="fade-in" style={{ marginBottom: 18 }}><Logo size={36} /></div>
+
+      <div className="hero2 fade-in-delay-1">
+        <div>
+          <div className="hero2-eyebrow">1,200+ people already earning from their phone — no experience needed</div>
+          <h1>Earn from your phone. Watch the payouts roll in.</h1>
+          <p className="lead">
+            Like, comment, share and follow on tasks you already do. Paid every Friday, straight
+            to your bank or Opay — no experience, no startup cost.
+          </p>
+          <div className="hero2-ctas">
+            <a href="#signup" className="cta-bold">Start earning — free →</a>
+            <a className="cta-ghost2" href="#how">See how payouts work</a>
+          </div>
         </div>
-        <div className="trust-row fade-in-delay-3">
-          <div className="trust-item"><span className="n">1,200+</span> active engagers</div>
-          <div className="trust-item"><span className="n">Every Friday</span> automatic payout</div>
+        <div className="hero2-widget">
+          <div className="live-tag"><span className="dot-live" /> Live payouts</div>
+          {payouts.length === 0 && <div className="empty">Recent payouts will appear here.</div>}
+          {payouts.map((p, i) => (
+            <div className="feed-row" key={i}>
+              <span><b>✓ ₦{p.amount.toLocaleString()}</b> paid to {p.name}</span>
+              <span className="t">{timeAgo(p.at)}</span>
+            </div>
+          ))}
         </div>
+      </div>
+
+      <div className="trust-bar2 fade-in-delay-2">
+        <div className="stat"><div className="n">Weekly</div><div className="l">Payouts, every Friday</div></div>
+        <div className="stat"><div className="n">₦0</div><div className="l">To get started</div></div>
+        <div className="stat"><div className="n">2 min</div><div className="l">To register</div></div>
+        <div className="badges">
+          <div className="badge">Bank or Opay</div>
+          <div className="badge">No experience needed</div>
+        </div>
+      </div>
+
+      <div className="case-study fade-in-delay-2">
+        <p className="quote">"Got my first payout the same week I signed up. Didn't believe it was real until the alert came in."</p>
+        <div className="who">— Tunde A., engager since March</div>
       </div>
 
       <div className="grid-main-side">
         <div>
-          <div className="section">
+          <div className="section" id="how">
             <div className="section-head"><h2>How it works</h2></div>
             <div style={{ padding: '4px 20px' }}>
               <div className="step-row">
@@ -70,11 +129,9 @@ export default function JoinAsEngager() {
           </div>
 
           <div className="section">
-            <div className="section-head"><h2>Paid out this week</h2></div>
-            <div style={{ padding: '16px 20px' }}>
-              <div className="payout-item"><span>Damilola O. · Gold tier</span><strong style={{ color: 'var(--good)', fontFamily: 'var(--mono)' }}>₦6,240</strong></div>
-              <div className="payout-item"><span>Ese M. · Silver tier</span><strong style={{ color: 'var(--good)', fontFamily: 'var(--mono)' }}>₦4,980</strong></div>
-              <div className="payout-item"><span>ThankGod E. · Platinum tier</span><strong style={{ color: 'var(--good)', fontFamily: 'var(--mono)' }}>₦9,150</strong></div>
+            <div className="section-head"><h2>Questions before you join</h2></div>
+            <div style={{ padding: '4px 20px 8px' }}>
+              <Faq items={FAQ_ITEMS} />
             </div>
           </div>
         </div>
@@ -129,6 +186,7 @@ export default function JoinAsEngager() {
       </p>
 
       <WhatsAppButton />
+      <StickyCta label="Free to join" sublabel="Start earning" href="#signup" hideNearId="signup" />
     </div>
     </>
   );

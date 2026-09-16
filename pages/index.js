@@ -2,8 +2,34 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
+import Faq from '../components/Faq';
+import StickyCta from '../components/StickyCta';
+import { timeAgo } from '../lib/timeAgo';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
+
+const FAQ_ITEMS = [
+  {
+    q: 'How do I know these are real people, not bots?',
+    a: 'Every engagement is completed by a trained, verified engager account — never an automated script. Each one submits screenshot proof of the action, which is checked automatically for authenticity and duplicates. You see the same progress bar move in your dashboard as it happens.',
+  },
+  {
+    q: 'Will this get my account flagged or banned?',
+    a: "No — because nothing about it looks like bot activity to the platform. Real accounts, real devices, real behavior. That's the entire point of not using a bot panel.",
+  },
+  {
+    q: "What if my order doesn't get fully delivered?",
+    a: "If any part of your order is still unfilled 5 days after payment, you're entitled to a refund for the undelivered portion — never the part that was already completed. Full terms are on our Refund Policy page.",
+  },
+  {
+    q: 'How fast will I see results?',
+    a: 'Most orders see their first engagement within 4–12 minutes of payment. You can track live progress from your dashboard the entire time.',
+  },
+  {
+    q: 'Is my payment secure?',
+    a: "Payments are processed by Paystack — we never see or store your card details. You'll get an order confirmation and a dashboard link to track everything after payment.",
+  },
+];
 
 export default function ClientLanding() {
   const [platform, setPlatform] = useState('facebook');
@@ -15,6 +41,7 @@ export default function ClientLanding() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showVerifyInfo, setShowVerifyInfo] = useState(false);
+  const [activity, setActivity] = useState([]);
 
   useEffect(() => {
     fetch(`/api/admin/pricing?platform=${platform}`)
@@ -26,6 +53,13 @@ export default function ClientLanding() {
         setSelected(initial);
       });
   }, [platform]);
+
+  useEffect(() => {
+    fetch('/api/public/recent-activity')
+      .then((r) => r.json())
+      .then((d) => setActivity(d.activity || []))
+      .catch(() => {});
+  }, []);
 
   const total = rules.reduce((sum, r) => {
     const s = selected[r.action];
@@ -78,28 +112,41 @@ export default function ClientLanding() {
         <meta name="twitter:image" content="https://primeloop.app/og-image.png" />
         <link rel="canonical" href="https://primeloop.app/" />
       </Head>
-    <div className="app">
-      <div className="hero">
-        <div className="fade-in"><Logo size={40} light /></div>
-        <div className="hero-eyebrow fade-in-delay-1" style={{ marginTop: 18 }}>
-          1,200+ real trained Nigerian engagers · Facebook, Instagram, TikTok, YouTube, X
+    <div className="app has-sticky-cta">
+      <div className="fade-in" style={{ marginBottom: 18 }}><Logo size={36} /></div>
+
+      <div className="hero2 fade-in-delay-1">
+        <div>
+          <div className="hero2-eyebrow">For creators and businesses who don't want to get burned by bot panels</div>
+          <h1>Real engagement, watched in real time.</h1>
+          <p className="lead">
+            No bots, no fake accounts that get you flagged. Every like, comment and share comes
+            from a trained, verified Nigerian engager — and you watch it happen.
+          </p>
+          <div className="hero2-ctas">
+            <a href="#order" className="cta-bold">Get engagement — from ₦6 →</a>
+            <button className="cta-ghost2" onClick={() => setShowVerifyInfo(true)}>How verification works</button>
+          </div>
         </div>
-        <h1 className="fade-in-delay-1">Real people. Real engagement. Posts that actually take off.</h1>
-        <p className="fade-in-delay-2">
-          No bots, no fake accounts that get you flagged. Every like, comment and share comes
-          from a trained, verified engager — and you watch it happen live.
-        </p>
-        <div className="hero-ctas fade-in-delay-3">
-          <a href="#order" className="btn accent pulse" style={{ textDecoration: 'none' }}>See packages</a>
-          <button className="btn" style={{ background: 'transparent', color: '#c4c9ec', borderColor: 'rgba(255,255,255,.25)' }} onClick={() => setShowVerifyInfo(true)}>
-            How verification works
-          </button>
+        <div className="hero2-widget">
+          <div className="live-tag"><span className="dot-live" /> Live activity</div>
+          {activity.length === 0 && <div className="empty">Engagements will appear here as they're delivered.</div>}
+          {activity.map((a, i) => (
+            <div className="feed-row" key={i}>
+              <span><b>✓ {a.platform[0].toUpperCase() + a.platform.slice(1)} {a.action}</b> verified</span>
+              <span className="t">{timeAgo(a.at)}</span>
+            </div>
+          ))}
         </div>
-        <div className="trust-row fade-in-delay-3">
-          <div className="trust-item"><span className="n">98.6%</span> approval rate</div>
-          <div className="trust-item"><span className="n">4–12 min</span> to first engagement</div>
-          <div className="trust-item"><span className="n">100%</span> money-back guarantee</div>
-          <div className="trust-item"><span className="n">5</span> platforms live</div>
+      </div>
+
+      <div className="trust-bar2 fade-in-delay-2">
+        <div className="stat"><div className="n">98.6%</div><div className="l">Approval rate</div></div>
+        <div className="stat"><div className="n">4–12 min</div><div className="l">To first engagement</div></div>
+        <div className="stat"><div className="n">5</div><div className="l">Platforms live</div></div>
+        <div className="badges">
+          <div className="badge">Paystack secured</div>
+          <div className="badge">Verified engagers only</div>
         </div>
       </div>
 
@@ -115,6 +162,11 @@ export default function ClientLanding() {
           <div className="step-row"><div className="step-num">4</div><div><strong>You watch it happen live</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Your progress updates in real time as engagements are approved.</div></div></div>
         </div>
       )}
+
+      <div className="case-study fade-in-delay-2">
+        <p className="quote">"Grew from 340 to 1,200 followers in three weeks. No warning, no drop-off after — because it was never fake to begin with."</p>
+        <div className="who">— Chidinma O., skincare brand</div>
+      </div>
 
       <div className="proof-strip fade-in-delay-3">
         <div className="proof-card">
@@ -208,6 +260,55 @@ export default function ClientLanding() {
         Already ordered? <a href="/client-login" style={{ color: 'var(--navy)' }}>Track your order</a>
       </p>
 
+      <div className="section" style={{ marginTop: 20 }}>
+        <div className="section-head"><h2>Real people, not a bot panel</h2></div>
+        <div style={{ padding: 20 }} className="compare-wrap">
+          <table className="compare-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th className="col-us">Primeloop</th>
+                <th>Typical bot panel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Who does the engagement</td>
+                <td className="col-us yes">Real, verified people</td>
+                <td className="no">Automated / fake accounts</td>
+              </tr>
+              <tr>
+                <td>Flagging risk to your account</td>
+                <td className="col-us yes">Behaves like real activity</td>
+                <td className="no">Detectable pattern</td>
+              </tr>
+              <tr>
+                <td>Proof it happened</td>
+                <td className="col-us yes">Screenshot, checked automatically</td>
+                <td className="no">None</td>
+              </tr>
+              <tr>
+                <td>Progress tracking</td>
+                <td className="col-us yes">Live dashboard</td>
+                <td className="no">"Trust us"</td>
+              </tr>
+              <tr>
+                <td>Undelivered portion</td>
+                <td className="col-us yes">Refunded</td>
+                <td className="no">Rarely, if ever</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="section" style={{ marginTop: 20 }}>
+        <div className="section-head"><h2>Questions before you order</h2></div>
+        <div style={{ padding: '4px 20px 8px' }}>
+          <Faq items={FAQ_ITEMS} />
+        </div>
+      </div>
+
       <a
         href="/join"
         className="section"
@@ -227,6 +328,7 @@ export default function ClientLanding() {
       </p>
 
       <WhatsAppButton />
+      <StickyCta label={total > 0 ? `₦${total.toLocaleString()}` : 'From ₦6/unit'} sublabel="Real engagement" href="#order" hideNearId="order" />
     </div>
     </>
   );
