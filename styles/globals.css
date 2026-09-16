@@ -160,9 +160,9 @@ input, select{padding:9px 10px;border:1px solid var(--line-strong);border-radius
 .faq-q{width:100%;text-align:left;background:none;border:none;padding:17px 2px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:inherit;}
 .faq-q .chevron{transition:transform .2s ease;color:var(--ink-mute);flex-shrink:0;font-size:13px;}
 .faq-item.open .chevron{transform:rotate(180deg);}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
-.faq-item.open .faq-a{max-height:260px;}
-.faq-a p{margin:0 2px 17px;font-size:13px;color:var(--ink-soft);line-height:1.65;}
+.faq-a{display:grid;grid-template-rows:0fr;overflow:hidden;transition:grid-template-rows .25s ease;}
+.faq-item.open .faq-a{grid-template-rows:1fr;}
+.faq-a p{margin:0 2px 17px;font-size:13px;color:var(--ink-soft);line-height:1.65;overflow:hidden;min-height:0;}
 
 /* ============================================================
    STICKY MOBILE CTA
