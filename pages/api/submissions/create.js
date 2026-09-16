@@ -5,6 +5,7 @@ import { isDuplicateHash } from '../../../lib/aiVerify';
 import { applyRegularVerdict } from '../../../lib/regularSubmissionEffects';
 import { uploadScreenshot, validateScreenshotUpload } from '../../../lib/storage';
 import { requireEngager } from '../../../lib/requireEngager';
+import { checkRateLimit } from '../../../lib/rateLimit';
 
 // Body: { taskCode, imageBase64, imageMediaType }
 // Who's submitting comes from the login session now, not a typed code —
@@ -15,6 +16,15 @@ export default async function handler(req, res) {
   const auth = await requireEngager(req);
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
   const engager = auth.engager;
+
+  // Unlike task claiming, nothing else here naturally caps how many times
+  // this can be called — each hit pays for an AI-verification call and a
+  // storage upload, so it's the one submission-side endpoint worth
+  // rate-limiting on its own.
+  const rateCheck = await checkRateLimit(supabaseAdmin, `submission-create:${engager.id}`, { maxAttempts: 30, windowSeconds: 3600 });
+  if (!rateCheck.allowed) {
+    return res.status(429).json({ error: 'Too many submissions in a short time. Please try again later.' });
+  }
 
   const { taskCode, imageBase64, imageMediaType } = req.body;
   if (!taskCode || !imageBase64) {

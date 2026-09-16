@@ -4,6 +4,7 @@ import { resolveVerdict } from '../../../lib/verificationRouter';
 import { recomputeOnboardingStatus } from '../../../lib/onboardingProgress';
 import { uploadScreenshot, validateScreenshotUpload } from '../../../lib/storage';
 import { requireEngager } from '../../../lib/requireEngager';
+import { checkRateLimit } from '../../../lib/rateLimit';
 
 // Body: { platform, action, imageBase64, imageMediaType }
 // Called once per required action (e.g. once for 'like', once for 'comment', etc.)
@@ -13,6 +14,14 @@ export default async function handler(req, res) {
   const auth = await requireEngager(req);
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
   const engager = auth.engager;
+
+  // The per-(platform,action) forceManual cap below already bounds AI spend
+  // tightly for any one onboarding test — this is a looser backstop across
+  // all of an engager's platforms/attempts combined.
+  const rateCheck = await checkRateLimit(supabaseAdmin, `onboarding-submit:${engager.id}`, { maxAttempts: 20, windowSeconds: 3600 });
+  if (!rateCheck.allowed) {
+    return res.status(429).json({ error: 'Too many onboarding attempts in a short time. Please try again later.' });
+  }
 
   const { platform, action, imageBase64, imageMediaType } = req.body;
   if (!platform || !action || !imageBase64) {
