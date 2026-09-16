@@ -10,26 +10,39 @@ export default function OrderSuccess() {
   useEffect(() => {
     const ref = reference || trxref;
     if (!ref) return;
-    // The actual task-creation already happened via the Paystack webhook
-    // (pages/api/paystack/webhook.js) — this page is just a friendly
-    // confirmation screen for the person who paid.
-    setStatus('Payment received. Your task has been created and engagers can start now.');
 
-    // Fire the Purchase pixel event exactly once per order, even if this
-    // page gets refreshed or revisited — sessionStorage survives a refresh
-    // but not a new tab, which is the right scope for "don't double count".
-    const firedKey = `pixel-purchase-fired:${ref}`;
-    if (typeof window !== 'undefined' && !sessionStorage.getItem(firedKey)) {
-      fetch(`/api/orders/lookup-amount?reference=${encodeURIComponent(ref)}`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.amount) {
-            pixelPurchase(data.amount);
-            sessionStorage.setItem(firedKey, '1');
+    // The actual task-creation happens via the Paystack webhook
+    // (pages/api/paystack/webhook.js), asynchronously — this page doesn't
+    // create anything, so it shouldn't declare success on its own say-so
+    // either. A reference showing up in the URL only means Paystack
+    // redirected the browser here; it doesn't mean the webhook has landed
+    // yet (or ever will, if it fails). Ask the backend what actually
+    // happened instead of assuming.
+    fetch(`/api/orders/lookup-amount?reference=${encodeURIComponent(ref)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === 'paid') {
+          setStatus('Payment received. Your task has been created and engagers can start now.');
+
+          // Fire the Purchase pixel exactly once per order, even across a
+          // refresh — sessionStorage survives that but not a new tab, which
+          // is the right scope for "don't double count".
+          const firedKey = `pixel-purchase-fired:${ref}`;
+          if (typeof window !== 'undefined' && !sessionStorage.getItem(firedKey)) {
+            if (data.amount) {
+              pixelPurchase(data.amount);
+              sessionStorage.setItem(firedKey, '1');
+            }
           }
-        })
-        .catch(() => {});
-    }
+        } else if (data.status) {
+          setStatus("Payment is still being confirmed — this can take a minute. Refresh this page, or check your order in a few minutes from the tracking link below.");
+        } else {
+          setStatus("We couldn't find this order. If you were just charged, contact us on WhatsApp and we'll sort it out.");
+        }
+      })
+      .catch(() => {
+        setStatus("We couldn't confirm your payment status right now. If you were just charged, check your order from the tracking link below in a few minutes.");
+      });
   }, [reference, trxref]);
 
   return (
