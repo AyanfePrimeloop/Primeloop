@@ -88,7 +88,7 @@ export default function JoinAsEngager() {
                 <CheckIcon size={11} color="var(--ink-mute)" />
                 <i>Example — ₦4,200 paid to an engager</i>
               </span>
-              <span className="t">e.g. 3m ago</span>
+              <span className="t">e.g. last Friday</span>
             </div>
           )}
           {payouts.map((p, i) => (

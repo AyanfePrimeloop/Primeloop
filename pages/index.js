@@ -7,6 +7,7 @@ import StickyCta from '../components/StickyCta';
 import CheckIcon from '../components/CheckIcon';
 import StarRating from '../components/StarRating';
 import { timeAgo, isFresh } from '../lib/timeAgo';
+import { linkMatchesPlatform, PLATFORM_DOMAINS } from '../lib/platformDomains';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
 
@@ -68,12 +69,20 @@ export default function ClientLanding() {
     return s?.checked ? sum + s.qty * r.client_price : sum;
   }, 0);
   const hasSelection = Object.values(selected).some((s) => s?.checked);
-  const canCheckout = !!email && !!postLink && hasSelection;
+  const platformLabel = platform[0].toUpperCase() + platform.slice(1);
+  const postLinkError = postLink && !linkMatchesPlatform(postLink, platform)
+    ? `That doesn't look like a ${platformLabel} link — paste a link from ${PLATFORM_DOMAINS[platform][0]}.`
+    : '';
+  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError;
 
   async function checkout() {
     setErrorMsg('');
     if (!email || !postLink) {
       setErrorMsg('Add your email and post link.');
+      return;
+    }
+    if (postLinkError) {
+      setErrorMsg(postLinkError);
       return;
     }
     const items = rules
@@ -228,7 +237,20 @@ export default function ClientLanding() {
           </div>
           <div style={{ marginBottom: 16 }}>
             <label htmlFor="post-link" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Post link</label>
-            <input id="post-link" style={{ width: '100%' }} value={postLink} onChange={(e) => setPostLink(e.target.value)} placeholder="https://facebook.com/..." />
+            <input
+              id="post-link"
+              style={{ width: '100%', ...(postLinkError ? { borderColor: 'var(--warn)' } : {}) }}
+              value={postLink}
+              onChange={(e) => setPostLink(e.target.value)}
+              placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/...`}
+              aria-invalid={!!postLinkError}
+              aria-describedby={postLinkError ? 'post-link-error' : undefined}
+            />
+            {postLinkError && (
+              <p id="post-link-error" style={{ color: 'var(--warn)', fontSize: 11.5, marginTop: 5 }}>
+                {postLinkError}
+              </p>
+            )}
           </div>
           <div style={{ marginBottom: 16 }}>
             <label htmlFor="extra-instructions" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
