@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import Script from 'next/script';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { PIXEL_ID, pixelPageView } from '../lib/metaPixel';
@@ -18,6 +19,9 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       {PIXEL_ID && (
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
