@@ -97,9 +97,9 @@ export default function JoinAsEngager() {
         <div className="stat"><div className="n">₦0</div><div className="l">To get started</div></div>
         <div className="stat"><div className="n">2 min</div><div className="l">To register</div></div>
         <div className="badges">
-          <div className="badge"><CheckIcon size={11} color="#4ade80" />1,200+ already earning</div>
-          <div className="badge"><CheckIcon size={11} color="#4ade80" />Bank or Opay</div>
-          <div className="badge"><CheckIcon size={11} color="#4ade80" />No experience needed</div>
+          <div className="badge"><CheckIcon size={11} color="var(--good)" />1,200+ already earning</div>
+          <div className="badge"><CheckIcon size={11} color="var(--good)" />Bank or Opay</div>
+          <div className="badge"><CheckIcon size={11} color="var(--good)" />No experience needed</div>
         </div>
       </div>
 

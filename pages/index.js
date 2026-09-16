@@ -149,8 +149,8 @@ export default function ClientLanding() {
         <div className="stat"><div className="n">4–12 min</div><div className="l">To first engagement</div></div>
         <div className="stat"><div className="n">5</div><div className="l">Platforms live</div></div>
         <div className="badges">
-          <div className="badge"><CheckIcon size={11} color="#4ade80" />Paystack secured</div>
-          <div className="badge"><CheckIcon size={11} color="#4ade80" />Verified engagers only</div>
+          <div className="badge"><CheckIcon size={11} color="var(--good)" />Paystack secured</div>
+          <div className="badge"><CheckIcon size={11} color="var(--good)" />Verified engagers only</div>
         </div>
       </div>
 
