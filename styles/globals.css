@@ -197,5 +197,6 @@ input, select{padding:9px 10px;border:1px solid var(--line-strong);border-radius
   .case-study{padding:20px;}
   .sticky-cta.visible{display:flex;}
   .app.has-sticky-cta{padding-bottom:76px;}
+  .app.has-sticky-cta .whatsapp-fab{bottom:76px !important;}
 }
 
