@@ -21,6 +21,10 @@ function ChatIcon() {
 // same bottom-right band it occupies, instead of sitting on top of it.
 export default function WhatsAppButton({ number = '2348085176399', avoidSelectors = [] }) {
   const [hidden, setHidden] = useState(false);
+  // Pages pass a fresh array literal every render; depend on its contents
+  // instead, so typing in a form doesn't tear down and re-add the scroll
+  // listeners on every keystroke.
+  const avoidKey = avoidSelectors.join('|');
 
   useEffect(() => {
     if (!avoidSelectors.length) return;
@@ -51,7 +55,7 @@ export default function WhatsAppButton({ number = '2348085176399', avoidSelector
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, [avoidSelectors]);
+  }, [avoidKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <a

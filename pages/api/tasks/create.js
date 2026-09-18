@@ -2,7 +2,7 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { requireAdmin } from '../../../lib/requireAdmin';
 import { checkPostLink } from '../../../lib/checkPostLink';
 import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
-import { findOrCreateAuthUser } from '../../../lib/findOrCreateAuthUser';
+import { getOrCreateClient } from '../../../lib/clientRecord';
 
 // Body: { clientEmail, platform, postLink, action, quantity, targetAccountHandle? }
 export default async function handler(req, res) {
@@ -21,32 +21,12 @@ export default async function handler(req, res) {
     .single();
   if (!rule) return res.status(400).json({ error: 'No pricing rule for this platform/action' });
 
-  let { data: client } = await supabaseAdmin
-    .from('clients')
-    .select('*')
-    .eq('email', clientEmail)
-    .maybeSingle();
-  if (!client) {
-    const authUserId = await findOrCreateAuthUser(supabaseAdmin, clientEmail);
-    const { data: newClient } = await supabaseAdmin
-      .from('clients')
-      .insert({ email: clientEmail, auth_user_id: authUserId })
-      .select()
-      .single();
-    client = newClient;
-  } else if (!client.auth_user_id) {
-    // Same self-healing repair as orders/create.js — see that file for why.
-    const authUserId = await findOrCreateAuthUser(supabaseAdmin, clientEmail);
-    if (authUserId) {
-      const { data: repaired } = await supabaseAdmin
-        .from('clients')
-        .update({ auth_user_id: authUserId })
-        .eq('id', client.id)
-        .select()
-        .single();
-      if (repaired) client = repaired;
-    }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ error: 'Quantity must be a whole number of 1 or more.' });
   }
+
+  const { client, error: clientErr } = await getOrCreateClient(supabaseAdmin, clientEmail);
+  if (clientErr || !client) return res.status(500).json({ error: clientErr?.message || 'Could not set up the client.' });
 
   const prefix = { facebook: 'FB', instagram: 'IG', tiktok: 'TT', youtube: 'YT', x: 'XT' }[platform] || 'PL';
   const taskCode = `${prefix}-${Math.floor(1000 + Math.random() * 8999)}-${Math.random().toString(36).slice(2, 4).toUpperCase()}`;

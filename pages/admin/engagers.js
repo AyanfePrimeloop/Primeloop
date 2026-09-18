@@ -93,7 +93,7 @@ export default function AdminEngagers() {
             </select>
             <select value={e.status} onChange={(ev) => updateEngager(e.id, 'status', ev.target.value)} disabled={busyId === e.id}
               style={{
-                color: e.status === 'dismissed' ? 'var(--bad, #b23434)' : e.status === 'warned' ? 'var(--warn)' : 'var(--good)',
+                color: e.status === 'dismissed' ? 'var(--ink-mute)' : e.status === 'warned' ? 'var(--warn)' : 'var(--good)',
                 fontWeight: 500,
               }}>
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}

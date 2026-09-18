@@ -94,10 +94,18 @@ export default async function handler(req, res) {
         return res.status(409).json({ error: 'This submission was already resolved' });
       }
 
-      await supabaseAdmin
+      // Only flip it if it's STILL pending — two admins (or a double click)
+      // resolving the same item at once would otherwise each pass the check
+      // above and apply the verdict's effects twice.
+      const { data: claimed } = await supabaseAdmin
         .from('submissions')
         .update({ final_status: decision, reviewed_by: 'admin', reviewed_at: new Date().toISOString() })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('final_status', 'pending')
+        .select('id');
+      if (!claimed?.length) {
+        return res.status(409).json({ error: 'This submission was already resolved' });
+      }
 
       await applyRegularVerdict({ task: submission.tasks, engager: submission.engagers, finalStatus: decision });
       return res.status(200).json({ ok: true });

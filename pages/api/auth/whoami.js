@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
+import { escapeLike } from '../../../lib/validation';
 
 const authCheckClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -31,7 +32,13 @@ export default async function handler(req, res) {
   if (clientById) {
     clientRow = clientById;
   } else if (userData.user.email) {
-    const { data: clientByEmail } = await supabaseAdmin.from('clients').select('*').ilike('email', userData.user.email).maybeSingle();
+    const { data: clientByEmail } = await supabaseAdmin
+      .from('clients')
+      .select('*')
+      .ilike('email', escapeLike(userData.user.email))
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
     if (clientByEmail) {
       const { data: healed } = await supabaseAdmin
         .from('clients')

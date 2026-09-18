@@ -12,7 +12,7 @@ export default function AdminPricing() {
 
   useEffect(() => {
     if (loading) return;
-    fetch(`/api/admin/pricing?platform=${platform}`)
+    authedFetch(`/api/admin/pricing?platform=${platform}`)
       .then((r) => r.json())
       .then((d) => setRules(d.rules || []));
   }, [platform, loading]);
