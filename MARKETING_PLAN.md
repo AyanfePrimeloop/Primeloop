@@ -237,10 +237,9 @@ already does).
 - **Real payout proof beats every designed ad.** After the first real Friday payout, ask 5 engagers
   (with consent, account details blurred) for a screenshot or 20-second video. Pay a small thank-you
   bonus and say so ("paid testimonial") — undisclosed incentives erode the trust you're selling.
-- **Referral link is live for everyone**, but the ₦200 bonus only pays out if the *referrer* is
-  Gold/Platinum (checked when the referred engager reaches 10 approved tasks). **Decision for you:**
-  making the bonus available to *all* referrers is probably your cheapest growth lever — ₦200 per
-  active engager is far below any paid channel. It's a one-line change; say the word.
+- **The referral bonus is open to every engager** (₦200 once the person they refer completes 10
+  approved tasks). That's your cheapest growth lever — far below the cost of any paid channel — so
+  say it loudly in every engager message: "Share your link. Earn when they do 10 tasks."
 - **Campus/corps ambassadors:** 1 per school/camp, a ₦-per-verified-signup arrangement using the
   same referral link.
 

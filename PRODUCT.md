@@ -11,7 +11,7 @@ web
 Two-sided marketplace, plus an internal admin/founder role:
 
 - **Clients** — creators and small businesses in Nigeria who want real social media engagement (likes, comments, shares, follows) on Facebook, Instagram, TikTok, YouTube, and X, without risking their account by using bot panels. They place an order, pay via Paystack, and track delivery live on a dashboard.
-- **Engagers** — individuals in Nigeria completing engagement tasks from their phone for pay (no experience or startup cost required). They register, pass an onboarding verification test per platform, browse/complete tasks, submit screenshot proof, and get paid automatically every Friday. Higher tiers (Gold/Platinum) unlock early task access and a referral bonus.
+- **Engagers** — individuals in Nigeria completing engagement tasks from their phone for pay (no experience or startup cost required). They register, pass an onboarding verification test per platform, browse/complete tasks, submit screenshot proof, and get paid automatically every Friday. Higher tiers (Gold/Platinum) unlock early task access. Every engager can earn the referral bonus.
 - **Admin/founder** — currently a single non-technical founder (with a super-admin tier supporting additional admins later) who manages pricing, reviews flagged submissions and post links, manages engagers, and monitors payouts/accounting. Builds and maintains the product primarily through conversational AI assistance (chat, then Claude Code) rather than writing code directly.
 
 ## Product Purpose
@@ -29,7 +29,7 @@ Primeloop is a marketplace that matches Nigerian social media engagement demand 
 - AI verification: Anthropic API checks submitted screenshots for authenticity.
 - Automated weekly payout every Friday via Vercel Cron (manual fallback script exists).
 - WhatsApp task alerts notify eligible engagers automatically when a task opens (capped at 250 recipients/task for now).
-- Referral system: Gold/Platinum engagers get a shareable signup link; reaching 10 approved tasks by a referral triggers a bonus in the referrer's next payout.
+- Referral system: every engager gets a shareable signup link; when someone they refer reaches 10 approved tasks, the referrer earns a bonus in their next payout (not for dismissed referrers). Dismissed engagers are not paid.
 - Post-link automated checking gates whether a task goes live to engagers or routes to an admin "Link reviews" queue.
 - Admin operates via shared nav across `/admin/*` pages (tasks, engagers, review queue, pricing, accounting, onboarding tests, verification settings, admins/2FA).
 - Currency is Naira (₦); market is Nigeria specifically (not general/global).

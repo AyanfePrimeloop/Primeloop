@@ -58,13 +58,11 @@ export default async function handler(req, res) {
     code = generateEngagerCode(fullName);
   }
 
-  // Every engager can share their link from day one — the referral
-  // relationship is recorded here regardless of the referrer's tier. The
-  // Gold/Platinum requirement for actually *earning* a bonus is still
-  // enforced, just checked later, at the moment the referred engager hits
-  // their milestone (see regularSubmissionEffects.js) instead of here at
-  // signup. That's strictly better as an anti-abuse check too — it can't be
-  // gamed by holding Gold just long enough to refer someone.
+  // Every engager can share their link from day one, and every engager can
+  // earn the referral bonus (whatever their tier). The relationship is
+  // recorded here; the bonus itself is only created later, when the referred
+  // engager reaches their milestone (see regularSubmissionEffects.js), so a
+  // signup that never does real work earns nothing.
   let referrer = null;
   if (referredByCode) {
     const { data: found } = await supabaseAdmin

@@ -216,9 +216,8 @@ export default function EngagerDashboard() {
         <div className="section-head"><h2>Refer other engagers</h2></div>
         <div style={{ padding: 20 }}>
           <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 12 }}>
-            {['gold', 'platinum'].includes(me?.engager?.tier)
-              ? "Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus — paid automatically with your next weekly payout."
-              : "Share your link now — every signup is tracked. Bonuses pay out once you reach Gold tier and the person you referred completes 10 approved tasks."}
+            Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus —
+            paid automatically with your next weekly payout.
           </p>
           <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
             <input

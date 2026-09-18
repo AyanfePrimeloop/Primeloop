@@ -41,7 +41,8 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
 - Shared branding components (`components/Logo.js`, `components/WhatsAppButton.js`) used
   across every public and dashboard page for consistency.
 - **Migration 6** (`supabase/migration_6_referrals.sql`) — the engager referral system.
-  Gold/Platinum engagers get a shareable link (`/join?ref=THEIRCODE`) on their dashboard.
+  Every engager gets a shareable link (`/join?ref=THEIRCODE`) on their dashboard, and every
+  engager can earn the bonus (not only Gold/Platinum).
   When someone signs up through it and reaches 10 approved tasks, the referrer earns a
   bonus automatically included in their next weekly payout — no manual tracking needed.
 - **WhatsApp task alerts** (`lib/whatsapp.js`, `lib/notifyEngagersOfTask.js`) — when a task

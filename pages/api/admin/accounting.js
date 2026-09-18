@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   let approved = await fetchAll(() =>
     supabaseAdmin
       .from('submissions')
-      .select('id, payout_id, tasks(price_per_unit, orders(payment_status))')
+      .select('id, payout_id, engagers(status), tasks(price_per_unit, orders(payment_status))')
       .eq('final_status', 'approved')
       .order('id')
   );
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
   // What you owe engagers right now: exact once payouts are tracked per
   // submission; otherwise total approved minus total paid.
   const pendingPayout = exact
-    ? sum(approvedSubs.filter((s) => !s.payout_id), price)
+    ? sum(approvedSubs.filter((s) => !s.payout_id && s.engagers?.status !== 'dismissed'), price)
     : Math.max(0, totalApprovedValue - totalPaidOut);
 
   // Referral bonuses — earned and paid, tracked separately since they're not
