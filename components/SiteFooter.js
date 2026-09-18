@@ -36,10 +36,6 @@ export default function SiteFooter() {
         </div>
         <div className="s-legal">
           <span>© {new Date().getFullYear()} Primeloop</span>
-          <span>
-            Photography: Blessing Olarewaju, Emmanuel Ikwuegbu and Muhammad-Taha Ibrahim via Unsplash.
-            Stock images are for illustration and do not depict Primeloop customers.
-          </span>
         </div>
       </div>
     </footer>

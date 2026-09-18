@@ -170,7 +170,7 @@ export default function TryFree() {
                 </ul>
               </div>
 
-              <div className="s-card s-card-lift" id="trial-form" aria-live="polite" style={{ animation: 's-pop .8s .15s cubic-bezier(.16,1,.3,1) both' }}>
+              <div className="s-card s-card-lift s-enter" id="trial-form" aria-live="polite">
                 {result ? (
                   <div>
                     <h2 className="s-card-title">Your free trial is live.</h2>
