@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 // the hero's own CTA, and hides it again once the real form/signup section
 // (identified by hideNearId) is actually in view — no point stacking a
 // second CTA on top of the one they're already looking at.
-export default function StickyCta({ label, sublabel, href, hideNearId }) {
+export default function StickyCta({ label, sublabel, href, hideNearId, cta = 'Get started →' }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function StickyCta({ label, sublabel, href, hideNearId }) {
         {sublabel}
         <b>{label}</b>
       </div>
-      <a className="btn-cta" href={href}>Get started →</a>
+      <a className="btn-cta" href={href}>{cta}</a>
     </div>
   );
 }

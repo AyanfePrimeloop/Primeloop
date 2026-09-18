@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /$
 Allow: /join$
+Allow: /try$
 Allow: /terms$
 Allow: /privacy$
 Allow: /refund-policy$

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Logo from '../components/Logo';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -7,7 +8,8 @@ import StickyCta from '../components/StickyCta';
 import CheckIcon from '../components/CheckIcon';
 import StarRating from '../components/StarRating';
 import { timeAgo, isFresh } from '../lib/timeAgo';
-import { linkMatchesPlatform, PLATFORM_DOMAINS } from '../lib/platformDomains';
+import { useMinPrice } from '../lib/useMinPrice';
+import { linkMatchesPlatform, isKnownPlatform, normalizeLink, platformLabel, linkMismatchMessage, PLATFORM_DOMAINS } from '../lib/platformDomains';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
 
@@ -35,6 +37,12 @@ const FAQ_ITEMS = [
 ];
 
 export default function ClientLanding() {
+  const router = useRouter();
+  const minPrice = useMinPrice();
+  // The free trial leads the page — unless it isn't set up yet (database
+  // migration not run), in which case fall back to the plain order CTA
+  // instead of sending visitors to a "coming soon" page.
+  const [trialOpen, setTrialOpen] = useState(true);
   const [platform, setPlatform] = useState('facebook');
   const [rules, setRules] = useState([]);
   const [selected, setSelected] = useState({}); // { like: { checked, qty } }
@@ -54,8 +62,26 @@ export default function ClientLanding() {
         const initial = {};
         (d.rules || []).forEach((r) => (initial[r.action] = { checked: false, qty: 30 }));
         setSelected(initial);
-      });
+      })
+      .catch(() => {});
   }, [platform]);
+
+  // Deep links (e.g. from the free-trial success screen) can pre-fill the
+  // order form: /?platform=instagram&link=...&email=...#order
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { platform: p, link, email: e } = router.query;
+    if (isKnownPlatform(p)) setPlatform(p);
+    if (typeof link === 'string') setPostLink(link);
+    if (typeof e === 'string') setEmail(e);
+  }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    fetch('/api/trial/status')
+      .then((r) => r.json())
+      .then((d) => setTrialOpen(d.reason !== 'not_set_up'))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch('/api/public/recent-activity')
@@ -69,10 +95,10 @@ export default function ClientLanding() {
     return s?.checked ? sum + s.qty * r.client_price : sum;
   }, 0);
   const hasSelection = Object.values(selected).some((s) => s?.checked);
-  const platformLabel = platform[0].toUpperCase() + platform.slice(1);
   const postLinkError = postLink && !linkMatchesPlatform(postLink, platform)
-    ? `That doesn't look like a ${platformLabel} link — paste a link from ${PLATFORM_DOMAINS[platform][0]}.`
+    ? linkMismatchMessage(platform)
     : '';
+  const hasFollowSelected = rules.some((r) => ['follow', 'subscribe'].includes(r.action) && selected[r.action]?.checked);
   const canCheckout = !!email && !!postLink && hasSelection && !postLinkError;
 
   async function checkout() {
@@ -94,19 +120,26 @@ export default function ClientLanding() {
     }
 
     setLoading(true);
-    const res = await fetch('/api/orders/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, platform, postLink, items, specialInstructions }),
-    });
-    const data = await res.json();
-    setLoading(false);
-
-    if (!res.ok) {
-      setErrorMsg(data.error || 'Something went wrong');
-      return;
+    try {
+      const res = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // Send the link with "https://" added if they pasted it without.
+        body: JSON.stringify({ email, platform, postLink: normalizeLink(postLink) || postLink, items, specialInstructions }),
+      });
+      // A server hiccup can return a non-JSON error page; never let that
+      // leave the button stuck on "Redirecting...".
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.authorization_url) {
+        setErrorMsg(data.error || 'Something went wrong. Please try again, or message us on WhatsApp.');
+        setLoading(false);
+        return;
+      }
+      window.location.href = data.authorization_url; // send them to Paystack
+    } catch {
+      setErrorMsg("We couldn't reach the server. Check your connection and try again.");
+      setLoading(false);
     }
-    window.location.href = data.authorization_url; // send them to Paystack
   }
 
   return (
@@ -137,7 +170,14 @@ export default function ClientLanding() {
             Nigerian engager, and you watch it happen live.
           </p>
           <div className="hero2-ctas">
-            <a href="#order" className="cta-bold">Get engagement — from ₦6 →</a>
+            {trialOpen ? (
+              <>
+                <a href="/try" className="cta-bold">Try it free — 5 likes + 2 comments →</a>
+                <a href="#order" className="cta-ghost2">Or order now{minPrice ? ` — from ₦${minPrice}` : ''}</a>
+              </>
+            ) : (
+              <a href="#order" className="cta-bold">Get engagement{minPrice ? ` — from ₦${minPrice}` : ''} →</a>
+            )}
             <button className="cta-ghost2" onClick={() => setShowVerifyInfo(true)}>How verification works</button>
           </div>
         </div>
@@ -226,29 +266,51 @@ export default function ClientLanding() {
                 style={p === platform ? { background: 'var(--navy)', color: '#fff' } : {}}
                 onClick={() => setPlatform(p)}
               >
-                {p[0].toUpperCase() + p.slice(1)}
+                {platformLabel(p)}
               </button>
             ))}
           </div>
 
           <div style={{ marginBottom: 12 }}>
             <label htmlFor="client-email" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Your email</label>
-            <input id="client-email" style={{ width: '100%' }} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+            <input
+              id="client-email"
+              type="email"
+              style={{ width: '100%' }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@email.com"
+              autoComplete="email"
+              autoCapitalize="none"
+              inputMode="email"
+            />
           </div>
           <div style={{ marginBottom: 16 }}>
-            <label htmlFor="post-link" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Post link</label>
+            <label htmlFor="post-link" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
+              {hasFollowSelected ? 'Post or profile link' : 'Post link'}
+            </label>
             <input
               id="post-link"
               style={{ width: '100%', ...(postLinkError ? { borderColor: 'var(--warn)' } : {}) }}
               value={postLink}
               onChange={(e) => setPostLink(e.target.value)}
               placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/...`}
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
               aria-invalid={!!postLinkError}
-              aria-describedby={postLinkError ? 'post-link-error' : undefined}
+              aria-describedby={postLinkError ? 'post-link-error' : hasFollowSelected ? 'post-link-hint' : undefined}
             />
             {postLinkError && (
               <p id="post-link-error" style={{ color: 'var(--warn)', fontSize: 11.5, marginTop: 5 }}>
                 {postLinkError}
+              </p>
+            )}
+            {!postLinkError && hasFollowSelected && (
+              <p id="post-link-hint" style={{ color: 'var(--ink-soft)', fontSize: 11.5, marginTop: 5 }}>
+                For {platform === 'youtube' ? 'subscribers' : 'follows'}, paste your profile link (like{' '}
+                {platform === 'youtube' ? 'youtube.com/@yourchannel' : `${PLATFORM_DOMAINS[platform][0]}/yourname`}) so each
+                engager only follows you once.
               </p>
             )}
           </div>
@@ -284,7 +346,7 @@ export default function ClientLanding() {
                 style={{ width: 70 }}
                 value={selected[r.action]?.qty || 30}
                 onChange={(e) =>
-                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, +e.target.value) } }))
+                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } }))
                 }
               />
             </div>
@@ -305,6 +367,11 @@ export default function ClientLanding() {
           <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 10, textAlign: 'right' }}>
             Undelivered after 5 days? Full refund for that portion — no questions asked.
           </p>
+          {trialOpen && (
+            <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)', textAlign: 'center' }}>
+              Not ready to pay yet? <a href="/try" style={{ color: 'var(--navy)', fontWeight: 600 }}>Try 5 likes + 2 comments free first →</a>
+            </p>
+          )}
         </div>
       </div>
 
@@ -381,7 +448,13 @@ export default function ClientLanding() {
       </p>
 
       <WhatsAppButton avoidSelectors={['#order', '#faq']} />
-      <StickyCta label={total > 0 ? `₦${total.toLocaleString()}` : 'From ₦6/unit'} sublabel="Real engagement" href="#order" hideNearId="order" />
+      <StickyCta
+        label={total > 0 ? `₦${total.toLocaleString()}` : trialOpen ? '5 likes + 2 comments' : minPrice ? `From ₦${minPrice}/unit` : 'Real engagement'}
+        sublabel={total > 0 ? 'Your order' : trialOpen ? 'Free trial' : 'Real engagement'}
+        href={total > 0 || !trialOpen ? '#order' : '/try'}
+        cta={total > 0 || !trialOpen ? 'Get started →' : 'Try it free →'}
+        hideNearId="order"
+      />
     </div>
     </>
   );

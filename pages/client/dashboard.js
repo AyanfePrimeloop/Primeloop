@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import Logo from '../../components/Logo';
 import WhatsAppButton from '../../components/WhatsAppButton';
+import { platformLabel } from '../../lib/platformDomains';
 
 export default function ClientDashboard() {
   const { loading, me } = useRequireRole('client');
@@ -64,26 +65,36 @@ export default function ClientDashboard() {
         const totalNeeded = tasks.reduce((sum, t) => sum + t.quantity_needed, 0);
         const totalFilled = tasks.reduce((sum, t) => sum + t.quantity_filled, 0);
         const pct = totalNeeded ? Math.round((totalFilled / totalNeeded) * 100) : 0;
+        const isTrial = order.payment_status === 'trial';
+        const showProgress = order.payment_status === 'paid' || isTrial;
+        const awaitingLinkReview = tasks.some((t) => t.status === 'pending_review');
+        // Prefilled order form for this same post — one tap from "it worked" to "more".
+        const orderMoreHref = `/?platform=${order.platform}&link=${encodeURIComponent(order.post_link)}&email=${encodeURIComponent(me?.client?.email || '')}#order`;
 
         return (
           <div className="section" key={order.id}>
             <div className="section-head">
               <div>
-                <div style={{ fontWeight: 600, fontSize: 14, textTransform: 'capitalize' }}>{order.platform} order</div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{platformLabel(order.platform)} {isTrial ? 'free trial' : 'order'}</div>
                 <div style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--ink-mute)' }}>
-                  {new Date(order.created_at).toLocaleDateString()} · ₦{Number(order.amount_total).toLocaleString()}
+                  {new Date(order.created_at).toLocaleDateString()} · {isTrial ? 'Free' : `₦${Number(order.amount_total).toLocaleString()}`}
                 </div>
               </div>
               <span className="badge" style={{
-                background: order.payment_status === 'paid' ? 'var(--good-soft)' : 'var(--warn-soft)',
-                color: order.payment_status === 'paid' ? 'var(--good)' : 'var(--warn)',
+                background: order.payment_status === 'paid' || isTrial ? 'var(--good-soft)' : 'var(--warn-soft)',
+                color: order.payment_status === 'paid' || isTrial ? 'var(--good)' : 'var(--warn)',
               }}>
-                {order.payment_status}
+                {isTrial ? 'free trial' : order.payment_status}
               </span>
             </div>
             <div style={{ padding: 20 }}>
               <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6, wordBreak: 'break-all' }}>{order.post_link}</div>
-              {order.payment_status === 'paid' && (
+              {awaitingLinkReview && (
+                <p style={{ fontSize: 12.5, color: 'var(--warn)', margin: '0 0 12px' }}>
+                  We're double-checking this link before engagers can start — this usually takes a few hours at most.
+                </p>
+              )}
+              {showProgress && (
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                     <div style={{ flex: 1, height: 6, background: 'var(--line)', borderRadius: 99, overflow: 'hidden' }}>
@@ -99,6 +110,19 @@ export default function ClientDashboard() {
                       </div>
                     ))}
                   </div>
+                  {isTrial && totalFilled > 0 && (
+                    <div style={{ marginTop: 16, padding: '14px 16px', background: 'var(--good-soft)', borderRadius: 10 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600 }}>
+                        {pct === 100 ? 'Your free trial is complete.' : 'Real engagement is arriving.'}
+                      </div>
+                      <div style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: '4px 0 10px' }}>
+                        Like what you see? Get more on this same post — anything we don't deliver within 5 days is refunded.
+                      </div>
+                      <a href={orderMoreHref} className="btn accent" style={{ textDecoration: 'none', display: 'inline-block' }}>
+                        Order more on this post →
+                      </a>
+                    </div>
+                  )}
                 </>
               )}
             </div>

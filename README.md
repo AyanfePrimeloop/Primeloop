@@ -137,6 +137,18 @@ This is the real, working codebase — not a mockup. It needs a few accounts set
 - **`MARKETING_PLAN.md`** and **`/ad-creatives`** — ad copy variations, targeting
   recommendations, budget allocation, and three ready-to-use ad graphics (SVG — convert to
   PNG/JPG via Canva or similar before uploading to Meta Ads Manager, which doesn't accept SVG).
+- **Free trial for new clients** (`/try`, `pages/api/trial/create.js`,
+  `supabase/migration_11_trials_and_payout_tracking.sql`) — a first-time client gets 5 likes
+  + 2 comments on a post of their choice, delivered by real engagers through the same
+  pipeline as a paid order (marked `payment_status = 'trial'`, amount 0, so it can never
+  count as revenue). Abuse guards: one per person (canonical email — dots, `+tags` and case
+  ignored) and one per post, both enforced by database UNIQUE constraints; per-IP rate
+  limit; a rolling weekly cap (`TRIAL_WEEKLY_CAP`, default 40); the same post-link check as
+  paid orders. Trial cost shows on `/admin/accounting`.
+- **Payout tracking** (migration 11) — each approved submission records which payout paid
+  it, so a payout run only pays what hasn't been paid: re-running never double-pays,
+  engagers with no bank details yet or a failed transfer are picked up next run, and failed
+  or reversed transfers (Paystack webhook) are released automatically.
 - **Admin review queue** at `/admin/review` — shows the actual screenshot, AI reasoning,
   attempt count, one click to approve/reject
 - Screenshot storage via Supabase Storage (`lib/storage.js`)

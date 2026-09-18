@@ -64,6 +64,10 @@ Your code is now "on the shelf." Leave this tab open, we'll come back for the li
     ```
 16. Repeat steps 4–6 for `supabase/migration_9_unique_pages.sql`.
 17. Repeat steps 4–6 for `supabase/migration_10_rate_limiting.sql`.
+18. Repeat steps 4–6 for `supabase/migration_11_trials_and_payout_tracking.sql`. This one
+    switches on the free-trial offer **and** makes weekly payouts safe to re-run (each
+    approved task is now marked as paid, so nobody is paid twice and nobody who was skipped
+    is forgotten). Run it **before** you deploy the latest code. It's safe to run twice.
 
 Your filing cabinet now has all its folders and labels ready.
 
@@ -273,7 +277,18 @@ Once you've tested everything and you're ready for real clients and real engager
 2. Go back to **Settings → API Keys & Webhooks** in Live Mode, copy the **Live** keys.
 3. In Vercel, replace `PAYSTACK_SECRET_KEY` and `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY` with the
    Live versions. Redeploy.
-4. Repeat the webhook step (Part 6) for Live Mode.
+4. Repeat the webhook step (Part 6) for Live Mode. While you're on the webhook page, make
+   sure it receives **all events** (the default) — Primeloop now also listens for
+   `transfer.failed` and `transfer.reversed`, so a payout that bounces is automatically
+   retried on the next run instead of being lost.
+4b. **Turn off "Confirm transfers before sending" (transfer OTP).** In Paystack: Settings →
+   Preferences → Transfers. If this is on, Paystack accepts each payout request but waits for
+   a one-time code that nobody enters, so **no money actually leaves your account**, even
+   though the request looks successful. Primeloop detects this and reports `otp_required`
+   in the payout results instead of marking anyone paid — but the payouts won't send until
+   this setting is off.
+4c. Make sure your Paystack balance can cover the week's payouts before Friday 4pm (UTC).
+   If it can't, those transfers are refused and picked up automatically on the next run.
 5. In Anthropic Console, set a monthly spend limit under **Settings → Plans & Billing** so
    your AI checking (once you turn it on) can never surprise you with a huge bill.
 
