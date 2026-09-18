@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import AuthShell from '../components/AuthShell';
 import { pixelPurchase } from '../lib/metaPixel';
 import { gaPurchase } from '../lib/ga';
 
@@ -48,17 +49,11 @@ export default function OrderSuccess() {
   }, [reference, trxref]);
 
   return (
-    <div className="app" style={{ maxWidth: 480, textAlign: 'center', paddingTop: 60 }}>
-      <div className="section" style={{ padding: 30 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600, marginBottom: 12 }}>Thank you</h1>
-        <p style={{ color: 'var(--ink-soft)', fontSize: 14 }}>{status}</p>
-        <a href="/client-login" className="btn primary" style={{ display: 'inline-block', marginTop: 20, textDecoration: 'none' }}>
-          Track this order
-        </a>
-        <p style={{ marginTop: 10 }}>
-          <a href="/" style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>Back to home</a>
-        </p>
+    <AuthShell title="Thank you" subtitle={status} pageTitle="Thank you — Primeloop" photo="trial-creator" photoPosition="50% 35%">
+      <div className="auth-form">
+        <a href="/client-login" className="btn accent auth-btn">Track this order</a>
+        <p className="auth-alt"><a href="/">Back to home</a></p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

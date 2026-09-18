@@ -37,7 +37,7 @@ export default function ReviewQueue() {
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Review queue</h1>
+      <h1 style={{ fontSize: 30 }}>Review queue</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Link reviews are held back automatically before ever reaching engagers. Task and onboarding
         submissions land here when the verification setting is Manual, an AI-sampled check was
@@ -47,9 +47,9 @@ export default function ReviewQueue() {
       <div className="section">
         <div className="section-head">
           <h2>Link reviews</h2>
-          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{links.length} pending</span>
+          <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{links.length} pending</span>
         </div>
-        <p style={{ padding: '0 20px', fontSize: 12.5, color: 'var(--ink-mute)', marginTop: 12 }}>
+        <p style={{ padding: '0 20px', fontSize: 14, color: 'var(--ink-mute)', marginTop: 12 }}>
           The automated check flagged these — the link didn't load, or its domain doesn't match the
           platform paid for. None of these have gone live to engagers yet.
         </p>
@@ -57,15 +57,15 @@ export default function ReviewQueue() {
         {links.map((t) => (
           <div key={t.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--navy)', fontWeight: 600 }}>
                 {t.task_code} <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>· {t.platform} · {t.action} · qty {t.quantity_needed}</span>
               </div>
-              <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 2, wordBreak: 'break-all' }}>{t.post_link}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 2, wordBreak: 'break-all' }}>{t.post_link}</div>
               {t.link_check_reason && (
-                <div style={{ fontSize: 11.5, color: 'var(--warn)', marginTop: 4 }}>{t.link_check_reason}</div>
+                <div style={{ fontSize: 13, color: 'var(--warn)', marginTop: 4 }}>{t.link_check_reason}</div>
               )}
             </div>
-            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5 }}>Open link</a>
+            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13 }}>Open link</a>
             <button className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)' }} disabled={busyId === t.id} onClick={() => decide('link', t.id, 'rejected')}>Reject</button>
             <button className="btn" style={{ borderColor: 'var(--good)', color: 'var(--good)' }} disabled={busyId === t.id} onClick={() => decide('link', t.id, 'approved')}>Approve — open to engagers</button>
           </div>
@@ -75,24 +75,24 @@ export default function ReviewQueue() {
       <div className="section">
         <div className="section-head">
           <h2>Task submissions</h2>
-          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{regular.length} pending</span>
+          <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{regular.length} pending</span>
         </div>
         {regular.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
         {regular.map((s) => (
           <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--navy)', fontWeight: 600 }}>
                 {s.tasks?.task_code} <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>· {s.tasks?.platform} · {s.tasks?.action}</span>
               </div>
-              <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 2 }}>
                 {s.engagers?.code} — {s.engagers?.full_name} ({s.engagers?.tier})
               </div>
-              {s.ai_reason && <div style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 2 }}>{s.ai_reason}</div>}
+              {s.ai_reason && <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginTop: 2 }}>{s.ai_reason}</div>}
               {s.screenshot_url && (
                 <img src={s.screenshot_url} alt="submission proof" style={{ maxWidth: 220, borderRadius: 6, marginTop: 8, border: '1px solid var(--line)' }} />
               )}
             </div>
-            <a href={s.tasks?.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5 }}>View post</a>
+            <a href={s.tasks?.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13 }}>View post</a>
             <button className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)' }} disabled={busyId === s.id} onClick={() => decide('regular', s.id, 'rejected')}>Reject</button>
             <button className="btn" style={{ borderColor: 'var(--good)', color: 'var(--good)' }} disabled={busyId === s.id} onClick={() => decide('regular', s.id, 'approved')}>Approve</button>
           </div>
@@ -102,13 +102,13 @@ export default function ReviewQueue() {
       <div className="section">
         <div className="section-head">
           <h2>Onboarding test submissions</h2>
-          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{onboarding.length} pending</span>
+          <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{onboarding.length} pending</span>
         </div>
         {onboarding.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing pending.</p>}
         {onboarding.map((s) => (
           <div key={s.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, textTransform: 'capitalize' }}>
+              <div style={{ fontSize: 14, fontWeight: 500, textTransform: 'capitalize' }}>
                 {s.platform} — {s.action}
                 {s.attemptNumber > 2 && (
                   <span className="badge" style={{ marginLeft: 8, background: 'var(--warn-soft)', color: 'var(--warn)' }}>
@@ -116,10 +116,10 @@ export default function ReviewQueue() {
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 2 }}>
                 {s.engagers?.code} — {s.engagers?.full_name}
               </div>
-              {s.ai_reason && <div style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 2 }}>{s.ai_reason}</div>}
+              {s.ai_reason && <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginTop: 2 }}>{s.ai_reason}</div>}
               {s.screenshot_url && (
                 <img src={s.screenshot_url} alt="onboarding proof" style={{ maxWidth: 220, borderRadius: 6, marginTop: 8, border: '1px solid var(--line)' }} />
               )}

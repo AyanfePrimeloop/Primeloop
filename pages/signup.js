@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
 import { supabase } from '../lib/supabaseClient';
-import Logo from '../components/Logo';
+import AuthShell from '../components/AuthShell';
 import { pixelLead } from '../lib/metaPixel';
 import { gaSignUp } from '../lib/ga';
 
@@ -65,70 +64,50 @@ export default function Signup() {
 
   if (awaitingConfirmation) {
     return (
-      <>
-        <Head><title>Check your email — Primeloop</title></Head>
-        <div className="app" style={{ maxWidth: 420 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-            <Logo size={44} />
-          </div>
-          <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Check your email</h1>
-          <div className="section" style={{ padding: 20 }}>
-            <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-              We've sent a confirmation link to <strong>{form.email}</strong>. Look for an email from
-              Primeloop (it will come from Supabase's sending address on our behalf, so check your
-              spam or promotions folder if it doesn't show up in a minute or two). Click the link
-              inside, and it'll take you straight to your dashboard — no need to come back here.
-            </p>
-          </div>
-        </div>
-      </>
+      <AuthShell title="Check your email" pageTitle="Check your email — Primeloop">
+        <p className="auth-ok" style={{ marginTop: 28, color: 'var(--ink-soft)' }}>
+          We've sent a confirmation link to <strong>{form.email}</strong>. Look for an email from
+          Primeloop (it will come from Supabase's sending address on our behalf, so check your
+          spam or promotions folder if it doesn't show up in a minute or two). Click the link
+          inside, and it'll take you straight to your dashboard — no need to come back here.
+        </p>
+      </AuthShell>
     );
   }
 
   return (
-    <>
-    <Head><title>Create your engager account — Primeloop</title></Head>
-    <div className="app" style={{ maxWidth: 420 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-        <Logo size={44} />
-      </div>
-      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Create your engager account</h1>
-      {router.query.ref && (
-        <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--good)', marginTop: -8, marginBottom: 12 }}>
-          Referred by {router.query.ref}
-        </p>
-      )}
-      <div className="section" style={{ padding: 20 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Full name</label>
-          <input style={{ width: '100%' }} value={form.fullName} onChange={(e) => set('fullName', e.target.value)} />
+    <AuthShell
+      title="Create your engager account"
+      subtitle={router.query.ref ? `Referred by ${router.query.ref}` : 'Free to join. Paid every Friday.'}
+      pageTitle="Create your engager account — Primeloop"
+    >
+      <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading) handleSignup(); }}>
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="su-name">Full name</label>
+          <input id="su-name" className="auth-input" value={form.fullName} onChange={(e) => set('fullName', e.target.value)} autoComplete="name" />
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>WhatsApp number</label>
-          <input style={{ width: '100%' }} value={form.whatsapp} onChange={(e) => set('whatsapp', e.target.value)} />
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="su-wa">WhatsApp number</label>
+          <input id="su-wa" className="auth-input" value={form.whatsapp} onChange={(e) => set('whatsapp', e.target.value)} autoComplete="tel" inputMode="tel" />
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Email</label>
-          <input style={{ width: '100%' }} value={form.email} onChange={(e) => set('email', e.target.value)} />
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="su-email">Email</label>
+          <input id="su-email" type="email" className="auth-input" value={form.email} onChange={(e) => set('email', e.target.value)} autoComplete="email" autoCapitalize="none" inputMode="email" />
         </div>
-        <div style={{ marginBottom: 8 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Password</label>
-          <input type="password" style={{ width: '100%' }} value={form.password} onChange={(e) => set('password', e.target.value)} />
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="su-pw">Password</label>
+          <input id="su-pw" type="password" className="auth-input" value={form.password} onChange={(e) => set('password', e.target.value)} autoComplete="new-password" />
+          <p className="auth-hint">
+            After you submit, we'll email {form.email || 'you'} a confirmation link to finish setting
+            up your account.
+          </p>
         </div>
-        <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginBottom: 14 }}>
-          After you submit, we'll email {form.email || 'you'} a confirmation link to finish setting
-          up your account.
-        </p>
-        <button className="btn accent" style={{ width: '100%' }} onClick={handleSignup} disabled={loading}>
+        <button type="submit" className="btn accent auth-btn" disabled={loading}>
           {loading ? 'Creating account...' : 'Create account'}
         </button>
-        {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-        <p style={{ fontSize: 12.5, marginTop: 14, textAlign: 'center' }}>
-          Already have an account? <a href="/login" style={{ color: 'var(--navy)' }}>Log in</a>
-        </p>
-      </div>
-    </div>
-    </>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+      </form>
+      <p className="auth-alt">Already have an account? <a href="/login">Log in</a></p>
+    </AuthShell>
   );
 }
-

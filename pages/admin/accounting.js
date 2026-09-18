@@ -6,7 +6,7 @@ import { downloadCSV } from '../../lib/csvExport';
 function StatCard({ label, value, color, plain }) {
   return (
     <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
-      <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 600, color: color || 'var(--ink)' }}>
         {plain ? value : `₦${Number(value).toLocaleString()}`}
       </div>
@@ -58,10 +58,10 @@ export default function Accounting() {
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Accounting</h1>
+      <h1 style={{ fontSize: 30 }}>Accounting</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>The financial health of the business, at a glance.</p>
 
-      {error && <p style={{ color: 'var(--warn)', fontSize: 13 }}>{error}</p>}
+      {error && <p style={{ color: 'var(--warn)', fontSize: 14 }}>{error}</p>}
 
       {stats && (
         <>
@@ -77,24 +77,24 @@ export default function Accounting() {
           </div>
           {stats.trials && (
             <>
-              <div style={{ fontSize: 13, fontWeight: 600, margin: '4px 0 8px' }}>Free trials</div>
+              <div style={{ fontSize: 14, fontWeight: 600, margin: '4px 0 8px' }}>Free trials</div>
               <div className="grid-3" style={{ marginBottom: 16 }}>
                 <StatCard label="Trials granted (all time)" value={stats.trials.granted} plain />
                 <StatCard label="Used this week (rolling 7 days)" value={`${stats.trials.last7d} of ${stats.trials.weeklyCap}`} plain color={stats.trials.last7d >= stats.trials.weeklyCap ? 'var(--warn)' : undefined} />
                 <StatCard label="Trial engagements cost so far" value={stats.trials.cost} />
               </div>
-              <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', margin: '-6px 0 16px' }}>
+              <p style={{ fontSize: 13, color: 'var(--ink-mute)', margin: '-6px 0 16px' }}>
                 Trial cost is what engagers earn for completing trial tasks — it's already included in "paid out"
                 above and reduces gross margin. Raise the weekly limit by setting TRIAL_WEEKLY_CAP in Vercel.
               </p>
             </>
           )}
           <div className="section" style={{ padding: 20 }}>
-            <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Gross margin (revenue minus payouts and bonuses)</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>Gross margin (revenue minus payouts and bonuses)</div>
             <div style={{ fontSize: 30, fontWeight: 700, color: stats.grossMargin >= 0 ? 'var(--good)' : 'var(--warn)' }}>
               ₦{stats.grossMargin.toLocaleString()}
             </div>
-            <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 10 }}>
+            <p style={{ fontSize: 13, color: 'var(--ink-mute)', marginTop: 10 }}>
               This is a simple all-time snapshot — it doesn't yet subtract things like your AI
               verification costs, ad spend, or other operating expenses. Treat it as a starting
               point for a full P&L, not the whole picture.
@@ -103,7 +103,7 @@ export default function Accounting() {
 
           <div className="section" style={{ padding: 20 }}>
             <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 6 }}>Manual backup</div>
-            <p style={{ fontSize: 12.5, color: 'var(--ink-mute)', marginBottom: 12 }}>
+            <p style={{ fontSize: 14, color: 'var(--ink-mute)', marginBottom: 12 }}>
               Downloads engagers, clients, orders, and payouts as CSV files — an interim safety
               net until you're on a Supabase plan with automated point-in-time recovery. Worth
               doing weekly, or before any major change.

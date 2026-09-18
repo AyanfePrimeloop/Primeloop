@@ -1,7 +1,7 @@
 ---
 name: Primeloop
 description: Real social media engagement from verified Nigerian engagers, with a screenshot behind every one.
-scope: Public pages (/, /join, /try) via styles/site.css. Dashboards, login/signup and legal pages still use styles/globals.css (later phase).
+scope: Public pages (/, /join, /try) via styles/site.css; dashboards, admin, login/signup and legal pages via styles/globals.css, which carries the same tokens.
 colors:
   bg: "#ffffff"
   tint: "#f5f6fa"
@@ -105,7 +105,7 @@ A fintech product page with photography. White ground, cool-tint bands, one deep
 
 Own-world materials: white, cool tint, navy, signal orange; Bricolage Grotesque heavy and tight over Hanken Grotesk; hairline borders; drawn single-stroke SVG icons (components/SiteIcons.js); licensed portraits. There is no mono, no gradient text, no cream, no serif.
 
-Scope: `.site` (styles/site.css) governs `/`, `/join`, `/try`. Dashboards, login/signup and legal pages remain on styles/globals.css, where `--serif` now resolves to Bricolage Grotesque and `--mono` to the system mono stack. Those surfaces are a later phase and are not yet governed by this document.
+Scope: `.site` (styles/site.css) governs `/`, `/join`, `/try` and the legal pages. Auth screens use the split AuthShell (form left, photograph right); dashboards and admin use AppBar plus the shared `.section`, `.btn`, `.badge` classes in styles/globals.css, which uses the same tokens, Bricolage Grotesque headings, Hanken Grotesk text and tabular numerals (`--mono` now resolves to the text face). Signed-in screens were restyled through the shared classes; their per-page inline layout is unchanged.
 
 ## Colors
 
@@ -192,4 +192,4 @@ Don't:
 
 ## Not canonized
 
-Drift observed, not recorded as rules: styles/globals.css (dashboards, login, legal) still carries the retired hero2/cream/pill-CTA vocabulary and its old type scale (13px body); the `--navy-deep` token is unused in site.css; `.impeccable/config.json` still whitelists WhatsApp `#25d366`, which no longer appears in the public site; the direction contract's "2:3 portrait, 12-column" first-viewport wording differs from the build (4:5 photo, 7/5 grid), so the build is recorded above.
+Drift observed, not recorded as rules: the `--navy-deep` token is unused in site.css; `.impeccable/config.json` still whitelists WhatsApp `#25d366`, which no longer appears in the public site; the direction contract's "2:3 portrait, 12-column" first-viewport wording differs from the build (4:5 photo, 7/5 grid), so the build is recorded above.

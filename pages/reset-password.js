@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
-import Logo from '../components/Logo';
+import AuthShell from '../components/AuthShell';
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -56,35 +56,28 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="app" style={{ maxWidth: 380 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-        <Logo size={44} />
-      </div>
-      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Set a new password</h1>
-      <div className="section" style={{ padding: 20, marginTop: 16 }}>
-        {checkingLink ? (
-          <p style={{ fontSize: 13.5, color: 'var(--ink-mute)' }}>Checking your link...</p>
-        ) : done ? (
-          <p style={{ fontSize: 13.5, color: 'var(--good)' }}>Password updated — taking you to log in...</p>
-        ) : sessionReady ? (
-          <>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>New password</label>
-            <input type="password" style={{ width: '100%', marginBottom: 14 }} value={password} onChange={(e) => setPassword(e.target.value)} />
-            <button className="btn primary" style={{ width: '100%' }} onClick={updatePassword} disabled={loading || !password}>
-              {loading ? 'Saving...' : 'Save new password'}
-            </button>
-            {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-          </>
-        ) : (
-          <>
-            <p style={{ color: 'var(--warn)', fontSize: 13.5 }}>{error}</p>
-            <a href="/forgot-password" className="btn primary" style={{ width: '100%', textAlign: 'center', display: 'block', textDecoration: 'none', marginTop: 10 }}>
-              Request a new link
-            </a>
-          </>
-        )}
-      </div>
-    </div>
+    <AuthShell title="Set a new password" pageTitle="Set a new password — Primeloop">
+      {checkingLink ? (
+        <p className="auth-sub">Checking your link...</p>
+      ) : done ? (
+        <p className="auth-ok" style={{ marginTop: 28 }}>Password updated — taking you to log in...</p>
+      ) : sessionReady ? (
+        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading && password) updatePassword(); }}>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="new-password">New password</label>
+            <input id="new-password" type="password" className="auth-input" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
+          </div>
+          <button type="submit" className="btn accent auth-btn" disabled={loading || !password}>
+            {loading ? 'Saving...' : 'Save new password'}
+          </button>
+          {error && <p className="auth-error" role="alert">{error}</p>}
+        </form>
+      ) : (
+        <div className="auth-form">
+          <p className="auth-error" style={{ marginTop: 0 }}>{error}</p>
+          <a href="/forgot-password" className="btn accent auth-btn" style={{ marginTop: 16 }}>Request a new link</a>
+        </div>
+      )}
+    </AuthShell>
   );
 }
-

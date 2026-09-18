@@ -38,7 +38,7 @@ export default function VerificationSettings() {
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Verification settings</h1>
+      <h1 style={{ fontSize: 30 }}>Verification settings</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Everything starts on Manual. Turn on AI checking only where it's worth the cost — see the cost math in the README.
       </p>
@@ -79,7 +79,7 @@ export default function VerificationSettings() {
                   value={Math.round(s.sample_rate * 100)}
                   onChange={(e) => updateLocal(s.id, 'sample_rate', +e.target.value / 100)}
                 />
-                <span style={{ fontSize: 12 }}>%</span>
+                <span style={{ fontSize: 13 }}>%</span>
               </div>
             )}
             <button className="btn" onClick={() => save(s)}>Save</button>

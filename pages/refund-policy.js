@@ -1,22 +1,15 @@
-import Logo from '../components/Logo';
+import LegalPage from '../components/LegalPage';
 
 export default function RefundPolicy() {
   return (
-    <div className="app" style={{ maxWidth: 720 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-        <Logo size={28} />
-        <h1 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Refund Policy</h1>
-      </div>
-      <div className="section" style={{ padding: '24px 28px', fontSize: 14, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
-        <p style={{ fontSize: 12, color: 'var(--ink-mute)' }}>Last updated: 13 September 2026</p>
-
-        <h3 style={{ color: 'var(--ink)' }}>Our guarantee</h3>
+    <LegalPage title="Refund Policy" updated="13 September 2026">
+        <h3>Our guarantee</h3>
         <p>
           If we do not deliver the full quantity of engagement you paid for, you're entitled to a
           refund for the undelivered portion, under the terms below.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>When a refund applies</h3>
+        <h3>When a refund applies</h3>
         <ul>
           <li>Your task remained open with unfilled quantity for more than 5 days after payment</li>
           <li>Your post link was rejected by our automated check or an admin, and you don't want
@@ -24,7 +17,7 @@ export default function RefundPolicy() {
           <li>A payment was taken but no task was ever created due to a technical error on our side</li>
         </ul>
 
-        <h3 style={{ color: 'var(--ink)' }}>When a refund does NOT apply</h3>
+        <h3>When a refund does NOT apply</h3>
         <ul>
           <li>Engagement that was already delivered and verified — you're only refunded for the
             undelivered portion of an order, never the completed part</li>
@@ -37,14 +30,13 @@ export default function RefundPolicy() {
             confirmed the order — partial delivery within the stated limit isn't refundable</li>
         </ul>
 
-        <h3 style={{ color: 'var(--ink)' }}>How to request a refund</h3>
+        <h3>How to request a refund</h3>
         <p>
-          Contact us at <a href="mailto:info@primeloop.app" style={{ color: 'var(--navy)' }}>info@primeloop.app</a> or
+          Contact us at <a href="mailto:info@primeloop.app">info@primeloop.app</a> or
           via the WhatsApp button on our site with your order reference. We aim to respond within
           2 business days and process approved refunds back to your original payment method via
           Paystack within 4 business days of approval.
         </p>
-      </div>
-    </div>
+    </LegalPage>
   );
 }

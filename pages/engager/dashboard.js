@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
-import Logo from '../../components/Logo';
+import AppBar from '../../components/AppBar';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -98,25 +98,24 @@ export default function EngagerDashboard() {
   const totalEarned = approved.reduce((sum, s) => sum + Number(s.tasks?.price_per_unit || 0), 0);
 
   return (
+    <>
+    <AppBar links={[
+      { href: '/engager/dashboard', label: 'Tasks', current: true },
+      { href: '/engager/bank-details', label: 'Bank details' },
+      { href: '/engager/profile', label: 'Profile' },
+      { href: '/choose-dashboard', label: 'Switch dashboard' },
+      { label: 'Log out', onClick: handleLogout },
+    ]} />
     <div className="app">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Logo size={28} />
-          <h1 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Open tasks</h1>
-        </div>
-        <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>
-          {me?.engager?.code} — {me?.engager?.full_name}
-          <a href="/engager/profile" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Profile</a>
-          <a href="/choose-dashboard" style={{ marginLeft: 10, fontSize: 11.5, color: 'var(--ink-mute)' }}>Switch dashboard</a>
-          <a href="/engager/bank-details" className="btn" style={{ marginLeft: 10, fontSize: 11.5, textDecoration: 'none' }}>Bank details</a>
-          <button className="btn" style={{ marginLeft: 10, fontSize: 11.5 }} onClick={handleLogout}>Log out</button>
-        </div>
+      <div className="page-head">
+        <h1>Open tasks</h1>
+        <p>{me?.engager?.full_name} · {me?.engager?.code}</p>
       </div>
 
       {!me?.engager?.paystack_recipient_code && (
         <div className="section" style={{ padding: '14px 20px', background: 'var(--warn-soft)', border: '1px solid var(--warn)', marginTop: 16 }}>
           <strong style={{ color: 'var(--warn)' }}>Set up your bank details before your first payout.</strong>{' '}
-          <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>
+          <span style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
             You can still complete tasks and earn now, but we can't pay you until this is done.
           </span>{' '}
           <a href="/engager/bank-details" style={{ color: 'var(--navy)', fontWeight: 600 }}>Add bank details →</a>
@@ -125,15 +124,15 @@ export default function EngagerDashboard() {
 
       <div className="grid-3" style={{ margin: '16px 0 20px' }}>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
-          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Total earned (approved)</div>
+          <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>Total earned (approved)</div>
           <div style={{ fontSize: 22, fontWeight: 600 }}>₦{totalEarned.toLocaleString()}</div>
         </div>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
-          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Already paid out</div>
+          <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>Already paid out</div>
           <div style={{ fontSize: 22, fontWeight: 600 }}>₦{totalPaid.toLocaleString()}</div>
         </div>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
-          <div style={{ fontSize: 12, color: 'var(--ink-mute)', marginBottom: 6 }}>Pending next payout</div>
+          <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>Pending next payout</div>
           <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--good)' }}>₦{Math.max(0, totalEarned - totalPaid).toLocaleString()}</div>
         </div>
       </div>
@@ -145,12 +144,12 @@ export default function EngagerDashboard() {
           <div className="task-row" key={t.id}>
             <div>
               <div className="task-id">{t.task_code}</div>
-              <div style={{ fontSize: 11, color: 'var(--ink-mute)' }}>{t.platform}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>{t.platform}</div>
             </div>
             <div style={{ textTransform: 'capitalize' }}>{t.action}</div>
             <div><span className="badge">{t.quantity_filled}/{t.quantity_needed}</span></div>
             <div style={{ fontFamily: 'var(--mono)' }} title="What you earn for this task">₦{t.price_per_unit}</div>
-            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5, textDecoration: 'none', textAlign: 'center' }}>
+            <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13, textDecoration: 'none', textAlign: 'center' }}>
               Open post
             </a>
             {verifiedPlatforms.has(t.platform) ? (
@@ -162,7 +161,7 @@ export default function EngagerDashboard() {
             )}
             {t.special_instructions && (
               <div style={{
-                gridColumn: '1 / -1', fontSize: 12, color: 'var(--ink-soft)', background: 'var(--paper)',
+                gridColumn: '1 / -1', fontSize: 13, color: 'var(--ink-soft)', background: 'var(--paper)',
                 borderRadius: 6, padding: '8px 10px', marginTop: 4,
               }}>
                 <strong style={{ color: 'var(--ink)' }}>Client note:</strong> {t.special_instructions}
@@ -175,20 +174,20 @@ export default function EngagerDashboard() {
       <div className="section">
         <div className="section-head">
           <h2>Pending review</h2>
-          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{pending.length} waiting</span>
+          <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{pending.length} waiting</span>
         </div>
-        <p style={{ padding: '0 20px', fontSize: 12.5, color: 'var(--ink-mute)', marginTop: 12 }}>
+        <p style={{ padding: '0 20px', fontSize: 14, color: 'var(--ink-mute)', marginTop: 12 }}>
           You've already submitted proof for these — no need to submit again. They'll move to
           Approved tasks once reviewed.
         </p>
         {pending.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing waiting right now.</p>}
         {pending.map((s) => (
-          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 14 }}>
             <div style={{ flex: 1 }}>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
               <span style={{ color: 'var(--ink-mute)', marginLeft: 8, textTransform: 'capitalize' }}>{s.tasks?.platform} · {s.tasks?.action}</span>
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
             <span className="badge" style={{ background: 'var(--warn-soft)', color: 'var(--warn)' }}>Waiting for review</span>
           </div>
         ))}
@@ -197,16 +196,16 @@ export default function EngagerDashboard() {
       <div className="section">
         <div className="section-head">
           <h2>Approved tasks</h2>
-          <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{approved.length} total</span>
+          <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{approved.length} total</span>
         </div>
         {approved.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>Nothing approved yet — complete a task above to see it here.</p>}
         {approved.map((s) => (
-          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 14 }}>
             <div style={{ flex: 1 }}>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--navy)', fontWeight: 600 }}>{s.tasks?.task_code}</span>
               <span style={{ color: 'var(--ink-mute)', marginLeft: 8, textTransform: 'capitalize' }}>{s.tasks?.platform} · {s.tasks?.action}</span>
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{new Date(s.submitted_at).toLocaleDateString()}</div>
             <div style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--good)' }}>+₦{s.tasks?.price_per_unit}</div>
           </div>
         ))}
@@ -215,19 +214,19 @@ export default function EngagerDashboard() {
       <div className="section">
         <div className="section-head"><h2>Refer other engagers</h2></div>
         <div style={{ padding: 20 }}>
-          <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 12 }}>
+          <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 12 }}>
             Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus —
             paid automatically with your next weekly payout.
           </p>
           <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
             <input
               readOnly
-              style={{ flex: 1, fontFamily: 'var(--mono)', fontSize: 12.5 }}
+              style={{ flex: 1, fontFamily: 'var(--mono)', fontSize: 14 }}
               value={typeof window !== 'undefined' ? `${window.location.origin}/join?ref=${me?.engager?.code}` : ''}
               onClick={(e) => e.target.select()}
             />
           </div>
-          <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
+          <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
             <div><strong>{referrals.count}</strong> people referred</div>
             <div><strong style={{ color: 'var(--good)' }}>₦{referrals.earned.toLocaleString()}</strong> earned from referrals</div>
           </div>
@@ -238,18 +237,18 @@ export default function EngagerDashboard() {
         <div className="section-head"><h2>Submit proof</h2></div>
         <div style={{ padding: 20 }}>
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Task code</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Task code</label>
             <input style={{ width: '100%' }} value={taskCode} onChange={(e) => setTaskCode(e.target.value)} placeholder="FB-5714-A6" />
           </div>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Screenshot</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Screenshot</label>
             <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
           </div>
           <button className="btn primary" onClick={submitProof} disabled={submitting}>
             {submitting ? 'Checking...' : 'Submit proof'}
           </button>
           {result && (
-            <p style={{ marginTop: 12, fontSize: 13, color: result.error ? 'var(--warn)' : result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
+            <p style={{ marginTop: 12, fontSize: 14, color: result.error ? 'var(--warn)' : result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
               {result.error || `${result.verdict.toUpperCase()}: ${result.reason}`}
               {result.needsOnboarding && result.platform && (
                 <>
@@ -264,9 +263,10 @@ export default function EngagerDashboard() {
         </div>
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: 13, marginTop: 20 }}>
+      <p style={{ textAlign: 'center', fontSize: 14, marginTop: 20 }}>
         Need engagement for your own post instead? <a href="/" style={{ color: 'var(--navy)' }}>Order here</a>
       </p>
     </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
 import { authedFetch } from '../lib/authClient';
-import Logo from '../components/Logo';
+import AuthShell from '../components/AuthShell';
 
 export default function Login() {
   const router = useRouter();
@@ -83,51 +83,40 @@ export default function Login() {
 
   if (needsMfa) {
     return (
-      <div className="app" style={{ maxWidth: 380 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-          <Logo size={44} />
-        </div>
-        <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Enter your 2FA code</h1>
-        <div className="section" style={{ padding: 20 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>6-digit code from your authenticator app</label>
-          <input style={{ width: '100%', marginBottom: 14 }} value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} maxLength={6} placeholder="000000" />
-          <button className="btn primary" style={{ width: '100%' }} onClick={submitMfaCode} disabled={loading || mfaCode.length !== 6}>
+      <AuthShell title="Enter your 2FA code" subtitle="Open your authenticator app and type the 6-digit code." pageTitle="2FA — Primeloop">
+        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading && mfaCode.length === 6) submitMfaCode(); }}>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="mfa-code">6-digit code</label>
+            <input id="mfa-code" className="auth-input" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} maxLength={6} placeholder="000000" inputMode="numeric" autoComplete="one-time-code" />
+          </div>
+          <button type="submit" className="btn accent auth-btn" disabled={loading || mfaCode.length !== 6}>
             {loading ? 'Verifying...' : 'Verify and log in'}
           </button>
-          {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-        </div>
-      </div>
+          {error && <p className="auth-error" role="alert">{error}</p>}
+        </form>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="app" style={{ maxWidth: 380 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-        <Logo size={44} />
-      </div>
-      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Log in</h1>
-      <div className="section" style={{ padding: 20 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Email</label>
-          <input style={{ width: '100%' }} value={email} onChange={(e) => setEmail(e.target.value)} />
+    <AuthShell title="Log in" subtitle="Welcome back. Pick up where you left off." pageTitle="Log in — Primeloop">
+      <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading) handleLogin(); }}>
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="login-email">Email</label>
+          <input id="login-email" type="email" className="auth-input" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" autoCapitalize="none" inputMode="email" />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Password</label>
-          <input type="password" style={{ width: '100%' }} value={password} onChange={(e) => setPassword(e.target.value)} />
-          <a href="/forgot-password" style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>Forgot password?</a>
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="login-password">Password</label>
+          <input id="login-password" type="password" className="auth-input" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+          <p className="auth-hint"><a href="/forgot-password">Forgot password?</a></p>
         </div>
-        <button className="btn primary" style={{ width: '100%' }} onClick={handleLogin} disabled={loading}>
+        <button type="submit" className="btn accent auth-btn" disabled={loading}>
           {loading ? 'Logging in...' : 'Log in'}
         </button>
-        {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-        <p style={{ fontSize: 12.5, marginTop: 14 }}>
-          New engager? <a href="/signup">Create an account</a>
-        </p>
-        <p style={{ fontSize: 12.5, marginTop: 6 }}>
-          Tracking an order as a client? <a href="/client-login">Use your order email instead</a>
-        </p>
-      </div>
-    </div>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+      </form>
+      <p className="auth-alt">New engager? <a href="/signup">Create an account</a></p>
+      <p className="auth-alt" style={{ marginTop: 8 }}>Tracking an order as a client? <a href="/client-login">Use your order email instead</a></p>
+    </AuthShell>
   );
 }
-

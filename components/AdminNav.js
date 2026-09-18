@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Logo from './Logo';
 
 const LINKS = [
   { href: '/admin/tasks', label: 'Task board' },
@@ -12,26 +13,19 @@ const LINKS = [
   { href: '/admin/enable-mfa', label: '2FA' },
 ];
 
+// Every admin page renders <AdminNav /> as its first child, inside .app.
 export default function AdminNav() {
   const router = useRouter();
   return (
-    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 20, borderBottom: '1px solid var(--line)', paddingBottom: 12 }}>
-      {LINKS.map((l) => (
-        <a
-          key={l.href}
-          href={l.href}
-          style={{
-            fontSize: 12.5,
-            padding: '6px 12px',
-            borderRadius: 7,
-            textDecoration: 'none',
-            color: router.pathname === l.href ? '#fff' : 'var(--ink-soft)',
-            background: router.pathname === l.href ? 'var(--navy)' : 'transparent',
-          }}
-        >
-          {l.label}
-        </a>
-      ))}
+    <div style={{ marginBottom: 22 }}>
+      <a href="/" className="app-brand" aria-label="Primeloop home" style={{ marginBottom: 14 }}>
+        <Logo size={28} />Primeloop <span style={{ fontWeight: 600, color: 'var(--ink-mute)', fontSize: 15, letterSpacing: 0 }}>Admin</span>
+      </a>
+      <nav className="admin-tabs app-bar-links" aria-label="Admin" style={{ justifyContent: 'flex-start', marginTop: 14, marginBottom: 0 }}>
+        {LINKS.map((l) => (
+          <a key={l.href} href={l.href} aria-current={router.pathname === l.href ? 'page' : undefined}>{l.label}</a>
+        ))}
+      </nav>
     </div>
   );
 }

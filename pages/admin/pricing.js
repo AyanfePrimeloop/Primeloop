@@ -37,8 +37,8 @@ export default function AdminPricing() {
     <div className="app">
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600 }}>Pricing management</h1>
-        <span style={{ fontSize: 12, color: 'var(--ink-mute)' }}>{me?.email}</span>
+        <h1 style={{ fontSize: 30 }}>Pricing management</h1>
+        <span style={{ fontSize: 13, color: 'var(--ink-mute)' }}>{me?.email}</span>
       </div>
 
       <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
@@ -55,9 +55,9 @@ export default function AdminPricing() {
       </div>
 
       <div className="section">
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
           <thead>
-            <tr style={{ textAlign: 'left', fontSize: 11.5, color: 'var(--ink-mute)' }}>
+            <tr style={{ textAlign: 'left', fontSize: 13, color: 'var(--ink-mute)' }}>
               <th style={{ padding: '10px 20px' }}>Action</th>
               <th style={{ padding: '10px 20px' }}>Client price (₦)</th>
               <th style={{ padding: '10px 20px' }}>Engager payout (₦)</th>
@@ -97,7 +97,7 @@ export default function AdminPricing() {
           </tbody>
         </table>
       </div>
-      {saved && <p style={{ color: 'var(--good)', fontSize: 13 }}>Saved.</p>}
+      {saved && <p style={{ color: 'var(--good)', fontSize: 14 }}>Saved.</p>}
     </div>
   );
 }

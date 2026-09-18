@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import Logo from '../components/Logo';
+import AuthShell from '../components/AuthShell';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -23,34 +23,28 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="app" style={{ maxWidth: 380 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-        <Logo size={44} />
-      </div>
-      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Reset your password</h1>
-      <div className="section" style={{ padding: 20, marginTop: 16 }}>
-        {sent ? (
-          <p style={{ fontSize: 13.5, color: 'var(--good)' }}>
-            Check <strong>{email}</strong> for an email from Primeloop (sent via Supabase Auth on
-            our behalf — look for a sender like "Supabase Auth" or "noreply@mail.app.supabase.io"
-            if you don't see "Primeloop" directly). It may land in spam or promotions, so check
-            those folders if it doesn't appear within a minute or two. Click the link inside to
-            set a new password.
-          </p>
-        ) : (
-          <>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Your account email</label>
-            <input style={{ width: '100%', marginBottom: 14 }} value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button className="btn primary" style={{ width: '100%' }} onClick={sendReset} disabled={loading || !email}>
-              {loading ? 'Sending...' : 'Send reset link'}
-            </button>
-            {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-          </>
-        )}
-        <p style={{ fontSize: 12.5, marginTop: 14, textAlign: 'center' }}>
-          <a href="/login" style={{ color: 'var(--navy)' }}>Back to log in</a>
+    <AuthShell title="Reset your password" subtitle="Enter your account email and we'll send you a reset link." pageTitle="Reset your password — Primeloop">
+      {sent ? (
+        <p className="auth-ok" style={{ marginTop: 28 }}>
+          Check <strong>{email}</strong> for an email from Primeloop (sent via Supabase Auth on
+          our behalf — look for a sender like "Supabase Auth" or "noreply@mail.app.supabase.io"
+          if you don't see "Primeloop" directly). It may land in spam or promotions, so check
+          those folders if it doesn't appear within a minute or two. Click the link inside to
+          set a new password.
         </p>
-      </div>
-    </div>
+      ) : (
+        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading && email) sendReset(); }}>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="forgot-email">Your account email</label>
+            <input id="forgot-email" type="email" className="auth-input" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" autoCapitalize="none" inputMode="email" />
+          </div>
+          <button type="submit" className="btn accent auth-btn" disabled={loading || !email}>
+            {loading ? 'Sending...' : 'Send reset link'}
+          </button>
+          {error && <p className="auth-error" role="alert">{error}</p>}
+        </form>
+      )}
+      <p className="auth-alt"><a href="/login">Back to log in</a></p>
+    </AuthShell>
   );
 }

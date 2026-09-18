@@ -68,7 +68,7 @@ export default function EnableMFA() {
   return (
     <div className="app" style={{ maxWidth: 460 }}>
       <AdminNav />
-      <h1 style={{ fontSize: 22, fontWeight: 600 }}>Two-factor authentication</h1>
+      <h1 style={{ fontSize: 28 }}>Two-factor authentication</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Adds a second step at login using an authenticator app (Google Authenticator, Authy,
         etc.) — recommended for every admin, required for handling real payouts safely.
@@ -95,20 +95,20 @@ export default function EnableMFA() {
 
       {enrolling && (
         <div className="section" style={{ padding: 20 }}>
-          <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 12 }}>
+          <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 12 }}>
             Scan this with your authenticator app, then enter the 6-digit code it shows.
           </p>
           {qrCode && <img src={qrCode} alt="Scan with your authenticator app" style={{ width: 180, height: 180, marginBottom: 14 }} />}
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>6-digit code</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>6-digit code</label>
             <input style={{ width: '100%' }} value={code} onChange={(e) => setCode(e.target.value)} maxLength={6} placeholder="000000" />
           </div>
           <button className="btn primary" onClick={confirmEnrollment} disabled={code.length !== 6}>Confirm</button>
-          {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
+          {error && <p style={{ color: 'var(--warn)', fontSize: 14, marginTop: 10 }}>{error}</p>}
         </div>
       )}
 
-      {done && <p style={{ color: 'var(--good)', fontSize: 13 }}>Two-factor authentication is now active.</p>}
+      {done && <p style={{ color: 'var(--good)', fontSize: 14 }}>Two-factor authentication is now active.</p>}
     </div>
   );
 }

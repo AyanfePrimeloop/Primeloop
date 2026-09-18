@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import Logo from '../components/Logo';
-import WhatsAppButton from '../components/WhatsAppButton';
+import AuthShell from '../components/AuthShell';
+import SiteWhatsApp from '../components/SiteWhatsApp';
 
 export default function ClientLogin() {
   const [email, setEmail] = useState('');
@@ -35,44 +35,33 @@ export default function ClientLogin() {
   }
 
   return (
-    <div className="app" style={{ maxWidth: 380 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-        <Logo size={44} />
-      </div>
-      <h1 style={{ fontSize: 22, fontWeight: 600, textAlign: 'center' }}>Track your order</h1>
-      <div className="section" style={{ padding: 20, marginTop: 16 }}>
-        {sent ? (
-          <p style={{ fontSize: 13.5, color: 'var(--good)' }}>
-            Check <strong>{email}</strong> for a link from Primeloop (sent via Supabase Auth on
-            our behalf — check spam/promotions if it doesn't show up in a minute). Click it to
-            see your order progress.
-          </p>
-        ) : rateLimited ? (
-          <>
-            <p style={{ fontSize: 13.5, color: 'var(--warn)' }}>
-              We've hit a temporary limit on how many login emails can go out right now — this
-              isn't a problem with your account. Please try again in a few minutes, or reach an
-              admin directly below and we'll pull up your order for you in the meantime.
-            </p>
-          </>
-        ) : (
-          <>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
-              Email you used at checkout
-            </label>
-            <input style={{ width: '100%', marginBottom: 14 }} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
-            <button className="btn primary" style={{ width: '100%' }} onClick={sendLink} disabled={loading || !email}>
-              {loading ? 'Sending...' : 'Send me a login link'}
-            </button>
-            {error && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{error}</p>}
-            <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 12 }}>
-              No password needed — we'll email you a one-click link from Primeloop via Supabase Auth.
-            </p>
-          </>
-        )}
-      </div>
-      <WhatsAppButton />
-    </div>
+    <AuthShell title="Track your order" subtitle="No password needed. We email you a one-click link." pageTitle="Track your order — Primeloop" photo="trial-creator" photoPosition="50% 35%">
+      {sent ? (
+        <p className="auth-ok" style={{ marginTop: 28 }}>
+          Check <strong>{email}</strong> for a link from Primeloop (sent via Supabase Auth on
+          our behalf — check spam/promotions if it doesn't show up in a minute). Click it to
+          see your order progress.
+        </p>
+      ) : rateLimited ? (
+        <p className="auth-error" style={{ marginTop: 28 }}>
+          We've hit a temporary limit on how many login emails can go out right now — this
+          isn't a problem with your account. Please try again in a few minutes, or reach an
+          admin directly below and we'll pull up your order for you in the meantime.
+        </p>
+      ) : (
+        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading && email) sendLink(); }}>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="client-login-email">Email you used at checkout</label>
+            <input id="client-login-email" type="email" className="auth-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" autoCapitalize="none" inputMode="email" />
+          </div>
+          <button type="submit" className="btn accent auth-btn" disabled={loading || !email}>
+            {loading ? 'Sending...' : 'Send me a login link'}
+          </button>
+          {error && <p className="auth-error" role="alert">{error}</p>}
+        </form>
+      )}
+      <p className="auth-alt">Engager or admin? <a href="/login">Log in with a password</a></p>
+      <SiteWhatsApp />
+    </AuthShell>
   );
 }
-

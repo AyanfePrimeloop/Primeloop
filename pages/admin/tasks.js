@@ -57,7 +57,7 @@ export default function AdminTasks() {
     <div className="app">
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600 }}>Task board</h1>
+        <h1 style={{ fontSize: 30 }}>Task board</h1>
         <button className="btn" onClick={exportCSV}>Download CSV</button>
       </div>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>Every task, most recent first. Showing up to 200.</p>
@@ -77,7 +77,7 @@ export default function AdminTasks() {
           <div key={t.id} className="task-row" style={{ gridTemplateColumns: '1.3fr 1fr 1fr 1fr 1fr 1fr' }}>
             <div>
               <div className="task-id">{t.task_code}</div>
-              <div style={{ fontSize: 11, color: 'var(--ink-mute)' }}>{t.platform}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>{t.platform}</div>
             </div>
             <div style={{ textTransform: 'capitalize' }}>{t.action}</div>
             <div><span className="badge">{t.quantity_filled}/{t.quantity_needed}</span></div>
@@ -91,13 +91,13 @@ export default function AdminTasks() {
               </span>
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
-              <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 11.5 }}>Link</a>
+              <a href={t.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13 }}>Link</a>
               {t.status === 'open' && (
-                <button className="btn" style={{ fontSize: 11.5 }} disabled={busyId === t.id} onClick={() => closeTask(t.id)}>Close</button>
+                <button className="btn" style={{ fontSize: 13 }} disabled={busyId === t.id} onClick={() => closeTask(t.id)}>Close</button>
               )}
             </div>
             {t.special_instructions && (
-              <div style={{ gridColumn: '1 / -1', fontSize: 11.5, color: 'var(--ink-soft)', background: 'var(--paper)', borderRadius: 6, padding: '6px 10px' }}>
+              <div style={{ gridColumn: '1 / -1', fontSize: 13, color: 'var(--ink-soft)', background: 'var(--paper)', borderRadius: 6, padding: '6px 10px' }}>
                 <strong>Client note:</strong> {t.special_instructions}
               </div>
             )}

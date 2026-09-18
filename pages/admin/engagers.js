@@ -58,7 +58,7 @@ export default function AdminEngagers() {
     <div className="app">
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600 }}>Engagers</h1>
+        <h1 style={{ fontSize: 30 }}>Engagers</h1>
         <button className="btn" onClick={exportCSV}>Download CSV</button>
       </div>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
@@ -78,11 +78,11 @@ export default function AdminEngagers() {
       <div className="section">
         {engagers.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>No engagers found.</p>}
         {engagers.map((e) => (
-          <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: '1px solid var(--line)', fontSize: 13, flexWrap: 'wrap' }}>
+          <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: '1px solid var(--line)', fontSize: 14, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--mono)', fontWeight: 600, color: 'var(--navy)' }}>{e.code}</div>
-              <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{e.full_name} · {e.whatsapp}</div>
-              <div style={{ fontSize: 11, color: 'var(--ink-mute)', marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: 'var(--ink-soft)' }}>{e.full_name} · {e.whatsapp}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', marginTop: 2 }}>
                 {e.tasks_completed} completed · {e.approval_rate}% approval
                 {' · '}
                 {(e.engager_platform_accounts || []).filter((p) => p.verification_status === 'verified').map((p) => p.platform).join(', ') || 'no platforms verified'}

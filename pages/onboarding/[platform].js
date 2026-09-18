@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
+import AppBar from '../../components/AppBar';
 
 export default function OnboardingTest() {
   const router = useRouter();
@@ -97,32 +98,41 @@ export default function OnboardingTest() {
   const remainingActions = test.required_actions.filter((a) => !progress.approvedActions?.includes(a));
 
   return (
+    <>
+    <AppBar links={[
+      { href: '/engager/dashboard', label: 'Tasks' },
+      { href: '/engager/bank-details', label: 'Bank details' },
+      { href: '/engager/profile', label: 'Profile' },
+      { href: '/choose-dashboard', label: 'Switch dashboard' },
+    ]} />
     <div className="app">
-      <h1 style={{ fontSize: 24, fontWeight: 600, textTransform: 'capitalize' }}>{platform} onboarding test</h1>
-      <p style={{ color: 'var(--ink-soft)' }}>
+      <div className="page-head">
+      <h1 style={{ textTransform: 'capitalize' }}>{platform} onboarding test</h1>
+      <p>
         Signed in as {me?.engager?.code}.{' '}
         {pageRegistered
           ? 'Complete every action below on our test post, then upload proof for each one.'
           : `Register your ${platform} page first — one page can only ever be linked to one engager account.`}
       </p>
+      </div>
 
       <div className="section">
         <div className="section-head"><h2>Your {platform} page</h2></div>
         <div style={{ padding: 20 }}>
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Page or account name</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Page or account name</label>
             <input style={{ width: '100%' }} value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Exactly as it appears on the page" />
           </div>
           <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Page link</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Page link</label>
             <input style={{ width: '100%' }} value={profileLink} onChange={(e) => setProfileLink(e.target.value)} placeholder={`https://${platform}.com/yourpage`} />
           </div>
           <button className="btn primary" onClick={registerPage} disabled={registering}>
             {registering ? 'Saving...' : pageRegistered ? 'Update page details' : 'Register this page'}
           </button>
-          {registerError && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{registerError}</p>}
+          {registerError && <p style={{ color: 'var(--warn)', fontSize: 14, marginTop: 10 }}>{registerError}</p>}
           {pageRegistered && !registerError && (
-            <p style={{ color: 'var(--good)', fontSize: 12.5, marginTop: 10 }}>
+            <p style={{ color: 'var(--good)', fontSize: 14, marginTop: 10 }}>
               Page on file. Changing the link later will require re-doing the test below.
             </p>
           )}
@@ -169,14 +179,14 @@ export default function OnboardingTest() {
                   <div className="section-head"><h2 style={{ textTransform: 'capitalize' }}>Submit proof: {action}</h2></div>
                   <div style={{ padding: 20 }}>
                     <div style={{ marginBottom: 16 }}>
-                      <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Screenshot of your {action}</label>
+                      <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Screenshot of your {action}</label>
                       <input type="file" accept="image/*" onChange={(e) => setFileFor(action, e.target.files[0])} />
                     </div>
                     <button className="btn primary" onClick={() => submitAction(action)} disabled={entry.submitting}>
                       {entry.submitting ? 'Checking...' : `Submit ${action} proof`}
                     </button>
                     {entry.result && (
-                      <p style={{ marginTop: 12, fontSize: 13, color: entry.result.error ? 'var(--warn)' : entry.result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
+                      <p style={{ marginTop: 12, fontSize: 14, color: entry.result.error ? 'var(--warn)' : entry.result.verdict === 'approved' ? 'var(--good)' : 'var(--ink-soft)' }}>
                         {entry.result.error || `${entry.result.verdict.toUpperCase()}${entry.result.reason ? ': ' + entry.result.reason : ''}`}
                         {entry.result.attemptNumber > 2 && entry.result.verdict === 'pending' && (
                           <span> This is attempt {entry.result.attemptNumber} — an admin will review it directly.</span>
@@ -191,5 +201,6 @@ export default function OnboardingTest() {
         </>
       )}
     </div>
+    </>
   );
 }

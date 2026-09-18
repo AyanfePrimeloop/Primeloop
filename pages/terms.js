@@ -1,16 +1,9 @@
-import Logo from '../components/Logo';
+import LegalPage from '../components/LegalPage';
 
 export default function Terms() {
   return (
-    <div className="app" style={{ maxWidth: 720 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-        <Logo size={28} />
-        <h1 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Terms of Service</h1>
-      </div>
-      <div className="section" style={{ padding: '24px 28px', fontSize: 14, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
-        <p style={{ fontSize: 12, color: 'var(--ink-mute)' }}>Last updated: 13 September 2026 — Effective for all use of Primeloop.</p>
-
-        <h3 style={{ color: 'var(--ink)' }}>1. What Primeloop is</h3>
+    <LegalPage title="Terms of Service" updated="13 September 2026 — Effective for all use of Primeloop.">
+        <h3>1. What Primeloop is</h3>
         <p>
           Primeloop ("we", "us", "the platform") is operated by <strong>Prime-Digital Technology
           Services</strong> (BN 8564351), a business name registered with the Corporate
@@ -23,14 +16,14 @@ export default function Terms() {
           performed by independent Engagers, not by Primeloop directly.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>2. Eligibility</h3>
+        <h3>2. Eligibility</h3>
         <p>
           You must be at least 18 years old to use Primeloop as a Client or an Engager. By
           registering, you confirm the information you provide (name, contact details, bank
           details, social media account ownership) is accurate and belongs to you.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>3. For Clients</h3>
+        <h3>3. For Clients</h3>
         <p>
           You agree to pay the listed price for the engagement package you select before any
           task is created. You confirm you have the right to request engagement on the post link
@@ -39,7 +32,7 @@ export default function Terms() {
           the estimated timeframe shown, subject to Engager availability.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>4. For Engagers</h3>
+        <h3>4. For Engagers</h3>
         <p>
           You are an independent participant, not an employee of Primeloop. You are responsible
           for any taxes owed on income earned through the platform. You agree to:
@@ -55,7 +48,7 @@ export default function Terms() {
           and/or permanent dismissal from the platform, at Primeloop's discretion.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>5. Payments</h3>
+        <h3>5. Payments</h3>
         <p>
           Client payments are processed via Paystack. Engager payouts are made weekly via bank
           transfer to the account details the Engager provides, once verified. Primeloop is not
@@ -63,17 +56,17 @@ export default function Terms() {
           the Engager's bank.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>6. Refunds</h3>
+        <h3>6. Refunds</h3>
         <p>See our separate Refund Policy for the full terms governing refunds.</p>
 
-        <h3 style={{ color: 'var(--ink)' }}>7. Prohibited use</h3>
+        <h3>7. Prohibited use</h3>
         <p>
           You may not use Primeloop for any unlawful purpose, to harass or defraud others, to
           submit content that infringes someone else's rights, or to attempt to manipulate,
           exploit, or reverse-engineer the platform's verification systems.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>8. Limitation of liability</h3>
+        <h3>8. Limitation of liability</h3>
         <p>
           Primeloop provides the platform "as is." We are not liable for actions taken by social
           media platforms against a Client's account or post (including removal, flagging, or
@@ -82,25 +75,24 @@ export default function Terms() {
           claim is limited to the amount you paid us in the 3 months before the claim arose.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>9. Changes to these terms</h3>
+        <h3>9. Changes to these terms</h3>
         <p>
           We may update these terms from time to time. Continued use of Primeloop after a change
           means you accept the updated terms.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>10. Governing law</h3>
+        <h3>10. Governing law</h3>
         <p>
           These terms are governed by the laws of the Federal Republic of Nigeria. Any dispute
           arising from these terms or use of Primeloop is subject to the exclusive jurisdiction
           of the courts of Lagos State, Nigeria.
         </p>
 
-        <h3 style={{ color: 'var(--ink)' }}>11. Contact</h3>
+        <h3>11. Contact</h3>
         <p>
-          Questions about these terms can be sent to <a href="mailto:info@primeloop.app" style={{ color: 'var(--navy)' }}>info@primeloop.app</a> or via
+          Questions about these terms can be sent to <a href="mailto:info@primeloop.app">info@primeloop.app</a> or via
           the WhatsApp button on our site.
         </p>
-      </div>
-    </div>
+    </LegalPage>
   );
 }

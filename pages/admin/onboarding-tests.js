@@ -38,7 +38,7 @@ export default function OnboardingTestsAdmin() {
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Engager onboarding tests</h1>
+      <h1 style={{ fontSize: 30 }}>Engager onboarding tests</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Post a real, permanent test post for each platform. New engagers must complete every action below on it before they can claim real, paid tasks.
       </p>
@@ -47,20 +47,20 @@ export default function OnboardingTestsAdmin() {
         <div className="section" key={t.id}>
           <div className="section-head">
             <h2 style={{ textTransform: 'capitalize' }}>{t.platform}</h2>
-            <label style={{ fontSize: 12.5, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <label style={{ fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
               <input type="checkbox" checked={t.active} onChange={(e) => updateLocal(t.id, 'active', e.target.checked)} />
               Active
             </label>
           </div>
           <div style={{ padding: 20 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Test post link</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Test post link</label>
             <input
               style={{ width: '100%', marginBottom: 14 }}
               value={t.post_link}
               onChange={(e) => updateLocal(t.id, 'post_link', e.target.value)}
               placeholder={`https://${t.platform}.com/...`}
             />
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Required actions (comma separated)</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Required actions (comma separated)</label>
             <input
               style={{ width: '100%', marginBottom: 14 }}
               value={t.required_actions.join(', ')}
@@ -68,7 +68,7 @@ export default function OnboardingTestsAdmin() {
               placeholder="like, comment, share, follow"
             />
             <button className="btn primary" onClick={() => save(t)}>Save</button>
-            {saved === t.id && <span style={{ color: 'var(--good)', fontSize: 12.5, marginLeft: 10 }}>Saved</span>}
+            {saved === t.id && <span style={{ color: 'var(--good)', fontSize: 14, marginLeft: 10 }}>Saved</span>}
           </div>
         </div>
       ))}

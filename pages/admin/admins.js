@@ -56,7 +56,7 @@ export default function AdminAdmins() {
   return (
     <div className="app">
       <AdminNav />
-      <h1 style={{ fontSize: 24, fontWeight: 600 }}>Admins</h1>
+      <h1 style={{ fontSize: 30 }}>Admins</h1>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         Invite a new admin — they'll get an email to set their own password.
       </p>
@@ -64,11 +64,11 @@ export default function AdminAdmins() {
       <div className="section">
         <div style={{ padding: 20, display: 'flex', gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 200 }}>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Email</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Email</label>
             <input style={{ width: '100%' }} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="newadmin@email.com" />
           </div>
           <div>
-            <label style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Role</label>
+            <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Role</label>
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="admin">Admin</option>
               <option value="super_admin">Super-admin</option>
@@ -78,12 +78,12 @@ export default function AdminAdmins() {
             {inviting ? 'Sending invite...' : 'Invite admin'}
           </button>
         </div>
-        {error && <p style={{ color: 'var(--warn)', fontSize: 13, padding: '0 20px 16px' }}>{error}</p>}
+        {error && <p style={{ color: 'var(--warn)', fontSize: 14, padding: '0 20px 16px' }}>{error}</p>}
       </div>
 
       <div className="section">
         {admins.map((a) => (
-          <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 13 }}>
+          <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid var(--line)', fontSize: 14 }}>
             <div>{a.email}</div>
             <span className="badge" style={{ background: a.role === 'super_admin' ? 'var(--good-soft)' : 'var(--paper)', color: a.role === 'super_admin' ? 'var(--good)' : 'var(--ink-soft)' }}>
               {a.role}
