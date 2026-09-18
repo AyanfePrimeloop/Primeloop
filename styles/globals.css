@@ -6,8 +6,8 @@
   --good:#1d7a4c; --good-soft:#e3f5ea;
   --warn:#8f6118; --warn-soft:#fbf1de;
   --label-on-navy:#c4c9ec;
-  --mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
-  --serif:'Fraunces',Georgia,serif;
+  --mono:ui-monospace,'SFMono-Regular',Consolas,monospace;
+  --serif:'Bricolage Grotesque','Hanken Grotesk',system-ui,sans-serif;
 }
 *{box-sizing:border-box;}
 body{margin:0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);}

@@ -1,131 +1,109 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-16T11:54:24.524Z",
-  "title": "Design System: Primeloop",
+  "generatedAt": "2026-09-18T00:00:00.000Z",
+  "title": "Design System: Primeloop (public site)",
   "extensions": {
+    "scope": "styles/site.css on .site: /, /join, /try. Dashboards, login/signup, legal still use styles/globals.css (later phase).",
     "colorMeta": {
-      "deep-navy": { "role": "primary", "displayName": "Deep Navy", "canonical": "oklch(24% 0.055 265)", "tonalRamp": ["oklch(15% 0.04 265)", "oklch(27% 0.05 265)", "oklch(39% 0.055 265)", "oklch(51% 0.06 265)", "oklch(63% 0.055 265)", "oklch(75% 0.04 265)", "oklch(87% 0.02 265)", "oklch(95% 0.008 265)"] },
-      "deep-navy-ink": { "role": "primary", "displayName": "Deep Navy — Ink", "canonical": "oklch(18% 0.045 265)", "tonalRamp": ["oklch(12% 0.035 265)", "oklch(22% 0.045 265)", "oklch(33% 0.05 265)", "oklch(45% 0.055 265)", "oklch(58% 0.05 265)", "oklch(71% 0.035 265)", "oklch(85% 0.018 265)", "oklch(95% 0.008 265)"] },
-      "signal-orange": { "role": "secondary", "displayName": "Signal Orange", "canonical": "oklch(63% 0.17 40)", "tonalRamp": ["oklch(20% 0.06 40)", "oklch(33% 0.09 40)", "oklch(45% 0.12 40)", "oklch(56% 0.15 40)", "oklch(63% 0.17 40)", "oklch(74% 0.13 55)", "oklch(86% 0.07 60)", "oklch(95% 0.03 65)"] },
-      "signal-orange-deep": { "role": "secondary", "displayName": "Signal Orange — Deep", "canonical": "oklch(43% 0.14 32)", "tonalRamp": ["oklch(16% 0.05 32)", "oklch(28% 0.09 32)", "oklch(38% 0.12 32)", "oklch(43% 0.14 32)", "oklch(54% 0.14 35)", "oklch(66% 0.12 45)", "oklch(80% 0.06 55)", "oklch(93% 0.025 60)"] },
-      "live-green": { "role": "tertiary", "displayName": "Live Green", "canonical": "oklch(48% 0.10 152)", "tonalRamp": ["oklch(17% 0.045 152)", "oklch(28% 0.07 152)", "oklch(38% 0.09 152)", "oklch(48% 0.10 152)", "oklch(60% 0.11 152)", "oklch(73% 0.09 155)", "oklch(86% 0.05 158)", "oklch(95% 0.02 160)"] },
-      "alert-amber": { "role": "status", "displayName": "Alert Amber", "canonical": "oklch(48% 0.09 70)", "tonalRamp": ["oklch(18% 0.04 70)", "oklch(29% 0.06 70)", "oklch(39% 0.08 70)", "oklch(48% 0.09 70)", "oklch(60% 0.10 72)", "oklch(73% 0.08 75)", "oklch(86% 0.045 78)", "oklch(95% 0.02 80)"] },
-      "ink-mute": { "role": "neutral", "displayName": "Ink Mute", "canonical": "oklch(58% 0.02 265)", "tonalRamp": ["oklch(20% 0.015 265)", "oklch(32% 0.018 265)", "oklch(44% 0.02 265)", "oklch(58% 0.02 265)", "oklch(70% 0.015 265)", "oklch(80% 0.012 265)", "oklch(90% 0.008 265)", "oklch(97% 0.003 265)"] }
+      "navy": { "role": "primary", "displayName": "Navy", "canonical": "#1c2340" },
+      "orange": { "role": "secondary", "displayName": "Signal Orange", "canonical": "#e0632b" },
+      "good": { "role": "tertiary", "displayName": "Good", "canonical": "#1d7a4c" },
+      "warn": { "role": "status", "displayName": "Warn", "canonical": "#8f6118" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#0f1428" },
+      "ink-soft": { "role": "neutral", "displayName": "Ink Soft", "canonical": "#485068" },
+      "ink-mute": { "role": "neutral", "displayName": "Ink Mute", "canonical": "#646b82" },
+      "tint": { "role": "neutral", "displayName": "Tint", "canonical": "#f5f6fa" },
+      "line": { "role": "neutral", "displayName": "Line", "canonical": "#e4e7ee" },
+      "line-strong": { "role": "neutral", "displayName": "Line Strong", "canonical": "#cdd2df" }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Hero headlines only — one per page, editorial weight." },
-      "title": { "displayName": "Title", "purpose": "Section and card headers across dashboards and landing pages." },
-      "body": { "displayName": "Body", "purpose": "Default paragraph and UI copy." },
-      "label-mono": { "displayName": "Label / Mono", "purpose": "Anything live, timestamped, or logged — feed rows, task IDs, eyebrow labels." }
+      "display": { "displayName": "Display", "purpose": "Page H1, one per page." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings." },
+      "title": { "displayName": "Title", "purpose": "Card and item headings." },
+      "body": { "displayName": "Body", "purpose": "Reading text in Hanken Grotesk." },
+      "lead": { "displayName": "Lead", "purpose": "Intro paragraph under a heading, max 56ch." },
+      "label": { "displayName": "Label", "purpose": "Form labels and small UI text." }
     },
     "shadows": [
-      { "name": "lifted-widget", "value": "0 24px 50px rgba(18,23,43,.10)", "purpose": "Floating, important elements — the live-proof widget model." },
-      { "name": "cta-glow", "value": "0 10px 26px rgba(163,68,28,.28)", "purpose": "The bold pill CTA at rest; intensifies to 0 14px 30px rgba(163,68,28,.34) on hover." },
-      { "name": "hover-lift", "value": "0 10px 24px rgba(18,23,43,.08)", "purpose": "Proof cards and packages on hover, paired with translateY(-3px)." },
-      { "name": "sticky-bar", "value": "0 -8px 24px rgba(18,23,43,.1)", "purpose": "Upward shadow anchoring the fixed mobile CTA bar." }
+      { "name": "proof-float", "value": "0 18px 40px rgba(15,20,40,.14)", "purpose": "Proof card floating over the hero photo." },
+      { "name": "card-lift", "value": "0 24px 56px rgba(15,20,40,.10)", "purpose": "Primary form card." },
+      { "name": "cta-hover", "value": "0 8px 20px rgba(224,99,43,.28)", "purpose": "Primary button hover with 1px lift." },
+      { "name": "sticky-bar", "value": "0 -10px 28px rgba(15,20,40,.08)", "purpose": "Mobile sticky CTA." }
     ],
     "motion": [
-      { "name": "fade-in-up", "value": "translateY(14px) to translateY(0), opacity 0 to 1, .6s ease", "purpose": "Entrance animation for hero and above-the-fold blocks, staggered via .fade-in-delay-1/2/3 (0.1s/0.2s/0.3s)." },
-      { "name": "glow-pulse", "value": "box-shadow 0 0 0 0 to 0 0 0 8px accent-tinted, 2.2s ease-in-out infinite", "purpose": "Pulsing glow on the single highest-priority CTA (.btn.accent.pulse)." },
-      { "name": "pulse-dot", "value": "box-shadow ring pulse, 1.8s infinite", "purpose": "The live-indicator dot next to LIVE tags." }
+      { "name": "s-rise", "value": "translateY(14px) to none, opacity 0 to 1, .8s cubic-bezier(.16,1,.3,1), 70ms stagger", "purpose": "Hero copy entrance." },
+      { "name": "s-pop", "value": "translateY(16px) scale(.98) to none, .8s, .35s delay", "purpose": "Proof card entrance." },
+      { "name": "s-pulse", "value": "8px green ring, 1.9s infinite", "purpose": "Live dot; static grey when data is stale." },
+      { "name": "reduced-motion", "value": "all of the above disabled", "purpose": "prefers-reduced-motion: reduce." }
     ],
     "breakpoints": [
-      { "name": "mobile", "value": "700px" }
-    ]
+      { "name": "wide", "value": "1020px" },
+      { "name": "tablet", "value": "860px" },
+      { "name": "mobile", "value": "700px" },
+      { "name": "small", "value": "560px" }
+    ],
+    "photography": {
+      "files": ["client-owner", "engager-corper", "engager-phone", "trial-creator"],
+      "sizes": [640, 1200],
+      "credit": "Blessing Olarewaju, Emmanuel Ikwuegbu, Muhammad-Taha Ibrahim via Unsplash; disclosed in footer; never captioned as customers."
+    }
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The default committing action.",
-      "html": "<button class=\"ds-btn ds-btn-primary\">Save changes</button>",
-      "css": ".ds-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid transparent;cursor:pointer;font-family:inherit;} .ds-btn-primary{background:#1c2340;border-color:#1c2340;color:#fff;} .ds-btn-primary:hover{background:#12172b;} .ds-btn-primary:focus-visible{outline:2px solid #e0632b;outline-offset:2px;}"
+      "description": "The one orange action per view, navy text.",
+      "html": "<a class=\"s-btn s-btn-primary\" href=\"#\">Try it free</a>",
+      "css": ".s-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 'Hanken Grotesk',system-ui,sans-serif;padding:16px 24px;border-radius:10px;border:1px solid transparent;cursor:pointer;text-decoration:none;} .s-btn-primary{background:#e0632b;color:#12172b;} .s-btn-primary:hover{background:#ea7238;box-shadow:0 8px 20px rgba(224,99,43,.28);transform:translateY(-1px);}"
     },
     {
-      "name": "Accent Button",
+      "name": "Ghost Button",
       "kind": "button",
-      "refersTo": "button-accent",
-      "description": "Signal-colored action button with a hover lift.",
-      "html": "<button class=\"ds-btn ds-btn-accent\">Place order</button>",
-      "css": ".ds-btn-accent{background:#e0632b;border:1px solid #e0632b;border-radius:7px;color:#fff;font-size:13px;font-weight:500;padding:9px 16px;cursor:pointer;font-family:inherit;transition:transform .15s ease, box-shadow .15s ease;} .ds-btn-accent:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(224,99,43,.3);} .ds-btn-accent:focus-visible{outline:2px solid #12172b;outline-offset:2px;}"
-    },
-    {
-      "name": "Bold CTA (signature)",
-      "kind": "button",
-      "refersTo": "button-cta",
-      "description": "The one primary conversion action per landing page — navy-to-orange gradient pill with a tinted glow.",
-      "html": "<button class=\"ds-cta-bold\">Start earning — free →</button>",
-      "css": ".ds-cta-bold{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(100deg,#1c2340 0%,#a3441c 140%);color:#fff;font-weight:700;font-size:14.5px;padding:14px 24px;border-radius:99px;border:none;cursor:pointer;box-shadow:0 10px 26px rgba(163,68,28,.28);transition:transform .15s ease, box-shadow .15s ease;} .ds-cta-bold:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(163,68,28,.34);} .ds-cta-bold:focus-visible{outline:2px solid #fff;outline-offset:3px;}"
-    },
-    {
-      "name": "Outline Button",
-      "kind": "button",
-      "refersTo": "button-outline",
-      "description": "Neutral/secondary action; recolor border+text to Live Green or Alert Amber for approve/reject without a new variant.",
-      "html": "<button class=\"ds-btn ds-btn-outline\">Cancel</button>",
-      "css": ".ds-btn-outline{background:#fff;border:1px solid #c9cce0;border-radius:7px;color:#12172b;font-size:13px;font-weight:500;padding:9px 16px;cursor:pointer;font-family:inherit;} .ds-btn-outline:hover{border-color:#8388a0;} .ds-btn-outline.ds-approve{border-color:#1d7a4c;color:#1d7a4c;} .ds-btn-outline.ds-reject{border-color:#8f6118;color:#8f6118;}"
+      "refersTo": "button-ghost",
+      "description": "Secondary action, white with strong hairline.",
+      "html": "<a class=\"s-btn s-btn-ghost\" href=\"#\">See how it works</a>",
+      "css": ".s-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 'Hanken Grotesk',system-ui,sans-serif;padding:16px 24px;border-radius:10px;border:1px solid transparent;cursor:pointer;text-decoration:none;} .s-btn-ghost{background:#fff;color:#0f1428;border-color:#cdd2df;} .s-btn-ghost:hover{border-color:#0f1428;}"
     },
     {
       "name": "Text Input",
       "kind": "input",
-      "refersTo": null,
-      "description": "Standard field styling shared by inputs and selects.",
-      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"you@example.com\" />",
-      "css": ".ds-input{padding:9px 10px;border:1px solid #c9cce0;border-radius:7px;font-size:13px;font-family:inherit;background:#fff;color:#12172b;} .ds-input:focus{outline:2px solid #1c2340;outline-offset:1px;border-color:#1c2340;}"
+      "refersTo": "input",
+      "description": "Form field with navy focus ring.",
+      "html": "<input class=\"s-input\" type=\"text\" placeholder=\"Your post link\" />",
+      "css": ".s-input{width:100%;padding:13px 14px;font:16px/1.3 'Hanken Grotesk',system-ui,sans-serif;color:#0f1428;background:#fff;border:1px solid #cdd2df;border-radius:10px;} .s-input:focus{outline:none;border-color:#1c2340;box-shadow:0 0 0 4px rgba(28,35,64,.12);}"
     },
     {
-      "name": "Badge",
+      "name": "Chip",
       "kind": "chip",
-      "refersTo": "badge",
-      "description": "Pill status marker; recolor background/text with the soft/solid pair of a status color.",
-      "html": "<span class=\"ds-badge ds-badge-pending\">Pending review</span>",
-      "css": ".ds-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;background:#f4f5f9;color:#12172b;display:inline-block;} .ds-badge-pending{background:#fbf1de;color:#8f6118;} .ds-badge-verified{background:#e3f5ea;color:#1d7a4c;}"
+      "refersTo": "chip",
+      "description": "Toggle option; pressed state fills navy.",
+      "html": "<button class=\"s-chip\" aria-pressed=\"true\">Instagram</button>",
+      "css": ".s-chip{padding:10px 15px;font:600 15px 'Hanken Grotesk',system-ui,sans-serif;color:#0f1428;background:#fff;border:1px solid #cdd2df;border-radius:10px;cursor:pointer;} .s-chip[aria-pressed=true]{background:#1c2340;border-color:#1c2340;color:#fff;}"
     },
     {
-      "name": "Section Card",
+      "name": "Card",
       "kind": "card",
-      "refersTo": "card-surface",
-      "description": "The workhorse container — bordered white card with a bottom-ruled header row.",
-      "html": "<div class=\"ds-section\"><div class=\"ds-section-head\"><h2>How it works</h2><span class=\"ds-section-meta\">4 steps</span></div><div class=\"ds-section-body\">Content goes here.</div></div>",
-      "css": ".ds-section{background:#fff;border:1px solid #e3e5ee;border-radius:12px;overflow:hidden;} .ds-section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e3e5ee;} .ds-section-head h2{font-size:16px;font-weight:600;margin:0;color:#12172b;} .ds-section-meta{font-size:12px;color:#8388a0;} .ds-section-body{padding:20px;font-size:13px;color:#454b63;line-height:1.6;}"
+      "refersTo": "card",
+      "description": "White 16px card with hairline border.",
+      "html": "<div class=\"s-card\"><div class=\"s-card-title\">Build your order</div><div class=\"s-card-sub\">Pick what you need.</div></div>",
+      "css": ".s-card{background:#fff;border:1px solid #e4e7ee;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(15,20,40,.04);} .s-card-title{font:700 20px/1.25 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.015em;margin:0 0 4px;} .s-card-sub{font:14.5px 'Hanken Grotesk',system-ui,sans-serif;color:#485068;}"
     },
     {
-      "name": "Live Proof Widget (signature)",
+      "name": "Proof Card (signature)",
       "kind": "custom",
       "refersTo": null,
-      "description": "Floating, slightly-rotated card showing a live feed of activity — the clearest expression of the Live Trading Floor metaphor.",
-      "html": "<div class=\"ds-live-widget\"><div class=\"ds-live-tag\"><span class=\"ds-dot-live\"></span>Live payouts</div><div class=\"ds-feed-row\"><span><b>Tunde A.</b> got paid ₦4,200</span><span class=\"ds-t\">2m ago</span></div><div class=\"ds-feed-row\"><span><b>Chioma O.</b> got paid ₦2,850</span><span class=\"ds-t\">6m ago</span></div></div>",
-      "css": ".ds-live-widget{background:#f4f5f9;border:1px solid #e3e5ee;border-radius:16px;padding:20px 22px;box-shadow:0 24px 50px rgba(18,23,43,.10);transform:rotate(1deg);} .ds-live-tag{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#1d7a4c;margin-bottom:12px;text-transform:uppercase;} .ds-dot-live{width:6px;height:6px;border-radius:50%;background:#1d7a4c;box-shadow:0 0 0 0 rgba(29,122,76,.5);animation:dsPulseDot 1.8s infinite;flex-shrink:0;} @keyframes dsPulseDot{0%{box-shadow:0 0 0 0 rgba(29,122,76,.5);}70%{box-shadow:0 0 0 8px rgba(29,122,76,0);}100%{box-shadow:0 0 0 0 rgba(29,122,76,0);}} .ds-feed-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;font-size:12px;color:#454b63;border-bottom:1px solid #e3e5ee;} .ds-feed-row:last-child{border-bottom:none;} .ds-feed-row b{color:#12172b;font-weight:600;} .ds-feed-row .ds-t{color:#8388a0;white-space:nowrap;}"
+      "description": "Verification card floating over a hero photo; real rows or a clearly labelled example.",
+      "html": "<div class=\"s-proof\"><div class=\"s-proof-head\"><span class=\"s-dot\"></span>Live verification</div><div class=\"s-proof-row\"><span><b>Instagram like</b> verified</span><time>2 min ago</time></div></div>",
+      "css": ".s-proof{background:#fff;border:1px solid #e4e7ee;border-radius:16px;padding:16px 18px;box-shadow:0 18px 40px rgba(15,20,40,.14);font:14px 'Hanken Grotesk',system-ui,sans-serif;color:#0f1428;} .s-proof-head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px;} .s-dot{width:8px;height:8px;border-radius:50%;background:#1d7a4c;} .s-proof-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #e4e7ee;} .s-proof-row time{color:#646b82;font-size:13px;}"
+    },
+    {
+      "name": "FAQ Item",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Hairline-ruled accordion row with rotating plus.",
+      "html": "<div class=\"s-faq-item\"><button class=\"s-faq-q\">Are these real people?<span class=\"plus\">+</span></button></div>",
+      "css": ".s-faq-item{border-top:1px solid #cdd2df;} .s-faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;text-align:left;background:none;border:0;padding:22px 0;font:600 18px/1.35 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.01em;color:#0f1428;cursor:pointer;} .s-faq-q .plus{width:28px;height:28px;border:1px solid #cdd2df;border-radius:50%;display:grid;place-items:center;}"
     }
-  ],
-  "narrative": {
-    "northStar": "The Live Trading Floor",
-    "overview": "Primeloop's interface reads like a floor where real money and real proof move in real time: a pulsing live dot, tabular numbers that tick like a ticker, monospace feed rows that log exactly what just happened, and a deep navy trust bar that anchors the noise. Against that live-data texture sits a warmer, editorial layer — a serif display headline, rounded pill CTAs, soft gradients — so the system feels approachable to a first-time engager on a budget phone, not just precise enough for a client trusting it with a payment. Warm and credible, never cold or corporate; never playful or bot-panel-garish.\n\nThe system explicitly rejects: flat corporate SaaS sterility, novelty/cartoonish decoration, and anything that reads like the bot-panel competitors Primeloop is positioned against (loud, salesy, fake-urgency styling).",
-    "keyCharacteristics": [
-      "Deep navy authority paired with a warm orange signal color used sparingly for action and confirmation.",
-      "Monospace typography marks anything \"live\" or data-like — feed rows, task IDs, eyebrow labels, timestamps.",
-      "Fraunces serif carries the one or two big editorial moments per page (hero headline, a quoted testimonial).",
-      "Cards are calm and mostly flat at rest; depth is used more deliberately going forward to lift primary and floating elements.",
-      "No red/danger color exists in the system — negative or reject actions use the amber alert token, never a separate error red."
-    ],
-    "rules": [
-      { "name": "The No-Red Rule", "body": "Negative, rejecting, or cautionary states are always Alert Amber, never a separate red.", "section": "colors" },
-      { "name": "The Signal, Not Surface Rule", "body": "Signal Orange marks actions and confirmations; it never becomes a large background fill.", "section": "colors" },
-      { "name": "The Mono-Means-Live Rule", "body": "Monospace is never used for regular prose or headings — only for timestamped, logged, or numeric \"this actually happened\" content.", "section": "typography" }
-    ],
-    "dos": [
-      "Do reserve Signal Orange for actions and confirmations — buttons, small accents, glows — never a large background fill.",
-      "Do use IBM Plex Mono only for live/logged/numeric content, never for headings or prose.",
-      "Do design mobile-first: verify every new component at the ≤700px breakpoint before treating desktop as done.",
-      "Do lean toward a soft, deliberate shadow lift on primary/important surfaces rather than staying flat-by-default.",
-      "Do use the .section / .section-head bordered-card-with-ruled-header pattern for new dashboard or content blocks."
-    ],
-    "donts": [
-      "Don't introduce a red/danger color for negative or reject states — use Alert Amber.",
-      "Don't use heavy drop shadows, hard black shadows, or sharp square corners.",
-      "Don't let the interface read as loud, salesy, or bot-panel-garish.",
-      "Don't add a new font family."
-    ]
-  }
+  ]
 }

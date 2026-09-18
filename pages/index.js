@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Logo from '../components/Logo';
-import WhatsAppButton from '../components/WhatsAppButton';
-import Faq from '../components/Faq';
-import StickyCta from '../components/StickyCta';
-import CheckIcon from '../components/CheckIcon';
-import StarRating from '../components/StarRating';
-import { timeAgo, isFresh } from '../lib/timeAgo';
+import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/SiteFooter';
+import SiteFaq from '../components/SiteFaq';
+import SiteSticky from '../components/SiteSticky';
+import SiteWhatsApp from '../components/SiteWhatsApp';
+import Photo from '../components/Photo';
+import ProofCard from '../components/ProofCard';
+import { Check, Cross, Arrow } from '../components/SiteIcons';
 import { useMinPrice } from '../lib/useMinPrice';
 import { linkMatchesPlatform, isKnownPlatform, normalizeLink, platformLabel, linkMismatchMessage, PLATFORM_DOMAINS } from '../lib/platformDomains';
 
@@ -36,6 +37,20 @@ const FAQ_ITEMS = [
   },
 ];
 
+const STEPS = [
+  { t: 'Choose what you need', d: 'Pick a platform, paste your post link and choose likes, comments, shares or follows.' },
+  { t: 'Real people do it', d: 'Verified engagers get an alert and complete each task from their own phones and accounts.' },
+  { t: 'Every one is checked', d: 'Each engager uploads a screenshot. It is checked automatically for the real action and for duplicates.' },
+];
+
+const COMPARE = [
+  ['Who does the engagement', 'Real, verified people', 'Automated or fake accounts'],
+  ['Flagging risk to your account', 'Behaves like real activity', 'A detectable pattern'],
+  ['Proof it happened', 'A screenshot, checked automatically', 'None'],
+  ['Progress tracking', 'A live dashboard', '"Trust us"'],
+  ['Undelivered portion', 'Refunded', 'Rarely, if ever'],
+];
+
 export default function ClientLanding() {
   const router = useRouter();
   const minPrice = useMinPrice();
@@ -51,7 +66,6 @@ export default function ClientLanding() {
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [showVerifyInfo, setShowVerifyInfo] = useState(false);
   const [activity, setActivity] = useState([]);
 
   useEffect(() => {
@@ -158,304 +172,266 @@ export default function ClientLanding() {
         <meta name="twitter:image" content="https://primeloop.app/og-image.png" />
         <link rel="canonical" href="https://primeloop.app/" />
       </Head>
-    <div className="app has-sticky-cta">
-      <div className="fade-in" style={{ marginBottom: 18 }}><Logo size={36} /></div>
+      <div className="site has-sticky">
+        <SiteHeader
+          cta={trialOpen ? { href: '/try', label: 'Try it free' } : { href: '#order', label: 'Order now' }}
+        />
 
-      <div className="hero2 fade-in-delay-1">
-        <div>
-          <h1>Real engagement, watched in real time.</h1>
-          <p className="lead">
-            Built for creators and businesses tired of bot panels that get pages flagged. No bots,
-            no fake accounts — every like, comment and share comes from a trained, verified
-            Nigerian engager, and you watch it happen live.
-          </p>
-          <div className="hero2-ctas">
-            {trialOpen ? (
-              <>
-                <a href="/try" className="cta-bold">Try it free — 5 likes + 2 comments →</a>
-                <a href="#order" className="cta-ghost2">Or order now{minPrice ? ` — from ₦${minPrice}` : ''}</a>
-              </>
-            ) : (
-              <a href="#order" className="cta-bold">Get engagement{minPrice ? ` — from ₦${minPrice}` : ''} →</a>
-            )}
-            <button className="cta-ghost2" onClick={() => setShowVerifyInfo(true)}>How verification works</button>
-          </div>
-        </div>
-        <div className="hero2-widget">
-          <div className={`live-tag${activity.length && isFresh(activity[0].at) ? '' : ' stale'}`}>
-            <span className="dot-live" />
-            {activity.length && isFresh(activity[0].at) ? 'Live activity' : 'Recent activity'}
-          </div>
-          {activity.length === 0 && (
-            <div className="feed-row example">
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <CheckIcon size={11} color="var(--ink-mute)" />
-                <i>Example — Instagram comment verified</i>
-              </span>
-              <span className="t">e.g. 3m ago</span>
+        <main>
+          <section className="s-hero">
+            <div className="s-wrap s-hero-grid">
+              <div className="s-hero-copy">
+                <h1 className="s-h1">Real engagement, watched in real time.</h1>
+                <p className="s-lead">
+                  Built for creators and businesses tired of bot panels that get pages flagged. Every
+                  like, comment and share comes from a trained, verified Nigerian engager, and you
+                  watch it happen live.
+                </p>
+                <div className="s-cta-row">
+                  {trialOpen ? (
+                    <>
+                      <a href="/try" className="s-btn s-btn-primary">Try it free: 5 likes + 2 comments <Arrow /></a>
+                      <a href="#order" className="s-link">Or order now{minPrice ? ` from ₦${minPrice}` : ''}</a>
+                    </>
+                  ) : (
+                    <a href="#order" className="s-btn s-btn-primary">Get engagement{minPrice ? ` from ₦${minPrice}` : ''} <Arrow /></a>
+                  )}
+                </div>
+                <ul className="s-assure">
+                  <li><Check color="var(--good)" />Verified people, never bots</li>
+                  <li><Check color="var(--good)" />A screenshot behind every one</li>
+                  <li><Check color="var(--good)" />Refund on anything undelivered</li>
+                </ul>
+              </div>
+              <div className="s-photo">
+                <Photo
+                  name="client-owner"
+                  width={1200}
+                  height={1800}
+                  priority
+                  position="50% 30%"
+                  alt="A smiling man in a grey shirt, arms folded, standing outside a venue in Nigeria"
+                  sizes="(max-width: 860px) 100vw, 460px"
+                />
+                <ProofCard kind="activity" rows={activity} exampleText="Instagram comment verified" exampleWhen="e.g. 3m ago" />
+              </div>
             </div>
-          )}
-          {activity.map((a, i) => (
-            <div className="feed-row" key={i}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <CheckIcon size={11} color="var(--good)" />
-                <b>{a.platform[0].toUpperCase() + a.platform.slice(1)} {a.action}</b>&nbsp;verified
-              </span>
-              <span className="t">{timeAgo(a.at)}</span>
+          </section>
+
+          <section className="s-section s-section-tint" id="how">
+            <div className="s-wrap">
+              <div className="s-section-head">
+                <h2 className="s-h2">How it works</h2>
+                <p>Three steps between your post and real people engaging with it.</p>
+              </div>
+              <ol className="s-steps" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                {STEPS.map((st, i) => (
+                  <li className="s-step" key={st.t}>
+                    <div className="s-step-n s-num">{i + 1}</div>
+                    <h3 className="s-h3">{st.t}</h3>
+                    <p>{st.d}</p>
+                  </li>
+                ))}
+              </ol>
             </div>
-          ))}
-        </div>
-      </div>
+          </section>
 
-      <div className="trust-bar2 fade-in-delay-2">
-        <div className="stat"><div className="n">100%</div><div className="l">Money-back guarantee</div></div>
-        <div className="stat"><div className="n">4–12 min</div><div className="l">To first engagement</div></div>
-        <div className="stat"><div className="n">5</div><div className="l">Platforms live</div></div>
-        <div className="badges">
-          <div className="badge"><CheckIcon size={11} color="var(--good)" />Paystack secured</div>
-          <div className="badge"><CheckIcon size={11} color="var(--good)" />Verified engagers only</div>
-        </div>
-      </div>
-
-      {showVerifyInfo && (
-        <div className="section" style={{ padding: 20, background: 'var(--paper)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <h3 style={{ margin: '0 0 14px', fontSize: 16 }}>How verification works</h3>
-            <button className="btn" style={{ fontSize: 11.5 }} onClick={() => setShowVerifyInfo(false)}>Close</button>
-          </div>
-          <div className="step-row"><div className="step-num">1</div><div><strong>Engager completes your task</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>A real, trained engager account does the action.</div></div></div>
-          <div className="step-row"><div className="step-num">2</div><div><strong>Screenshot proof submitted</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Uploaded straight from their device.</div></div></div>
-          <div className="step-row"><div className="step-num">3</div><div><strong>Checked automatically</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Confirms the action was really done on your post and screens for duplicates.</div></div></div>
-          <div className="step-row"><div className="step-num">4</div><div><strong>You watch it happen live</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Your progress updates in real time as engagements are approved.</div></div></div>
-        </div>
-      )}
-
-      <div className="case-study fade-in-delay-2">
-        <p className="quote">"Grew from 340 to 1,200 followers in three weeks. No warning, no drop-off after — because it was never fake to begin with."</p>
-        <div className="who">— Chidinma O., skincare brand</div>
-      </div>
-
-      <div className="proof-strip fade-in-delay-3">
-        <div className="proof-card">
-          <StarRating />
-          <div className="quote">"Comments looked genuinely like customers, not spam."</div>
-          <div className="who">Chidinma O., skincare brand</div>
-        </div>
-        <div className="proof-card">
-          <StarRating />
-          <div className="quote">"I can actually see the progress bar move instead of just hoping it's working."</div>
-          <div className="who">Tunde A., content creator</div>
-        </div>
-        <div className="proof-card">
-          <StarRating />
-          <div className="quote">"Switched from a bot panel after a page warning. No issues since."</div>
-          <div className="who">Grace E., small business owner</div>
-        </div>
-      </div>
-
-      <div className="section" id="order">
-        <div className="section-head">
-          <h2>Build your order</h2>
-        </div>
-        <div style={{ padding: 20 }}>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-            {PLATFORMS.map((p) => (
-              <button
-                key={p}
-                className="btn"
-                style={p === platform ? { background: 'var(--navy)', color: '#fff' } : {}}
-                onClick={() => setPlatform(p)}
-              >
-                {platformLabel(p)}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label htmlFor="client-email" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>Your email</label>
-            <input
-              id="client-email"
-              type="email"
-              style={{ width: '100%' }}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              autoComplete="email"
-              autoCapitalize="none"
-              inputMode="email"
-            />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="post-link" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
-              {hasFollowSelected ? 'Post or profile link' : 'Post link'}
-            </label>
-            <input
-              id="post-link"
-              style={{ width: '100%', ...(postLinkError ? { borderColor: 'var(--warn)' } : {}) }}
-              value={postLink}
-              onChange={(e) => setPostLink(e.target.value)}
-              placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/...`}
-              inputMode="url"
-              autoCapitalize="none"
-              autoCorrect="off"
-              aria-invalid={!!postLinkError}
-              aria-describedby={postLinkError ? 'post-link-error' : hasFollowSelected ? 'post-link-hint' : undefined}
-            />
-            {postLinkError && (
-              <p id="post-link-error" style={{ color: 'var(--warn)', fontSize: 11.5, marginTop: 5 }}>
-                {postLinkError}
-              </p>
-            )}
-            {!postLinkError && hasFollowSelected && (
-              <p id="post-link-hint" style={{ color: 'var(--ink-soft)', fontSize: 11.5, marginTop: 5 }}>
-                For {platform === 'youtube' ? 'subscribers' : 'follows'}, paste your profile link (like{' '}
-                {platform === 'youtube' ? 'youtube.com/@yourchannel' : `${PLATFORM_DOMAINS[platform][0]}/yourname`}) so each
-                engager only follows you once.
-              </p>
-            )}
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="extra-instructions" style={{ fontSize: 12.5, display: 'block', marginBottom: 5 }}>
-              Extra instructions <span style={{ color: 'var(--ink-mute)', fontWeight: 400 }}>(optional)</span>
-            </label>
-            <textarea
-              id="extra-instructions"
-              style={{ width: '100%', minHeight: 70, fontFamily: 'inherit', fontSize: 13, padding: '9px 10px', border: '1px solid var(--line-strong)', borderRadius: 7, boxSizing: 'border-box' }}
-              value={specialInstructions}
-              onChange={(e) => setSpecialInstructions(e.target.value)}
-              placeholder="e.g. comments should mention the product name, or focus on the first photo in the carousel"
-            />
-          </div>
-
-          {rules.map((r) => (
-            <div key={r.action} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line)', flexWrap: 'wrap' }}>
-              <input
-                id={`engage-${r.action}`}
-                type="checkbox"
-                checked={!!selected[r.action]?.checked}
-                onChange={(e) =>
-                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], checked: e.target.checked } }))
-                }
-              />
-              <label htmlFor={`engage-${r.action}`} style={{ flex: 1, textTransform: 'capitalize', cursor: 'pointer' }}>{r.action}</label>
-              <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>₦{r.client_price}/unit</div>
-              <input
-                type="number"
-                min="1"
-                aria-label={`${r.action} quantity`}
-                style={{ width: 70 }}
-                value={selected[r.action]?.qty || 30}
-                onChange={(e) =>
-                  setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } }))
-                }
-              />
+          <section className="s-band">
+            <div className="s-wrap">
+              <div className="s-section-head">
+                <h2 className="s-h2">Real people, not a bot panel</h2>
+                <p>Bot panels sell numbers. Primeloop sells engagement you can check.</p>
+              </div>
+              <table className="s-compare">
+                <thead>
+                  <tr>
+                    <th scope="col"><span className="s-sr">Feature</span></th>
+                    <th scope="col" className="us">Primeloop</th>
+                    <th scope="col" className="them">Typical bot panel</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARE.map(([k, us, them]) => (
+                    <tr key={k}>
+                      <th scope="row">{k}</th>
+                      <td className="us" data-label="Primeloop"><span className="cell"><Check size={16} color="#7fe0a8" />{us}</span></td>
+                      <td className="them" data-label="Typical bot panel"><span className="cell"><Cross size={16} color="#8f97c4" />{them}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          </section>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 18 }}>
-            <div style={{ fontSize: 24, fontWeight: 600 }}>₦{total.toLocaleString()}</div>
-            <button
-              className="btn accent"
-              onClick={checkout}
-              disabled={loading || !canCheckout}
-              style={!canCheckout ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
-            >
-              {loading ? 'Redirecting...' : 'Pay with Paystack'}
-            </button>
-          </div>
-          {errorMsg && <p style={{ color: 'var(--warn)', fontSize: 13, marginTop: 10 }}>{errorMsg}</p>}
-          <p style={{ fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 10, textAlign: 'right' }}>
-            Undelivered after 5 days? Full refund for that portion — no questions asked.
-          </p>
-          {trialOpen && (
-            <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)', textAlign: 'center' }}>
-              Not ready to pay yet? <a href="/try" style={{ color: 'var(--navy)', fontWeight: 600 }}>Try 5 likes + 2 comments free first →</a>
-            </p>
-          )}
-        </div>
+          <section className="s-section" id="order">
+            <div className="s-wrap s-builder">
+              <div className="s-builder-copy">
+                <h2 className="s-h2">Build your order</h2>
+                <p>Choose the platform and the engagement you want. You only pay for what you pick, and you see the total before you go to Paystack.</p>
+                <ul>
+                  <li><Check color="var(--good)" />Paid securely with Paystack</li>
+                  <li><Check color="var(--good)" />Live tracking from your dashboard</li>
+                  <li><Check color="var(--good)" />Undelivered after 5 days? Refunded for that portion</li>
+                </ul>
+                <p className="s-small" style={{ marginTop: 26 }}>
+                  Already ordered? <a href="/client-login" className="s-link">Track your order</a>
+                </p>
+              </div>
+
+              <div className="s-card s-card-lift">
+                <div className="s-field">
+                  <span className="s-label" id="platform-label">Platform</span>
+                  <div className="s-chips" role="group" aria-labelledby="platform-label">
+                    {PLATFORMS.map((p) => (
+                      <button key={p} type="button" className="s-chip" aria-pressed={p === platform} onClick={() => setPlatform(p)}>
+                        {platformLabel(p)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="s-field">
+                  <label className="s-label" htmlFor="client-email">Your email</label>
+                  <input
+                    id="client-email"
+                    type="email"
+                    className="s-input"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    inputMode="email"
+                  />
+                </div>
+
+                <div className="s-field">
+                  <label className="s-label" htmlFor="post-link">{hasFollowSelected ? 'Post or profile link' : 'Post link'}</label>
+                  <input
+                    id="post-link"
+                    className={`s-input${postLinkError ? ' is-bad' : ''}`}
+                    value={postLink}
+                    onChange={(e) => setPostLink(e.target.value)}
+                    placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/...`}
+                    inputMode="url"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    aria-invalid={!!postLinkError}
+                    aria-describedby={postLinkError ? 'post-link-error' : hasFollowSelected ? 'post-link-hint' : undefined}
+                  />
+                  {postLinkError && <p id="post-link-error" className="s-error">{postLinkError}</p>}
+                  {!postLinkError && hasFollowSelected && (
+                    <p id="post-link-hint" className="s-hint">
+                      For {platform === 'youtube' ? 'subscribers' : 'follows'}, paste your profile link (like{' '}
+                      {platform === 'youtube' ? 'youtube.com/@yourchannel' : `${PLATFORM_DOMAINS[platform][0]}/yourname`}) so each
+                      engager only follows you once.
+                    </p>
+                  )}
+                </div>
+
+                <div className="s-field">
+                  <label className="s-label" htmlFor="extra-instructions">
+                    Extra instructions <span className="s-muted" style={{ fontWeight: 400 }}>(optional)</span>
+                  </label>
+                  <textarea
+                    id="extra-instructions"
+                    className="s-input"
+                    value={specialInstructions}
+                    onChange={(e) => setSpecialInstructions(e.target.value)}
+                    placeholder="e.g. comments should mention the product name, or focus on the first photo in the carousel"
+                  />
+                </div>
+
+                <div>
+                  {rules.map((r) => (
+                    <div className="s-eng" key={r.action}>
+                      <input
+                        id={`engage-${r.action}`}
+                        type="checkbox"
+                        checked={!!selected[r.action]?.checked}
+                        onChange={(e) =>
+                          setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], checked: e.target.checked } }))
+                        }
+                      />
+                      <label htmlFor={`engage-${r.action}`}>{r.action}</label>
+                      <div className="price">₦{r.client_price}/unit</div>
+                      <input
+                        type="number"
+                        min="1"
+                        className="s-input"
+                        aria-label={`${r.action} quantity`}
+                        style={{ padding: '9px 10px' }}
+                        value={selected[r.action]?.qty || 30}
+                        onChange={(e) =>
+                          setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } }))
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="s-total">
+                  <div>
+                    <div className="label">Total</div>
+                    <div className="amt">₦{total.toLocaleString()}</div>
+                  </div>
+                  <button className="s-btn s-btn-primary" onClick={checkout} disabled={loading || !canCheckout}>
+                    {loading ? 'Redirecting...' : 'Pay with Paystack'}
+                  </button>
+                </div>
+                {errorMsg && <p className="s-error" role="alert">{errorMsg}</p>}
+                <p className="s-note">Undelivered after 5 days? Full refund for that portion — no questions asked.</p>
+                {trialOpen && (
+                  <p className="s-alt">
+                    Not ready to pay yet? <a href="/try" className="s-link">Try 5 likes + 2 comments free first</a>
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section className="s-section s-section-tint" id="faq">
+            <div className="s-wrap s-faq-wrap">
+              <div className="s-faq-side">
+                <h2 className="s-h2">Questions before you order</h2>
+                <p>Can&apos;t find your answer? Message an admin on WhatsApp and a person will reply.</p>
+              </div>
+              <SiteFaq items={FAQ_ITEMS} />
+            </div>
+          </section>
+
+          <section className="s-section">
+            <div className="s-wrap">
+              <div className="s-cross">
+                <div className="s-cross-copy">
+                  <h2 className="s-h2">Want to earn instead?</h2>
+                  <p>Engagers are paid every Friday, straight to a bank account or Opay, for likes, comments, shares and follows they complete from their own phones.</p>
+                  <a href="/join" className="s-btn s-btn-navy">See how engagers earn <Arrow /></a>
+                </div>
+                <Photo
+                  name="engager-corper"
+                  width={1200}
+                  height={1800}
+                  position="50% 30%"
+                  alt="A young person in a green and white uniform checking their phone on a street in Nigeria"
+                  sizes="(max-width: 860px) 100vw, 40vw"
+                />
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <SiteFooter />
+
+        <SiteWhatsApp avoidSelectors={['#order .s-card']} />
+        <SiteSticky
+          label={total > 0 ? `₦${total.toLocaleString()}` : trialOpen ? '5 likes + 2 comments' : minPrice ? `From ₦${minPrice}/unit` : 'Real engagement'}
+          sublabel={total > 0 ? 'Your order' : trialOpen ? 'Free trial' : 'Real engagement'}
+          href={total > 0 || !trialOpen ? '#order' : '/try'}
+          cta={total > 0 || !trialOpen ? 'Get started' : 'Try it free'}
+          hideNearId="order"
+        />
       </div>
-
-      <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--ink-mute)', marginTop: 10 }}>
-        Already ordered? <a href="/client-login" style={{ color: 'var(--navy)' }}>Track your order</a>
-      </p>
-
-      <div className="section" style={{ marginTop: 20 }}>
-        <div className="section-head"><h2>Real people, not a bot panel</h2></div>
-        <div style={{ padding: 20 }} className="compare-wrap">
-          <div className="compare-hint">Swipe to see the full comparison →</div>
-          <table className="compare-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th className="col-us">Primeloop</th>
-                <th>Typical bot panel</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Who does the engagement</td>
-                <td className="col-us yes">Real, verified people</td>
-                <td className="no">Automated / fake accounts</td>
-              </tr>
-              <tr>
-                <td>Flagging risk to your account</td>
-                <td className="col-us yes">Behaves like real activity</td>
-                <td className="no">Detectable pattern</td>
-              </tr>
-              <tr>
-                <td>Proof it happened</td>
-                <td className="col-us yes">Screenshot, checked automatically</td>
-                <td className="no">None</td>
-              </tr>
-              <tr>
-                <td>Progress tracking</td>
-                <td className="col-us yes">Live dashboard</td>
-                <td className="no">"Trust us"</td>
-              </tr>
-              <tr>
-                <td>Undelivered portion</td>
-                <td className="col-us yes">Refunded</td>
-                <td className="no">Rarely, if ever</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="section" id="faq" style={{ marginTop: 20 }}>
-        <div className="section-head"><h2>Questions before you order</h2></div>
-        <div style={{ padding: '4px 20px 8px' }}>
-          <Faq items={FAQ_ITEMS} />
-        </div>
-      </div>
-
-      <a
-        href="/join"
-        className="section"
-        style={{
-          display: 'block', padding: '18px 20px', marginTop: 20, textDecoration: 'none',
-          background: 'var(--navy)', color: '#fff', textAlign: 'center',
-        }}
-      >
-        <strong>Want to be an engager and earn money instead?</strong>
-        <div style={{ fontSize: 12.5, color: 'var(--label-on-navy)', marginTop: 4 }}>Join 1,200+ people earning from their phone →</div>
-      </a>
-
-      <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
-        <a href="/terms" style={{ color: 'var(--ink-soft)' }}>Terms</a> ·{' '}
-        <a href="/privacy" style={{ color: 'var(--ink-soft)' }}>Privacy</a> ·{' '}
-        <a href="/refund-policy" style={{ color: 'var(--ink-soft)' }}>Refund Policy</a>
-      </p>
-
-      <WhatsAppButton avoidSelectors={['#order', '#faq']} />
-      <StickyCta
-        label={total > 0 ? `₦${total.toLocaleString()}` : trialOpen ? '5 likes + 2 comments' : minPrice ? `From ₦${minPrice}/unit` : 'Real engagement'}
-        sublabel={total > 0 ? 'Your order' : trialOpen ? 'Free trial' : 'Real engagement'}
-        href={total > 0 || !trialOpen ? '#order' : '/try'}
-        cta={total > 0 || !trialOpen ? 'Get started →' : 'Try it free →'}
-        hideNearId="order"
-      />
-    </div>
     </>
   );
 }

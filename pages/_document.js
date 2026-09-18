@@ -10,11 +10,11 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link rel="icon" type="image/svg+xml" href={FAVICON} />
-        <meta name="theme-color" content="#1c2340" />
+        <meta name="theme-color" content="#ffffff" />
         <meta name="google-site-verification" content="ILiN2IyHcGSQ21BzoZryhF0El3Txef9QBwTY9VCft6o" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Hanken+Grotesk:wght@400..700&display=swap" />
       </Head>
       <body>
         <Main />

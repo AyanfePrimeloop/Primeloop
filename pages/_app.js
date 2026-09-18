@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import '../styles/site.css';
 import { Analytics } from '@vercel/analytics/react';
 import Script from 'next/script';
 import Head from 'next/head';

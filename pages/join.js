@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Logo from '../components/Logo';
-import WhatsAppButton from '../components/WhatsAppButton';
-import Faq from '../components/Faq';
-import StickyCta from '../components/StickyCta';
-import CheckIcon from '../components/CheckIcon';
-import { timeAgo, isFresh } from '../lib/timeAgo';
+import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/SiteFooter';
+import SiteFaq from '../components/SiteFaq';
+import SiteSticky from '../components/SiteSticky';
+import SiteWhatsApp from '../components/SiteWhatsApp';
+import Photo from '../components/Photo';
+import ProofCard from '../components/ProofCard';
+import { Check, Arrow } from '../components/SiteIcons';
 
 const FAQ_ITEMS = [
   {
     q: 'Is this actually legit? How do I know I’ll get paid?',
-    a: 'Payouts run automatically every Friday to your bank account or Opay — no chasing anyone for money. 1,200+ people are already earning this way, and any payout you see above is a real, recent transfer, not a made-up example.',
+    a: 'Payouts run automatically every Friday to your bank account or Opay, so there is no chasing anyone for money. When real payouts have gone out recently they appear in the card at the top of this page; until then it shows a clearly labelled example.',
   },
   {
     q: 'Do I need a big following or a professional account?',
@@ -19,7 +21,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How much can I realistically earn?',
-    a: 'It depends on how many tasks you do and your tier — Gold and Platinum engagers earn more per task. Use the calculator below for a realistic weekly estimate based on your own pace.',
+    a: 'It depends on how many tasks you do and your tier — Gold and Platinum engagers earn more per task. Use the calculator on this page for a realistic weekly estimate based on your own pace.',
   },
   {
     q: 'What if my proof gets rejected?',
@@ -29,6 +31,13 @@ const FAQ_ITEMS = [
     q: 'Is there any cost to join?',
     a: 'None. Registration is free, and your account activates immediately after you pass a short onboarding test for each platform you want to work on.',
   },
+];
+
+const STEPS = [
+  { t: 'Register in 2 minutes', d: 'Your name, WhatsApp number, and the platforms you use.' },
+  { t: 'Pass a quick onboarding test', d: 'One test task per platform confirms your account.' },
+  { t: 'Do tasks, upload proof', d: 'A quick screenshot. Most are checked in seconds.' },
+  { t: 'Get paid every Friday', d: 'Straight to your bank or Opay, automatically.' },
 ];
 
 export default function JoinAsEngager() {
@@ -52,7 +61,7 @@ export default function JoinAsEngager() {
         <title>Earn Money Online in Nigeria — Join Primeloop as an Engager</title>
         <meta name="description" content="Earn from your phone doing tasks you already do — like, comment, share and follow on Facebook, Instagram, TikTok, YouTube and X. Paid every Friday, no experience needed." />
         <meta property="og:title" content="Earn Money From Your Phone — Join Primeloop" />
-        <meta property="og:description" content="1,200+ people already earning weekly payouts. Register in 2 minutes, no startup cost." />
+        <meta property="og:description" content="Weekly payouts every Friday. Register in 2 minutes, no startup cost." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://primeloop.app/join" />
         <meta property="og:image" content="https://primeloop.app/og-image-join.png" />
@@ -62,148 +71,146 @@ export default function JoinAsEngager() {
         <meta name="twitter:image" content="https://primeloop.app/og-image-join.png" />
         <link rel="canonical" href="https://primeloop.app/join" />
       </Head>
-    <div className="app has-sticky-cta">
-      <div className="fade-in" style={{ marginBottom: 18 }}><Logo size={36} /></div>
+      <div className="site has-sticky">
+        <SiteHeader
+          cta={{ href: signupHref, label: 'Start earning' }}
+          links={[
+            { href: '#how', label: 'How it works' },
+            { href: '#earnings', label: 'Earnings' },
+            { href: '/', label: 'Buy engagement' },
+          ]}
+        />
 
-      <div className="hero2 fade-in-delay-1">
-        <div>
-          <h1>Earn from your phone. Watch the payouts roll in.</h1>
-          <p className="lead">
-            Like, comment, share and follow on tasks you already do. Paid every Friday, straight
-            to your bank or Opay — no experience, no startup cost.
-          </p>
-          <div className="hero2-ctas">
-            <a href="#signup" className="cta-bold">Start earning — free →</a>
-            <a className="cta-ghost2" href="#how">See how payouts work</a>
-          </div>
-        </div>
-        <div className="hero2-widget">
-          <div className={`live-tag${payouts.length && isFresh(payouts[0].at) ? '' : ' stale'}`}>
-            <span className="dot-live" />
-            {payouts.length && isFresh(payouts[0].at) ? 'Live payouts' : 'Recent payouts'}
-          </div>
-          {payouts.length === 0 && (
-            <div className="feed-row example">
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <CheckIcon size={11} color="var(--ink-mute)" />
-                <i>Example — ₦4,200 paid to an engager</i>
-              </span>
-              <span className="t">e.g. last Friday</span>
-            </div>
-          )}
-          {payouts.map((p, i) => (
-            <div className="feed-row" key={i}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <CheckIcon size={11} color="var(--good)" />
-                <b>₦{p.amount.toLocaleString()}</b>&nbsp;paid to {p.name}
-              </span>
-              <span className="t">{timeAgo(p.at)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="trust-bar2 fade-in-delay-2">
-        <div className="stat"><div className="n">Weekly</div><div className="l">Payouts, every Friday</div></div>
-        <div className="stat"><div className="n">₦0</div><div className="l">To get started</div></div>
-        <div className="stat"><div className="n">2 min</div><div className="l">To register</div></div>
-        <div className="badges">
-          <div className="badge"><CheckIcon size={11} color="var(--good)" />1,200+ already earning</div>
-          <div className="badge"><CheckIcon size={11} color="var(--good)" />Bank or Opay</div>
-          <div className="badge"><CheckIcon size={11} color="var(--good)" />No experience needed</div>
-        </div>
-      </div>
-
-      <div className="case-study fade-in-delay-2">
-        <p className="quote">"Got my first payout the same week I signed up. Didn't believe it was real until the alert came in."</p>
-        <div className="who">— Tunde A., engager since March</div>
-      </div>
-
-      <div className="grid-main-side">
-        <div>
-          <div className="section" id="how">
-            <div className="section-head"><h2>How it works</h2></div>
-            <div style={{ padding: '4px 20px' }}>
-              <div className="step-row">
-                <div className="step-num">1</div>
-                <div><strong>Register in 2 minutes</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Your name, WhatsApp number, and the platforms you use.</div></div>
+        <main>
+          <section className="s-hero">
+            <div className="s-wrap s-hero-grid">
+              <div className="s-hero-copy">
+                <h1 className="s-h1">Earn from your phone. Watch the payouts roll in.</h1>
+                <p className="s-lead">
+                  Like, comment, share and follow on tasks you already do. Paid every Friday, straight
+                  to your bank or Opay — no experience, no startup cost.
+                </p>
+                <div className="s-cta-row">
+                  <a href="#signup" className="s-btn s-btn-primary">Start earning free <Arrow /></a>
+                  <a href="#how" className="s-link">See how payouts work</a>
+                </div>
+                <ul className="s-assure">
+                  <li><Check color="var(--good)" />Paid every Friday</li>
+                  <li><Check color="var(--good)" />Bank or Opay</li>
+                  <li><Check color="var(--good)" />No experience needed</li>
+                </ul>
               </div>
-              <div className="step-row">
-                <div className="step-num">2</div>
-                <div><strong>Pass a quick onboarding test</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>One test task per platform confirms your account.</div></div>
-              </div>
-              <div className="step-row">
-                <div className="step-num">3</div>
-                <div><strong>Do tasks, upload proof</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>A quick screenshot. Most are checked in seconds.</div></div>
-              </div>
-              <div className="step-row">
-                <div className="step-num">4</div>
-                <div><strong>Get paid every Friday</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Straight to your bank or Opay, automatically.</div></div>
+              <div className="s-photo">
+                <Photo
+                  name="engager-phone"
+                  width={1200}
+                  height={1500}
+                  priority
+                  position="50% 40%"
+                  alt="A young man in a grey t-shirt smiling at his phone against a plain wall"
+                  sizes="(max-width: 860px) 100vw, 460px"
+                />
+                <ProofCard kind="payouts" rows={payouts} exampleText="₦4,200 paid to an engager" exampleWhen="e.g. last Friday" />
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="section" id="faq">
-            <div className="section-head"><h2>Questions before you join</h2></div>
-            <div style={{ padding: '4px 20px 8px' }}>
-              <Faq items={FAQ_ITEMS} />
+          <section className="s-section s-section-tint" id="how">
+            <div className="s-wrap">
+              <div className="s-section-head">
+                <h2 className="s-h2">How it works</h2>
+                <p>From sign-up to your first payout, in four steps.</p>
+              </div>
+              <ol className="s-steps four" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                {STEPS.map((st, i) => (
+                  <li className="s-step" key={st.t}>
+                    <div className="s-step-n s-num">{i + 1}</div>
+                    <h3 className="s-h3">{st.t}</h3>
+                    <p>{st.d}</p>
+                  </li>
+                ))}
+              </ol>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div>
-          <div className="earn-calc">
-            <label htmlFor="tasks-per-day" style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 10, display: 'block' }}>Tasks you can realistically do per day</label>
-            <input id="tasks-per-day" type="range" min="1" max="100" value={tasksPerDay} onChange={(e) => setTasksPerDay(+e.target.value)} style={{ width: '100%' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, color: 'var(--ink-mute)' }}>
-              <span>1</span><span>{tasksPerDay}</span><span>100</span>
+          <section className="s-section" id="earnings">
+            <div className="s-wrap s-split photo-left">
+              <div className="s-photo s-photo-wide">
+                <Photo
+                  name="trial-creator"
+                  width={1200}
+                  height={800}
+                  position="50% 40%"
+                  alt="A smiling woman in a red floral top standing outside a venue in Nigeria"
+                  sizes="(max-width: 860px) 100vw, 540px"
+                />
+              </div>
+              <div>
+                <h2 className="s-h2">See what your pace could earn</h2>
+                <p className="s-lead" style={{ marginTop: 14 }}>
+                  Move the slider to the number of tasks you could do in a day. Referring friends earns a bonus on top.
+                </p>
+                <div className="s-card s-card-lift earn-calc" style={{ marginTop: 28 }}>
+                  <label className="s-label" htmlFor="tasks-per-day">Tasks you can realistically do per day</label>
+                  <input
+                    id="tasks-per-day"
+                    className="s-range"
+                    type="range"
+                    min="1"
+                    max="100"
+                    value={tasksPerDay}
+                    onChange={(e) => setTasksPerDay(+e.target.value)}
+                    style={{ '--fill': `${((tasksPerDay - 1) / 99) * 100}%` }}
+                  />
+                  <div className="s-calc-scale s-num"><span>1</span><span>{tasksPerDay} per day</span><span>100</span></div>
+                  <div className="s-calc-out">
+                    <div className="s-small s-muted">Estimated weekly earning</div>
+                    <div className="big">₦{weeklyEstimate.toLocaleString()}</div>
+                    <div className="s-small s-muted">An estimate, not a guarantee. Gold and Platinum tiers earn more per task.</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(0,0,0,.08)' }}>
-              <div style={{ fontSize: 12, color: 'var(--ink-mute)' }}>Estimated weekly earning</div>
-              <div style={{ fontSize: 26, fontWeight: 600, color: 'var(--good)' }}>₦{weeklyEstimate.toLocaleString()}</div>
-              <div style={{ fontSize: 11.5, color: 'var(--ink-mute)' }}>Gold and Platinum tiers earn more per task.</div>
-            </div>
-          </div>
+          </section>
 
-          <div className="section" id="signup">
-            <div className="section-head"><h2>Ready to start?</h2></div>
-            <div style={{ padding: 20 }}>
-              <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 14 }}>
-                Registration takes about 2 minutes. Your account activates immediately —
-                you can browse tasks right away.
+          <section className="s-section s-section-tint" id="faq">
+            <div className="s-wrap s-faq-wrap">
+              <div className="s-faq-side">
+                <h2 className="s-h2">Questions before you join</h2>
+                <p>Still unsure? Message an admin on WhatsApp and a person will reply.</p>
+              </div>
+              <SiteFaq items={FAQ_ITEMS} />
+            </div>
+          </section>
+
+          <section className="s-band" id="signup">
+            <div className="s-wrap s-final">
+              <div>
+                <h2 className="s-h2">Ready to start?</h2>
+                <p>Registration takes about 2 minutes. Your account activates immediately, so you can browse tasks right away.</p>
+                <p className="s-small" style={{ marginTop: 14 }}>
+                  Already registered? <a href="/login" className="s-link" style={{ color: '#fff' }}>Log in</a>
+                </p>
+              </div>
+              <a href={signupHref} className="s-btn s-btn-primary">Create my account <Arrow /></a>
+            </div>
+          </section>
+
+          <section className="s-section">
+            <div className="s-wrap">
+              <p className="s-lead" style={{ maxWidth: 'none' }}>
+                Want to promote your own post instead?{' '}
+                <a href="/" className="s-link">Get real engagement from trained engagers</a>
               </p>
-              <a href={signupHref} className="btn accent" style={{ width: '100%', textAlign: 'center', display: 'block', textDecoration: 'none' }}>
-                Create my account
-              </a>
-              <p style={{ fontSize: 12.5, marginTop: 14, textAlign: 'center' }}>
-                Already registered? <a href="/login" style={{ color: 'var(--navy)' }}>Log in</a>
-              </p>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
+
+        <SiteFooter />
+
+        <SiteWhatsApp avoidSelectors={['.earn-calc']} />
+        <SiteSticky label="Free to join" sublabel="Start earning" href="#signup" cta="Start earning" hideNearId="signup" />
       </div>
-
-      <a
-        href="/"
-        className="section"
-        style={{
-          display: 'block', padding: '18px 20px', marginTop: 20, textDecoration: 'none',
-          background: 'var(--navy)', color: '#fff', textAlign: 'center',
-        }}
-      >
-        <strong>Want to promote your own post instead?</strong>
-        <div style={{ fontSize: 12.5, color: 'var(--label-on-navy)', marginTop: 4 }}>Get real engagement from trained engagers →</div>
-      </a>
-
-      <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
-        <a href="/terms" style={{ color: 'var(--ink-soft)' }}>Terms</a> ·{' '}
-        <a href="/privacy" style={{ color: 'var(--ink-soft)' }}>Privacy</a> ·{' '}
-        <a href="/refund-policy" style={{ color: 'var(--ink-soft)' }}>Refund Policy</a>
-      </p>
-
-      <WhatsAppButton avoidSelectors={['#faq', '.earn-calc']} />
-      <StickyCta label="Free to join" sublabel="Start earning" href="#signup" hideNearId="signup" />
-    </div>
     </>
   );
 }

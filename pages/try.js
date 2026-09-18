@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Logo from '../components/Logo';
-import WhatsAppButton from '../components/WhatsAppButton';
-import Faq from '../components/Faq';
-import StickyCta from '../components/StickyCta';
-import CheckIcon from '../components/CheckIcon';
+import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/SiteFooter';
+import SiteFaq from '../components/SiteFaq';
+import SiteSticky from '../components/SiteSticky';
+import SiteWhatsApp from '../components/SiteWhatsApp';
+import Photo from '../components/Photo';
+import { Check, Arrow } from '../components/SiteIcons';
 import { supabase } from '../lib/supabaseClient';
 import { PLATFORM_DOMAINS, isKnownPlatform, platformLabel, linkMismatchMessage, linkMatchesPlatform, normalizeLink } from '../lib/platformDomains';
 import { pixelStartTrial } from '../lib/metaPixel';
@@ -35,6 +37,12 @@ const FAQ_ITEMS = [
     q: 'What do you do with my email?',
     a: "We use it to create your tracking dashboard and to send you a one-click login link. There's no password to remember. Details are on our Privacy Policy page.",
   },
+];
+
+const STEPS = [
+  { t: 'Paste your post link', d: 'Any public post on Facebook, Instagram, TikTok, YouTube or X.' },
+  { t: 'Real people do it', d: 'Verified engagers get an alert and do it from their own phones and accounts — never a script.' },
+  { t: 'See the proof', d: 'Every like and comment comes with a screenshot. Track it live from your dashboard — we email you a one-click link, no password.' },
 ];
 
 export default function TryFree() {
@@ -121,7 +129,6 @@ export default function TryFree() {
     }
     setLinkSent(true);
   }
-
   const orderMoreHref = `/?platform=${platform}&link=${encodeURIComponent(postLink)}&email=${encodeURIComponent(email)}#order`;
 
   return (
@@ -137,178 +144,191 @@ export default function TryFree() {
         <meta name="twitter:card" content="summary_large_image" />
         <link rel="canonical" href="https://primeloop.app/try" />
       </Head>
-      <div className="app has-sticky-cta">
-        <div className="fade-in" style={{ marginBottom: 18 }}>
-          <a href="/" aria-label="Primeloop home"><Logo size={36} /></a>
-        </div>
+      <div className="site has-sticky">
+        <SiteHeader
+          cta={{ href: '#trial-form', label: 'Claim free trial' }}
+          links={[
+            { href: '#how', label: 'How the trial works' },
+            { href: '#faq', label: 'Questions' },
+            { href: '/#order', label: 'Pricing' },
+          ]}
+        />
 
-        <div className="hero2 fade-in-delay-1">
-          <div>
-            <h1>See it work before you pay a kobo.</h1>
-            <p className="lead">
-              Paste a link to one of your posts. Real people will like it 5 times and comment on
-              it twice — and you'll see the proof for every single one. No card, no bots.
-            </p>
-            <ul className="trial-points">
-              <li><CheckIcon size={13} color="var(--good)" />5 likes and 2 comments from real, verified people</li>
-              <li><CheckIcon size={13} color="var(--good)" />A screenshot behind every engagement, checked automatically</li>
-              <li><CheckIcon size={13} color="var(--good)" />Watch it arrive live on your own dashboard</li>
-            </ul>
-          </div>
-
-          <div className="trial-card" id="trial-form" aria-live="polite">
-            {result ? (
-              <div>
-                <h2 className="trial-title">Your free trial is live.</h2>
-                <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 14px' }}>
-                  {result.linkPending
-                    ? `We're double-checking your ${label} link first — a person reviews it, then engagers can start. That can take a few hours.`
-                    : `${result.items.map((i) => `${i.quantity} ${i.action}${i.quantity > 1 ? 's' : ''}`).join(' and ')} are now open to our verified engagers on your ${label} post. Most start within minutes.`}
+        <main>
+          <section className="s-hero">
+            <div className="s-wrap s-hero-grid">
+              <div className="s-hero-copy">
+                <h1 className="s-h1">See it work before you pay a kobo.</h1>
+                <p className="s-lead">
+                  Paste a link to one of your posts. Real people will like it 5 times and comment on
+                  it twice — and you&apos;ll see the proof for every single one. No card, no bots.
                 </p>
-                {linkSent ? (
-                  <p style={{ fontSize: 13, color: 'var(--good)', margin: '0 0 14px' }}>
-                    Check <strong>{email}</strong> for your one-click login link (look in spam or
-                    promotions if it isn't there in a minute).
-                  </p>
+                <ul className="s-assure" style={{ flexDirection: 'column', gap: 12, marginTop: 28 }}>
+                  <li><Check size={18} color="var(--good)" />5 likes and 2 comments from real, verified people</li>
+                  <li><Check size={18} color="var(--good)" />A screenshot behind every engagement, checked automatically</li>
+                  <li><Check size={18} color="var(--good)" />Watch it arrive live on your own dashboard</li>
+                </ul>
+              </div>
+
+              <div className="s-card s-card-lift" id="trial-form" aria-live="polite" style={{ animation: 's-pop .8s .15s cubic-bezier(.16,1,.3,1) both' }}>
+                {result ? (
+                  <div>
+                    <h2 className="s-card-title">Your free trial is live.</h2>
+                    <p className="s-card-sub">
+                      {result.linkPending
+                        ? `We're double-checking your ${label} link first — a person reviews it, then engagers can start. That can take a few hours.`
+                        : `${result.items.map((i) => `${i.quantity} ${i.action}${i.quantity > 1 ? 's' : ''}`).join(' and ')} are now open to our verified engagers on your ${label} post. Most start within minutes.`}
+                    </p>
+                    {linkSent ? (
+                      <p style={{ fontSize: 15, color: 'var(--good)' }}>
+                        Check <strong>{email}</strong> for your one-click login link (look in spam or
+                        promotions if it isn&apos;t there in a minute).
+                      </p>
+                    ) : (
+                      <>
+                        <button className="s-btn s-btn-primary" style={{ width: '100%' }} onClick={sendTrackingLink} disabled={linkSending}>
+                          {linkSending ? 'Sending…' : 'Email me my tracking link'}
+                        </button>
+                        {linkNote && <p className="s-error">{linkNote}</p>}
+                      </>
+                    )}
+                    <p className="s-alt">
+                      Want more on this post? <a href={orderMoreHref} className="s-link">Order more</a> — anything undelivered after 5 days is refunded.
+                    </p>
+                  </div>
+                ) : soldOut ? (
+                  <div>
+                    <h2 className="s-card-title">
+                      {status.reason === 'not_set_up' ? 'Free trials are opening soon.' : "This week's free trials are all taken."}
+                    </h2>
+                    <p className="s-card-sub">
+                      {status.reason === 'not_set_up'
+                        ? "We're getting ready to give out free trials."
+                        : 'Spots free up as the week rolls forward, so check back tomorrow.'}{' '}
+                      You don&apos;t have to wait to try us — {fromText}, with a 100% money-back guarantee on anything undelivered.
+                    </p>
+                    <a href="/#order" className="s-btn s-btn-primary" style={{ width: '100%' }}>Order now <Arrow /></a>
+                  </div>
                 ) : (
-                  <>
-                    <button className="cta-bold" style={{ width: '100%', justifyContent: 'center' }} onClick={sendTrackingLink} disabled={linkSending}>
-                      {linkSending ? 'Sending…' : 'Email me my tracking link →'}
+                  <form onSubmit={claim} noValidate>
+                    <h2 className="s-card-title">Claim your free trial</h2>
+                    <p className="s-card-sub">
+                      5 likes + 2 comments · no card needed
+                      {status?.remaining > 0 && status.remaining <= 15 && (
+                        <span style={{ color: 'var(--warn)', fontWeight: 600 }}> · only {status.remaining} left this week</span>
+                      )}
+                    </p>
+
+                    <div className="s-field">
+                      <span className="s-label" id="trial-platform-label">Platform</span>
+                      <div className="s-chips" role="group" aria-labelledby="trial-platform-label">
+                        {PLATFORMS.map((p) => (
+                          <button type="button" key={p} className="s-chip" aria-pressed={p === platform} onClick={() => setPlatform(p)}>
+                            {platformLabel(p)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor="trial-link" className="s-label">Link to your {label} post</label>
+                      <input
+                        id="trial-link"
+                        className={`s-input${linkError ? ' is-bad' : ''}`}
+                        value={postLink}
+                        onChange={(e) => setPostLink(e.target.value)}
+                        placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/…`}
+                        inputMode="url"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        aria-invalid={!!linkError}
+                        aria-describedby={linkError ? 'trial-link-error' : undefined}
+                      />
+                      {linkError && <p id="trial-link-error" className="s-error">{linkError}</p>}
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor="trial-email" className="s-label">Your email</label>
+                      <input
+                        id="trial-email"
+                        type="email"
+                        className="s-input"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@email.com"
+                        autoComplete="email"
+                        autoCapitalize="none"
+                        inputMode="email"
+                      />
+                    </div>
+
+                    {error && <p role="alert" className="s-error">{error}</p>}
+
+                    <button type="submit" className="s-btn s-btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={!canSubmit}>
+                      {submitting ? 'Starting your trial…' : 'Start my free trial'}{!submitting && <Arrow />}
                     </button>
-                    {linkNote && <p style={{ color: 'var(--warn)', fontSize: 12.5, marginTop: 8 }}>{linkNote}</p>}
-                  </>
+                    <p className="s-note" style={{ textAlign: 'center' }}>One free trial per person. Your post must be public.</p>
+                  </form>
                 )}
-                <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: '14px 0 0' }}>
-                  Want more on this post? <a href={orderMoreHref} style={{ color: 'var(--navy)', fontWeight: 600 }}>Order more</a> — anything undelivered after 5 days is refunded.
-                </p>
               </div>
-            ) : soldOut ? (
+            </div>
+          </section>
+
+          <section className="s-section s-section-tint" id="how">
+            <div className="s-wrap s-split photo-left">
+              <div className="s-photo s-photo-wide">
+                <Photo
+                  name="trial-creator"
+                  width={1200}
+                  height={800}
+                  position="50% 40%"
+                  alt="A smiling woman in a red floral top standing outside a venue in Nigeria"
+                  sizes="(max-width: 860px) 100vw, 540px"
+                />
+              </div>
               <div>
-                <h2 className="trial-title">
-                  {status.reason === 'not_set_up' ? 'Free trials are opening soon.' : "This week's free trials are all taken."}
-                </h2>
-                <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 14px' }}>
-                  {status.reason === 'not_set_up'
-                    ? "We're getting ready to give out free trials."
-                    : 'Spots free up as the week rolls forward, so check back tomorrow.'}{' '}
-                  You don't have to wait to try us — {fromText}, with a 100% money-back guarantee on anything undelivered.
-                </p>
-                <a href="/#order" className="cta-bold" style={{ width: '100%', justifyContent: 'center' }}>Order now →</a>
-              </div>
-            ) : (
-              <form onSubmit={claim} noValidate>
-                <h2 className="trial-title">Claim your free trial</h2>
-                <p className="trial-sub">
-                  5 likes + 2 comments · no card needed
-                  {status?.remaining > 0 && status.remaining <= 15 && (
-                    <span style={{ color: 'var(--warn)', fontWeight: 600 }}> · only {status.remaining} left this week</span>
-                  )}
-                </p>
-
-                <div role="group" aria-label="Platform" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '0 0 14px' }}>
-                  {PLATFORMS.map((p) => (
-                    <button
-                      type="button"
-                      key={p}
-                      className="btn"
-                      aria-pressed={p === platform}
-                      style={p === platform ? { background: 'var(--navy)', color: '#fff', borderColor: 'var(--navy)' } : {}}
-                      onClick={() => setPlatform(p)}
-                    >
-                      {platformLabel(p)}
-                    </button>
+                <h2 className="s-h2">How the free trial works</h2>
+                <ol className="s-steps" style={{ margin: '32px 0 0', padding: 0, listStyle: 'none', gridTemplateColumns: '1fr', gap: 24 }}>
+                  {STEPS.map((st, i) => (
+                    <li className="s-step" key={st.t}>
+                      <div className="s-step-n s-num">{i + 1}</div>
+                      <h3 className="s-h3">{st.t}</h3>
+                      <p>{st.d}</p>
+                    </li>
                   ))}
+                </ol>
+              </div>
+            </div>
+          </section>
+
+          <section className="s-section" id="faq">
+            <div className="s-wrap s-faq-wrap">
+              <div className="s-faq-side">
+                <h2 className="s-h2">Questions before you start</h2>
+                <p>Anything else? Message an admin on WhatsApp and a person will reply.</p>
+              </div>
+              <SiteFaq items={FAQ_ITEMS.map((i) => ({ ...i, a: i.a.replace('{FROM}', fromText) }))} />
+            </div>
+          </section>
+
+          {!result && !soldOut && (
+            <section className="s-band">
+              <div className="s-wrap s-final">
+                <div>
+                  <h2 className="s-h2">Ready to see it for yourself?</h2>
+                  <p>Five likes and two comments, with proof, on a post of your choice.</p>
                 </div>
+                <a href="#trial-form" className="s-btn s-btn-primary">Claim your free trial <Arrow /></a>
+              </div>
+            </section>
+          )}
+        </main>
 
-                <label htmlFor="trial-link" className="trial-label">Link to your {label} post</label>
-                <input
-                  id="trial-link"
-                  style={{ width: '100%', ...(linkError ? { borderColor: 'var(--warn)' } : {}) }}
-                  value={postLink}
-                  onChange={(e) => setPostLink(e.target.value)}
-                  placeholder={`https://${PLATFORM_DOMAINS[platform][0]}/…`}
-                  inputMode="url"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  aria-invalid={!!linkError}
-                  aria-describedby={linkError ? 'trial-link-error' : undefined}
-                />
-                {linkError && <p id="trial-link-error" className="trial-error">{linkError}</p>}
+        <SiteFooter />
 
-                <label htmlFor="trial-email" className="trial-label" style={{ marginTop: 12 }}>Your email</label>
-                <input
-                  id="trial-email"
-                  type="email"
-                  style={{ width: '100%' }}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
-                  autoComplete="email"
-                  autoCapitalize="none"
-                  inputMode="email"
-                />
-
-                {error && <p role="alert" className="trial-error" style={{ marginTop: 12 }}>{error}</p>}
-
-                <button
-                  type="submit"
-                  className="cta-bold"
-                  style={{ width: '100%', justifyContent: 'center', marginTop: 16, opacity: canSubmit ? 1 : 0.55, cursor: canSubmit ? 'pointer' : 'not-allowed' }}
-                  disabled={!canSubmit}
-                >
-                  {submitting ? 'Starting your trial…' : 'Start my free trial →'}
-                </button>
-                <p className="trial-fine">One free trial per person. Your post must be public.</p>
-              </form>
-            )}
-          </div>
-        </div>
-
-        <div className="section" id="how">
-          <div className="section-head"><h2>How the free trial works</h2></div>
-          <div style={{ padding: '4px 20px' }}>
-            <div className="step-row">
-              <div className="step-num">1</div>
-              <div><strong>Paste your post link</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Any public post on Facebook, Instagram, TikTok, YouTube or X.</div></div>
-            </div>
-            <div className="step-row">
-              <div className="step-num">2</div>
-              <div><strong>Real people do it</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Verified engagers get an alert and do it from their own phones and accounts — never a script.</div></div>
-            </div>
-            <div className="step-row">
-              <div className="step-num">3</div>
-              <div><strong>See the proof</strong><div style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>Every like and comment comes with a screenshot. Track it live from your dashboard — we email you a one-click link, no password.</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="section" id="faq">
-          <div className="section-head"><h2>Questions before you start</h2></div>
-          <div style={{ padding: '4px 20px 8px' }}>
-            <Faq items={FAQ_ITEMS.map((i) => ({ ...i, a: i.a.replace('{FROM}', fromText) }))} />
-          </div>
-        </div>
-
+        <SiteWhatsApp avoidSelectors={['#trial-form']} />
         {!result && !soldOut && (
-          <a
-            href="#trial-form"
-            className="section"
-            style={{ display: 'block', padding: '18px 20px', marginTop: 20, textDecoration: 'none', background: 'var(--navy)', color: '#fff', textAlign: 'center' }}
-          >
-            <strong>Ready to see it for yourself?</strong>
-            <div style={{ fontSize: 12.5, color: 'var(--label-on-navy)', marginTop: 4 }}>Claim your free trial →</div>
-          </a>
-        )}
-
-        <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--ink-mute)', marginTop: 24 }}>
-          <a href="/terms" style={{ color: 'var(--ink-soft)' }}>Terms</a> ·{' '}
-          <a href="/privacy" style={{ color: 'var(--ink-soft)' }}>Privacy</a> ·{' '}
-          <a href="/refund-policy" style={{ color: 'var(--ink-soft)' }}>Refund Policy</a>
-        </p>
-
-        <WhatsAppButton avoidSelectors={['#trial-form', '#faq']} />
-        {!result && !soldOut && (
-          <StickyCta label="5 likes + 2 comments" sublabel="Free trial" href="#trial-form" cta="Claim it →" hideNearId="trial-form" />
+          <SiteSticky label="5 likes + 2 comments" sublabel="Free trial" href="#trial-form" cta="Claim it" hideNearId="trial-form" />
         )}
       </div>
     </>
