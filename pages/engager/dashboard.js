@@ -5,6 +5,7 @@ import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
 import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
+import GetStarted from '../../components/GetStarted';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -95,6 +96,16 @@ export default function EngagerDashboard() {
     window.location.href = '/login';
   }
 
+  function selectTask(code) {
+    setTaskCode(code);
+    // The proof form is further down the page; without this, tapping Select looks like nothing happened.
+    const el = document.getElementById('submit-proof');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => document.getElementById('proof-file')?.focus({ preventScroll: true }), 400);
+    }
+  }
+
   if (loading) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
 
   const totalEarned = approved.reduce((sum, s) => sum + Number(s.tasks?.price_per_unit || 0), 0);
@@ -114,12 +125,16 @@ export default function EngagerDashboard() {
         <p>{me?.engager?.full_name} · {me?.engager?.code}</p>
       </div>
 
-      {!me?.engager?.paystack_recipient_code && (
-        <div className="section" style={{ padding: '14px 20px', background: 'var(--warn-soft)', border: '1px solid var(--warn)', marginTop: 16 }}>
-          <strong style={{ color: 'var(--warn)' }}>Set up your bank details before your first payout.</strong>{' '}
-          <span style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
-            You can still complete tasks and earn now, but we can't pay you until this is done.
-          </span>{' '}
+      <GetStarted
+        hasVerifiedPlatform={verifiedPlatforms.size > 0}
+        hasBank={!!me?.engager?.paystack_recipient_code}
+        hasApprovedTask={approved.length > 0}
+      />
+
+      {!me?.engager?.paystack_recipient_code && verifiedPlatforms.size > 0 && approved.length > 0 && (
+        <div className="section" style={{ padding: '14px 20px', background: 'var(--warn-soft)', border: '1px solid var(--warn)' }}>
+          <strong style={{ color: 'var(--warn)' }}>Add your bank details to get paid.</strong>{' '}
+          <span style={{ color: 'var(--ink-soft)', fontSize: 14 }}>You've earned money, but we can't pay you until this is done.</span>{' '}
           <a href="/engager/bank-details" style={{ color: 'var(--navy)', fontWeight: 600 }}>Add bank details →</a>
         </div>
       )}
@@ -158,7 +173,7 @@ export default function EngagerDashboard() {
               Open post
             </a>
             {verifiedPlatforms.has(t.platform) ? (
-              <button className="btn primary" onClick={() => setTaskCode(t.task_code)}>Select</button>
+              <button className="btn primary" onClick={() => selectTask(t.task_code)}>Select</button>
             ) : (
               <a href={`/onboarding/${t.platform}`} className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)', textDecoration: 'none', textAlign: 'center' }}>
                 Onboarding needed
@@ -238,7 +253,7 @@ export default function EngagerDashboard() {
         </div>
       </div>
 
-      <div className="section">
+      <div className="section" id="submit-proof">
         <div className="section-head"><h2>Submit proof</h2></div>
         <div style={{ padding: 20 }}>
           <div style={{ marginBottom: 12 }}>
@@ -247,7 +262,7 @@ export default function EngagerDashboard() {
           </div>
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Screenshot</label>
-            <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
+            <input id="proof-file" type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
           </div>
           <button className="btn primary" onClick={submitProof} disabled={submitting}>
             {submitting ? 'Checking...' : 'Submit proof'}

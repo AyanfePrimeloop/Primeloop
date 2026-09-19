@@ -9,7 +9,9 @@ const { runWeeklyPayout } = require('../../../lib/runWeeklyPayout');
 // CRON_SECRET environment variable — see GETTING_STARTED.md for the setup step.
 export default async function handler(req, res) {
   const authHeader = req.headers.authorization || '';
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // If CRON_SECRET were ever unset, the expected header would become the text
+  // "Bearer undefined", which anyone could send. Refuse everything instead.
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

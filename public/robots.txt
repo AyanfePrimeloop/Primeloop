@@ -15,6 +15,7 @@ Disallow: /client-login
 Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /choose-dashboard
+Disallow: /become-engager
 Disallow: /onboarding
 Disallow: /order-success
 

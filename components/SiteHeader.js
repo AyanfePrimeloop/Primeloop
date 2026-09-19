@@ -15,7 +15,7 @@ export default function SiteHeader({ cta = { href: '/try', label: 'Try it free' 
           {nav.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
         </nav>
         <div className="s-header-actions">
-          <a href="/client-login" className="s-login">Log in</a>
+          <a href="/login" className="s-login">Log in</a>
           <a href={cta.href} className="s-btn s-btn-primary s-btn-sm">{cta.label}<Arrow size={14} /></a>
         </div>
       </div>

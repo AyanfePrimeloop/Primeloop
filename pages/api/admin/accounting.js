@@ -87,7 +87,43 @@ export default async function handler(req, res) {
     };
   }
 
+  // Things that need a person: money taken but nothing delivered, and orders
+  // past the 5-day refund promise. Refunds are made by hand in Paystack, so
+  // this is the list to work through.
+  const attention = { paidWithoutTasks: [], overdue: [] };
+  {
+    const { data: orders } = await fetchAll(() =>
+      supabaseAdmin
+        .from('orders')
+        .select('id, amount_total, platform, paystack_reference, created_at, clients(email)')
+        .eq('payment_status', 'paid')
+        .order('id')
+    );
+    const { data: tasks } = await fetchAll(() =>
+      supabaseAdmin.from('tasks').select('id, order_id, quantity_needed, quantity_filled').order('id')
+    );
+    const byOrder = new Map();
+    for (const t of tasks || []) {
+      const g = byOrder.get(t.order_id) || { needed: 0, filled: 0, count: 0 };
+      g.needed += t.quantity_needed || 0;
+      g.filled += t.quantity_filled || 0;
+      g.count += 1;
+      byOrder.set(t.order_id, g);
+    }
+    const fiveDaysAgo = Date.now() - 5 * 24 * 60 * 60 * 1000;
+    for (const o of orders || []) {
+      const g = byOrder.get(o.id);
+      const row = { id: o.id, reference: o.paystack_reference, email: o.clients?.email || '', platform: o.platform, amount: Number(o.amount_total), paidAt: o.created_at };
+      if (!g) {
+        attention.paidWithoutTasks.push(row);
+      } else if (g.needed > g.filled && new Date(o.created_at).getTime() < fiveDaysAgo) {
+        attention.overdue.push({ ...row, unfilled: g.needed - g.filled, needed: g.needed });
+      }
+    }
+  }
+
   return res.status(200).json({
+    attention,
     totalRevenue,
     totalPaidOut,
     pendingPayout,

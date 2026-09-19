@@ -36,6 +36,12 @@ export default function Privacy() {
           <li><strong>Meta (WhatsApp Business)</strong> — delivers task alert messages, where enabled</li>
         </ul>
         <p>We do not sell your personal data to anyone.</p>
+        <p>
+          Some activity is shown on our public pages to prove the service is real: recent
+          payouts (an Engager&apos;s first name, last initial and the amount) and recent verified
+          engagements (platform and action only, never the post or the person). If you would
+          rather not appear, email <a href="mailto:info@primeloop.app">info@primeloop.app</a>.
+        </p>
 
         <h3>4. How long we keep it</h3>
         <p>

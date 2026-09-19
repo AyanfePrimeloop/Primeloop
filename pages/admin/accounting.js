@@ -14,6 +14,44 @@ function StatCard({ label, value, color, plain }) {
   );
 }
 
+function Attention({ data }) {
+  const none = !data || (!data.paidWithoutTasks.length && !data.overdue.length);
+  const row = (o, extra) => (
+    <div key={o.id} style={{ display: 'flex', gap: 12, justifyContent: 'space-between', flexWrap: 'wrap', padding: '10px 0', borderTop: '1px solid var(--line)', fontSize: 14 }}>
+      <div>
+        <strong style={{ textTransform: 'capitalize' }}>{o.platform}</strong> · {o.email || 'no email'}
+        <div style={{ fontSize: 13, color: 'var(--ink-mute)' }}>Ref {String(o.reference || '').slice(0, 14)} · paid {new Date(o.paidAt).toLocaleDateString()}</div>
+      </div>
+      <div style={{ textAlign: 'right' }}>
+        <div style={{ fontWeight: 600 }}>₦{o.amount.toLocaleString()}</div>
+        <div style={{ fontSize: 13, color: 'var(--warn)' }}>{extra}</div>
+      </div>
+    </div>
+  );
+  return (
+    <div className="section" style={{ padding: '16px 20px', marginTop: 16, borderColor: none ? 'var(--line)' : 'var(--warn)' }}>
+      <div style={{ fontWeight: 700, fontSize: 16 }}>{none ? 'Nothing needs your attention' : 'Needs your attention'}</div>
+      {none && <p style={{ fontSize: 14, color: 'var(--ink-mute)', margin: '4px 0 0' }}>Every paid order has tasks, and none are past the 5-day refund promise.</p>}
+      {data?.paidWithoutTasks.length > 0 && (
+        <>
+          <p style={{ fontSize: 14, color: 'var(--ink-soft)', margin: '8px 0 4px' }}>
+            <strong>Paid, but no tasks were created.</strong> The customer has paid and nothing is being delivered. Create the tasks by hand or refund in Paystack.
+          </p>
+          {data.paidWithoutTasks.map((o) => row(o, 'No tasks'))}
+        </>
+      )}
+      {data?.overdue.length > 0 && (
+        <>
+          <p style={{ fontSize: 14, color: 'var(--ink-soft)', margin: '12px 0 4px' }}>
+            <strong>Past 5 days and not fully delivered.</strong> Per the refund policy the customer is owed a refund for the undelivered part. Refund in Paystack, then close the task.
+          </p>
+          {data.overdue.map((o) => row(o, `${o.unfilled} of ${o.needed} undelivered`))}
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Accounting() {
   const { loading, me } = useRequireRole('admin');
   const [stats, setStats] = useState(null);
@@ -65,6 +103,7 @@ export default function Accounting() {
 
       {stats && (
         <>
+          <Attention data={stats.attention} />
           <div className="grid-3" style={{ margin: '16px 0' }}>
             <StatCard label="Total revenue (all time)" value={stats.totalRevenue} color="var(--navy)" />
             <StatCard label="Revenue, last 30 days" value={stats.recentRevenue30d} />
