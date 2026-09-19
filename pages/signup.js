@@ -32,6 +32,16 @@ export default function Signup() {
       return;
     }
 
+    // For an email that already has an account, Supabase deliberately returns a
+    // look-alike user (no identities) instead of an error, so it can't be used
+    // to discover who is registered. That fake id would fail registration with
+    // a confusing message, so catch it here.
+    if (Array.isArray(data.user?.identities) && data.user.identities.length === 0) {
+      setError("This email already has a Primeloop account. Log in below, or use Forgot password if you can't remember it.");
+      setLoading(false);
+      return;
+    }
+
     const res = await fetch('/api/engagers/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,7 +56,11 @@ export default function Signup() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(regData.error);
+      setError(
+        regData.error === 'Invalid signup session'
+          ? "We couldn't finish setting up your account. If you've signed up with this email before, please log in instead."
+          : regData.error
+      );
       return;
     }
 
@@ -68,9 +82,9 @@ export default function Signup() {
       <AuthShell title="Check your email" pageTitle="Check your email — Primeloop">
         <p className="auth-ok" style={{ marginTop: 28, color: 'var(--ink-soft)' }}>
           We've sent a confirmation link to <strong>{form.email}</strong>. Look for an email from
-          Primeloop (it will come from Supabase's sending address on our behalf, so check your
-          spam or promotions folder if it doesn't show up in a minute or two). Click the link
-          inside, and it'll take you straight to your dashboard — no need to come back here.
+          Primeloop. If it isn't there within a minute or two, check your spam or promotions
+          folder. Click the link inside and it'll take you straight to your dashboard — no need
+          to come back here.
         </p>
         <ChannelInvite compact />
       </AuthShell>

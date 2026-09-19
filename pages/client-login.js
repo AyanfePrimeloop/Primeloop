@@ -38,8 +38,8 @@ export default function ClientLogin() {
     <AuthShell title="Track your order" subtitle="No password needed. We email you a one-click link." pageTitle="Track your order — Primeloop" photo="trial-creator" photoPosition="50% 35%">
       {sent ? (
         <p className="auth-ok" style={{ marginTop: 28 }}>
-          Check <strong>{email}</strong> for a link from Primeloop (sent via Supabase Auth on
-          our behalf — check spam/promotions if it doesn't show up in a minute). Click it to
+          Check <strong>{email}</strong> for an email from Primeloop with your login link. If it
+          isn't there within a minute, look in your spam or promotions folder. Click the link to
           see your order progress.
         </p>
       ) : rateLimited ? (

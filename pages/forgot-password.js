@@ -26,11 +26,9 @@ export default function ForgotPassword() {
     <AuthShell title="Reset your password" subtitle="Enter your account email and we'll send you a reset link." pageTitle="Reset your password — Primeloop">
       {sent ? (
         <p className="auth-ok" style={{ marginTop: 28 }}>
-          Check <strong>{email}</strong> for an email from Primeloop (sent via Supabase Auth on
-          our behalf — look for a sender like "Supabase Auth" or "noreply@mail.app.supabase.io"
-          if you don't see "Primeloop" directly). It may land in spam or promotions, so check
-          those folders if it doesn't appear within a minute or two. Click the link inside to
-          set a new password.
+          Check <strong>{email}</strong> for an email from Primeloop. If it isn't there within a
+          minute or two, look in your spam or promotions folder. Click the link inside to set a
+          new password.
         </p>
       ) : (
         <form className="auth-form" onSubmit={(e) => { e.preventDefault(); if (!loading && email) sendReset(); }}>
