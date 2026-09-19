@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
 import AuthShell from '../components/AuthShell';
+import ChannelInvite from '../components/ChannelInvite';
 import { pixelLead } from '../lib/metaPixel';
 import { gaSignUp } from '../lib/ga';
 
@@ -71,6 +72,7 @@ export default function Signup() {
           spam or promotions folder if it doesn't show up in a minute or two). Click the link
           inside, and it'll take you straight to your dashboard — no need to come back here.
         </p>
+        <ChannelInvite compact />
       </AuthShell>
     );
   }

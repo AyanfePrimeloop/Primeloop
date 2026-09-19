@@ -4,6 +4,7 @@ import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
 import PushOptIn from '../../components/PushOptIn';
+import ChannelInvite from '../../components/ChannelInvite';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -124,6 +125,7 @@ export default function EngagerDashboard() {
       )}
 
       <PushOptIn />
+      <ChannelInvite />
 
       <div className="grid-3" style={{ margin: '16px 0 20px' }}>
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
