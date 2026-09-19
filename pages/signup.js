@@ -37,7 +37,7 @@ export default function Signup() {
     // to discover who is registered. That fake id would fail registration with
     // a confusing message, so catch it here.
     if (Array.isArray(data.user?.identities) && data.user.identities.length === 0) {
-      setError("This email already has a Primeloop account. Log in below, or use Forgot password if you can't remember it.");
+      setError("This email already has a Primeloop account, for example from placing an order. Log in with it and you can add earning from your dashboard. No password? Use Forgot password, or the order-email login on the Log in page.");
       setLoading(false);
       return;
     }

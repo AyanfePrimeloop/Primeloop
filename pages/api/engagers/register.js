@@ -1,12 +1,7 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { isValidNigerianPhone } from '../../../lib/validation';
 import { checkRateLimit, getClientIp } from '../../../lib/rateLimit';
-
-function generateEngagerCode(fullName) {
-  const initials = (fullName || 'XX').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'XX';
-  const num = Math.floor(1000 + Math.random() * 8999);
-  return `EN${num}${initials}`;
-}
+import { createEngager } from '../../../lib/createEngager';
 
 // Body: { authUserId, fullName, whatsapp, referredByCode? }
 // Called right after supabase.auth.signUp() succeeds on the client.
@@ -50,41 +45,8 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'This account is already set up. Please log in instead.' });
   }
 
-  // Generate a code and retry on the rare chance of a collision
-  let code = generateEngagerCode(fullName);
-  for (let i = 0; i < 5; i++) {
-    const { data: clash } = await supabaseAdmin.from('engagers').select('id').eq('code', code).maybeSingle();
-    if (!clash) break;
-    code = generateEngagerCode(fullName);
-  }
+  const created = await createEngager(supabaseAdmin, { authUserId, fullName, whatsapp, referredByCode });
+  if (created.error) return res.status(500).json({ error: created.error });
 
-  // Every engager can share their link from day one, and every engager can
-  // earn the referral bonus (whatever their tier). The relationship is
-  // recorded here; the bonus itself is only created later, when the referred
-  // engager reaches their milestone (see regularSubmissionEffects.js), so a
-  // signup that never does real work earns nothing.
-  let referrer = null;
-  if (referredByCode) {
-    const { data: found } = await supabaseAdmin
-      .from('engagers')
-      .select('id')
-      .eq('code', referredByCode)
-      .maybeSingle();
-    if (found) referrer = found;
-  }
-
-  const { data: engager, error } = await supabaseAdmin
-    .from('engagers')
-    .insert({
-      auth_user_id: authUserId,
-      code,
-      full_name: fullName,
-      whatsapp,
-      referred_by: referrer?.id || null,
-    })
-    .select()
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-
-  return res.status(200).json({ engager });
+  return res.status(200).json({ engager: created.engager });
 }

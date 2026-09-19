@@ -130,7 +130,11 @@ export default function ClientDashboard() {
       })}
 
       <p style={{ textAlign: 'center', fontSize: 14, marginTop: 20 }}>
-        Want to earn money as an engager instead? <a href="/join" style={{ color: 'var(--navy)' }}>Join here</a>
+        {me?.engager ? (
+          <>You also have an engager account. <a href="/choose-dashboard">Switch dashboard</a></>
+        ) : (
+          <>Want to earn money as well? <a href="/become-engager">Add an engager profile to this login</a></>
+        )}
       </p>
 
       <SiteWhatsApp />
