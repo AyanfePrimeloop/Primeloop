@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import { downloadCSV } from '../../lib/csvExport';
+import { buildChannelPost } from '../../lib/channelPost';
+
+const CHANNEL_URL = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL;
 
 const STATUSES = ['open', 'closed', 'pending_review', 'rejected'];
 
@@ -10,6 +13,7 @@ export default function AdminTasks() {
   const [tasks, setTasks] = useState([]);
   const [statusFilter, setStatusFilter] = useState('open');
   const [busyId, setBusyId] = useState(null);
+  const [channelNote, setChannelNote] = useState('');
 
   useEffect(() => {
     if (!loading) load();
@@ -31,6 +35,26 @@ export default function AdminTasks() {
     });
     setBusyId(null);
     load();
+  }
+
+  // The app can't post to a WhatsApp Channel, so this copies the message and
+  // opens the Channel: the admin just pastes and sends.
+  async function postToChannel() {
+    setChannelNote('');
+    const res = await authedFetch('/api/admin/tasks?status=open');
+    const data = await res.json().catch(() => ({}));
+    const text = buildChannelPost(data.tasks || []);
+    if (!text) {
+      setChannelNote('There are no open tasks to announce right now.');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setChannelNote(CHANNEL_URL ? 'Copied. Paste it into the Channel and send.' : 'Copied. Open your WhatsApp Channel, paste, and send.');
+    } catch {
+      window.prompt('Copy this message, then paste it into your WhatsApp Channel:', text);
+    }
+    if (CHANNEL_URL) window.open(CHANNEL_URL, '_blank', 'noopener');
   }
 
   function exportCSV() {
@@ -58,8 +82,12 @@ export default function AdminTasks() {
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: 30 }}>Task board</h1>
-        <button className="btn" onClick={exportCSV}>Download CSV</button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button className="btn accent" onClick={postToChannel}>Post open tasks to WhatsApp Channel</button>
+          <button className="btn" onClick={exportCSV}>Download CSV</button>
+        </div>
       </div>
+      {channelNote && <p role="status" style={{ color: 'var(--good)', fontSize: 14, margin: '10px 0 0' }}>{channelNote}</p>}
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>Every task, most recent first. Showing up to 200.</p>
 
       <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
