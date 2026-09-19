@@ -22,7 +22,7 @@ export default function Signup() {
     setError('');
 
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email: form.email,
+      email: form.email.trim().toLowerCase(),
       password: form.password,
       options: { emailRedirectTo: `${window.location.origin}/engager/dashboard` },
     });

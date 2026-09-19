@@ -15,8 +15,11 @@ export default function ClientLogin() {
     setError('');
     setRateLimited(false);
     const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/client/dashboard` },
+      email: email.trim().toLowerCase(),
+      // Only people who already have a login (from an order or free trial) can
+      // get a link. Without this, typing any address created a brand-new login
+      // and sent an email, which anyone could use to burn the daily email limit.
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/client/dashboard` },
     });
     setLoading(false);
     if (err) {
@@ -26,6 +29,8 @@ export default function ClientLogin() {
       // account. Give them a real way forward instead of a dead end.
       if (/rate limit/i.test(err.message)) {
         setRateLimited(true);
+      } else if (/signups? not allowed|not found/i.test(err.message)) {
+        setError("We couldn't find an order or free trial with that email. Check the spelling, or start from the home page.");
       } else {
         setError(err.message);
       }

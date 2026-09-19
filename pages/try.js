@@ -115,7 +115,7 @@ export default function TryFree() {
     setLinkSending(true);
     setLinkNote('');
     const { error: err } = await supabase.auth.signInWithOtp({
-      email,
+      email: email.trim().toLowerCase(),
       options: { emailRedirectTo: `${window.location.origin}/client/dashboard` },
     });
     setLinkSending(false);
