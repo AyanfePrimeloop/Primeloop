@@ -100,6 +100,7 @@ export default async function handler(req, res) {
   const existingHashes = (taskSubmissions || []).map((s) => s.screenshot_hash).filter(Boolean);
 
   let verdict, reason;
+  let reviewedBy = 'ai';
   if (isDuplicateHash(screenshotHash, existingHashes)) {
     verdict = 'rejected';
     reason = 'This screenshot matches one already submitted for this task.';
@@ -112,9 +113,11 @@ export default async function handler(req, res) {
       imageMediaType: imageMediaType || 'image/png',
       expectedAccountName: platformAccount.profile_name || engager.full_name,
       postLink: task.post_link,
+      engagerId: engager.id,
     });
     verdict = result.verdict;
     reason = result.reason;
+    reviewedBy = result.reviewedBy || 'ai';
   }
 
   // 7. Record the submission — screenshot goes to Supabase Storage first
@@ -135,7 +138,7 @@ export default async function handler(req, res) {
       ai_verdict: verdict,
       ai_reason: reason,
       final_status: finalStatus,
-      reviewed_by: finalStatus === 'pending' ? null : 'ai',
+      reviewed_by: finalStatus === 'pending' ? null : reviewedBy,
       reviewed_at: finalStatus !== 'pending' ? new Date().toISOString() : null,
     })
     .select()

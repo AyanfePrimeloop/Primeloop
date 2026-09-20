@@ -51,7 +51,10 @@ export default function Terms() {
         <h3>5. Payments</h3>
         <p>
           Client payments are processed via Paystack. Engager payouts are made weekly via bank
-          transfer to the account details the Engager provides, once verified. Primeloop is not
+          transfer to the account details the Engager provides, once verified. A payout is made
+          only when an Engager's approved, unpaid earnings reach the minimum payout shown on the
+          Engager dashboard (currently ₦500); smaller amounts carry over to the next weekly run
+          and are never lost. Primeloop is not
           responsible for delays caused by incorrect bank details, Paystack service issues, or
           the Engager's bank.
         </p>

@@ -9,11 +9,14 @@ import SiteWhatsApp from '../components/SiteWhatsApp';
 import Photo from '../components/Photo';
 import ProofCard from '../components/ProofCard';
 import { Check, Arrow } from '../components/SiteIcons';
+import { MIN_PAYOUT } from '../lib/payoutRules';
+
+const MIN_NOTE = MIN_PAYOUT > 0 ? ` once you have ₦${MIN_PAYOUT.toLocaleString()} or more` : '';
 
 const FAQ_ITEMS = [
   {
     q: 'Is this actually legit? How do I know I’ll get paid?',
-    a: 'Payouts run automatically every Friday to your bank account or Opay, so there is no chasing anyone for money. When real payouts have gone out recently they appear in the card at the top of this page; until then it shows a clearly labelled example.',
+    a: `Payouts run automatically every Friday to your bank account or Opay${MIN_NOTE}, so there is no chasing anyone for money. Anything less carries over to the next Friday. When real payouts have gone out recently they appear in the card at the top of this page; until then it shows a clearly labelled example.`,
   },
   {
     q: 'Do I need a big following or a professional account?',
@@ -37,7 +40,7 @@ const STEPS = [
   { t: 'Register in 2 minutes', d: 'Your name, WhatsApp number, and the platforms you use.' },
   { t: 'Pass a quick onboarding test', d: 'One test task per platform confirms your account.' },
   { t: 'Do tasks, upload proof', d: 'A quick screenshot. Most are checked in seconds.' },
-  { t: 'Get paid every Friday', d: 'Straight to your bank or Opay, automatically.' },
+  { t: 'Get paid every Friday', d: `Straight to your bank or Opay, automatically${MIN_NOTE}.` },
 ];
 
 export default function JoinAsEngager() {
@@ -95,7 +98,7 @@ export default function JoinAsEngager() {
                   <a href="#how" className="s-link">See how payouts work</a>
                 </div>
                 <ul className="s-assure">
-                  <li><Check color="var(--good)" />Paid every Friday</li>
+                  <li><Check color="var(--good)" />Paid every Friday{MIN_PAYOUT > 0 ? ` from ₦${MIN_PAYOUT.toLocaleString()}` : ''}</li>
                   <li><Check color="var(--good)" />Bank or Opay</li>
                   <li><Check color="var(--good)" />No experience needed</li>
                 </ul>

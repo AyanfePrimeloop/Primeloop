@@ -7,6 +7,7 @@ import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
 import EarnMore from '../../components/EarnMore';
+import { MIN_PAYOUT } from '../../lib/payoutRules';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -159,6 +160,13 @@ export default function EngagerDashboard() {
         <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, padding: '16px 18px' }}>
           <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginBottom: 6 }}>Pending next payout</div>
           <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--good)' }}>₦{Math.max(0, totalEarned - totalPaid).toLocaleString()}</div>
+          {MIN_PAYOUT > 0 && (
+            <div style={{ fontSize: 13, color: 'var(--ink-mute)', marginTop: 6 }}>
+              {Math.max(0, totalEarned - totalPaid) >= MIN_PAYOUT
+                ? 'Comes to you this Friday.'
+                : `Paid on a Friday once you reach ₦${MIN_PAYOUT.toLocaleString()}. You are ₦${(MIN_PAYOUT - Math.max(0, totalEarned - totalPaid)).toLocaleString()} away.`}
+            </div>
+          )}
         </div>
       </div>
 

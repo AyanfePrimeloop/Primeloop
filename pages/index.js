@@ -10,6 +10,8 @@ import Photo from '../components/Photo';
 import ProofCard from '../components/ProofCard';
 import { Check, Cross, Arrow } from '../components/SiteIcons';
 import { useMinPrice } from '../lib/useMinPrice';
+import { PACKS, buildPack, packLineLabel } from '../lib/packs';
+import { MIN_ORDER } from '../lib/payoutRules';
 import { linkMatchesPlatform, isKnownPlatform, normalizeLink, platformLabel, linkMismatchMessage, PLATFORM_DOMAINS } from '../lib/platformDomains';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
@@ -67,6 +69,7 @@ export default function ClientLanding() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [activity, setActivity] = useState([]);
+  const [pack, setPack] = useState(null); // id of the pack that filled the form, cleared on manual edits
 
   useEffect(() => {
     fetch(`/api/admin/pricing?platform=${platform}`)
@@ -76,6 +79,7 @@ export default function ClientLanding() {
         const initial = {};
         (d.rules || []).forEach((r) => (initial[r.action] = { checked: false, qty: 30 }));
         setSelected(initial);
+        setPack(null);
       })
       .catch(() => {});
   }, [platform]);
@@ -113,7 +117,19 @@ export default function ClientLanding() {
     ? linkMismatchMessage(platform)
     : '';
   const hasFollowSelected = rules.some((r) => ['follow', 'subscribe'].includes(r.action) && selected[r.action]?.checked);
-  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError;
+  const belowMinimum = total > 0 && total < MIN_ORDER;
+  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError && !belowMinimum;
+
+  function applyPack(id) {
+    const def = PACKS.find((x) => x.id === id);
+    const lines = buildPack(rules, platform, def.budget);
+    if (!lines.length) return;
+    const next = {};
+    rules.forEach((r) => (next[r.action] = { checked: false, qty: 30 }));
+    lines.forEach((l) => (next[l.action] = { checked: true, qty: l.qty }));
+    setSelected(next);
+    setPack(id);
+  }
 
   async function checkout() {
     setErrorMsg('');
@@ -290,6 +306,28 @@ export default function ClientLanding() {
                   </div>
                 </div>
 
+                {rules.length > 0 && (
+                  <div className="s-field">
+                    <span className="s-label" id="pack-label">Start with a pack, or build your own below</span>
+                    <div className="s-packs" role="group" aria-labelledby="pack-label">
+                      {PACKS.map((pk) => (
+                        <button key={pk.id} type="button" className="s-pack" aria-pressed={pack === pk.id} onClick={() => applyPack(pk.id)}>
+                          <span className="s-pack-name">{pk.name}</span>
+                          <span className="s-pack-price">₦{pk.budget.toLocaleString()}</span>
+                        </button>
+                      ))}
+                    </div>
+                    {pack && (() => {
+                      const lines = buildPack(rules, platform, PACKS.find((x) => x.id === pack).budget);
+                      return (
+                        <p className="s-hint">
+                          {lines.map(packLineLabel).join(' · ')}. Change any amount below.
+                        </p>
+                      );
+                    })()}
+                  </div>
+                )}
+
                 <div className="s-field">
                   <label className="s-label" htmlFor="client-email">Your email</label>
                   <input
@@ -350,7 +388,7 @@ export default function ClientLanding() {
                         type="checkbox"
                         checked={!!selected[r.action]?.checked}
                         onChange={(e) =>
-                          setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], checked: e.target.checked } }))
+                          { setPack(null); setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], checked: e.target.checked } })); }
                         }
                       />
                       <label htmlFor={`engage-${r.action}`}>{r.action}</label>
@@ -363,7 +401,7 @@ export default function ClientLanding() {
                         style={{ padding: '9px 10px' }}
                         value={selected[r.action]?.qty || 30}
                         onChange={(e) =>
-                          setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } }))
+                          { setPack(null); setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } })); }
                         }
                       />
                     </div>
@@ -379,6 +417,11 @@ export default function ClientLanding() {
                     {loading ? 'Redirecting...' : 'Pay with Paystack'}
                   </button>
                 </div>
+                {belowMinimum && (
+                  <p className="s-error" role="status">
+                    The minimum order is ₦{MIN_ORDER.toLocaleString()}. Add ₦{(MIN_ORDER - total).toLocaleString()} more, or pick a pack above.
+                  </p>
+                )}
                 {errorMsg && <p className="s-error" role="alert">{errorMsg}</p>}
                 <p className="s-note">Undelivered after 5 days? Full refund for that portion — no questions asked.</p>
                 {trialOpen && (
@@ -405,7 +448,7 @@ export default function ClientLanding() {
               <div className="s-cross">
                 <div className="s-cross-copy">
                   <h2 className="s-h2">Want to earn instead?</h2>
-                  <p>Engagers are paid every Friday, straight to a bank account or Opay, for likes, comments, shares and follows they complete from their own phones.</p>
+                  <p>Engagers are paid every Friday, straight to a bank account or Opay, for likes, comments, shares and follows they complete from their own phones. Payouts start from ₦500; smaller amounts carry over.</p>
                   <a href="/join" className="s-btn s-btn-navy">See how engagers earn <Arrow /></a>
                 </div>
                 <Photo

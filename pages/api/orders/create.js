@@ -2,6 +2,7 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { initializeTransaction } from '../../../lib/paystack';
 import { getOrCreateClient } from '../../../lib/clientRecord';
 import { isValidEmail, normalizeEmail } from '../../../lib/validation';
+import { MIN_ORDER } from '../../../lib/payoutRules';
 import { checkRateLimit, getClientIp } from '../../../lib/rateLimit';
 import { isKnownPlatform, linkMismatchMessage, normalizeLink, linkMatchesPlatform, extractProfileHandle } from '../../../lib/platformDomains';
 
@@ -109,6 +110,11 @@ export default async function handler(req, res) {
   }
   if (!(amountTotal > 0)) {
     return res.status(400).json({ error: 'This order has no payable items.' });
+  }
+  if (amountTotal < MIN_ORDER) {
+    return res.status(400).json({
+      error: `The minimum order is ₦${MIN_ORDER.toLocaleString()}. Add a little more, or choose a starter pack.`,
+    });
   }
 
   // 2. Find or create the client record — also creates a real login for them

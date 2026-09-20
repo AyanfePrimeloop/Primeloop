@@ -17,10 +17,22 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    const { id, mode, sample_rate } = req.body;
+    const { id, mode, sample_rate, all } = req.body;
+    const MODES = ['manual', 'ai_always', 'ai_sampled', 'trust_based'];
+    if (!MODES.includes(mode)) return res.status(400).json({ error: 'Unknown mode' });
+    const rate = Number(sample_rate);
+    if (!(rate >= 0 && rate <= 1)) return res.status(400).json({ error: 'Rate must be between 0% and 100%' });
+    if (all === true) {
+      const { error: allErr } = await supabaseAdmin
+        .from('verification_settings')
+        .update({ mode, sample_rate: rate, updated_at: new Date().toISOString() })
+        .neq('id', '00000000-0000-0000-0000-000000000000');
+      if (allErr) return res.status(500).json({ error: allErr.message });
+      return res.status(200).json({ ok: true });
+    }
     const { data, error } = await supabaseAdmin
       .from('verification_settings')
-      .update({ mode, sample_rate, updated_at: new Date().toISOString() })
+      .update({ mode, sample_rate: rate, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
