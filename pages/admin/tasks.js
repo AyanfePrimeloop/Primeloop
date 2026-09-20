@@ -27,6 +27,7 @@ export default function AdminTasks() {
   }
 
   async function closeTask(id) {
+    if (!window.confirm('Close this task? If a customer really paid for it and it is not filled, they may be owed a refund. Closing removes it from the refund list.')) return;
     setBusyId(id);
     await authedFetch('/api/admin/tasks', {
       method: 'PUT',
@@ -57,6 +58,22 @@ export default function AdminTasks() {
     if (CHANNEL_URL) window.open(CHANNEL_URL, '_blank', 'noopener');
   }
 
+  async function closeAllOpen() {
+    const open = tasks.filter((x) => x.status === 'open');
+    if (!open.length) return;
+    if (!window.confirm('Close all ' + open.length + ' open tasks? Engagers will stop seeing them. If any belong to real paying customers who have not received everything, refund them first.')) return;
+    setBusyId('all');
+    for (const x of open) {
+      await authedFetch('/api/admin/tasks', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: x.id, status: 'closed' }),
+      });
+    }
+    setBusyId(null);
+    load();
+  }
+
   function exportCSV() {
     downloadCSV(
       `primeloop-tasks-${statusFilter || 'all'}-${new Date().toISOString().slice(0, 10)}`,
@@ -84,6 +101,9 @@ export default function AdminTasks() {
         <h1 style={{ fontSize: 30 }}>Task board</h1>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button className="btn accent" onClick={postToChannel}>Post open tasks to WhatsApp Channel</button>
+          {statusFilter === 'open' && tasks.length > 0 && (
+            <button className="btn" onClick={closeAllOpen} disabled={busyId === 'all'}>{busyId === 'all' ? 'Closing...' : 'Close all ' + tasks.length + ' open'}</button>
+          )}
           <button className="btn" onClick={exportCSV}>Download CSV</button>
         </div>
       </div>

@@ -14,7 +14,23 @@ function StatCard({ label, value, color, plain }) {
   );
 }
 
-function Attention({ data }) {
+function Attention({ data, onHandled }) {
+  const [busy, setBusy] = useState(null);
+  const [err, setErr] = useState('');
+  async function markHandled(id) {
+    if (!window.confirm('Mark this order as handled? It will disappear from this list. Only do this after you have refunded the customer or decided nothing is owed.')) return;
+    setBusy(id);
+    setErr('');
+    const res = await authedFetch('/api/admin/resolve-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    const d = await res.json().catch(() => ({}));
+    setBusy(null);
+    if (!res.ok) return setErr(d.error || 'Could not save.');
+    onHandled();
+  }
   const none = !data || (!data.paidWithoutTasks.length && !data.overdue.length);
   const row = (o, extra) => (
     <div key={o.id} style={{ display: 'flex', gap: 12, justifyContent: 'space-between', flexWrap: 'wrap', padding: '10px 0', borderTop: '1px solid var(--line)', fontSize: 14 }}>
@@ -25,12 +41,16 @@ function Attention({ data }) {
       <div style={{ textAlign: 'right' }}>
         <div style={{ fontWeight: 600 }}>₦{o.amount.toLocaleString()}</div>
         <div style={{ fontSize: 13, color: 'var(--warn)' }}>{extra}</div>
+        <button className="btn" style={{ fontSize: 13, padding: '5px 10px', marginTop: 6 }} disabled={busy === o.id} onClick={() => markHandled(o.id)}>
+          {busy === o.id ? 'Saving...' : 'Mark handled'}
+        </button>
       </div>
     </div>
   );
   return (
     <div className="section" style={{ padding: '16px 20px', marginTop: 16, borderColor: none ? 'var(--line)' : 'var(--warn)' }}>
       <div style={{ fontWeight: 700, fontSize: 16 }}>{none ? 'Nothing needs your attention' : 'Needs your attention'}</div>
+      {err && <p role="alert" style={{ fontSize: 14, color: 'var(--warn)', margin: '6px 0 0' }}>{err}</p>}
       {none && <p style={{ fontSize: 14, color: 'var(--ink-mute)', margin: '4px 0 0' }}>Every paid order has tasks, and none are past the 5-day refund promise.</p>}
       {data?.paidWithoutTasks.length > 0 && (
         <>
@@ -60,13 +80,15 @@ export default function Accounting() {
 
   const isSuperAdmin = me?.admin?.role === 'super_admin';
 
+  function loadStats() {
+    return authedFetch('/api/admin/accounting')
+      .then((r) => r.json())
+      .then((d) => (d.error ? setError(d.error) : setStats(d)));
+  }
+
   useEffect(() => {
-    if (!loading && isSuperAdmin) {
-      authedFetch('/api/admin/accounting')
-        .then((r) => r.json())
-        .then((d) => (d.error ? setError(d.error) : setStats(d)));
-    }
-  }, [loading, isSuperAdmin]);
+    if (!loading && isSuperAdmin) loadStats();
+  }, [loading, isSuperAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function downloadBackup() {
     setBackingUp(true);
@@ -103,7 +125,7 @@ export default function Accounting() {
 
       {stats && (
         <>
-          <Attention data={stats.attention} />
+          <Attention data={stats.attention} onHandled={loadStats} />
           <div className="grid-3" style={{ margin: '16px 0' }}>
             <StatCard label="Total revenue (all time)" value={stats.totalRevenue} color="var(--navy)" />
             <StatCard label="Revenue, last 30 days" value={stats.recentRevenue30d} />

@@ -92,21 +92,25 @@ export default async function handler(req, res) {
   // this is the list to work through.
   const attention = { paidWithoutTasks: [], overdue: [] };
   {
-    const { data: orders } = await fetchAll(() =>
-      supabaseAdmin
-        .from('orders')
-        .select('id, amount_total, platform, paystack_reference, created_at, clients(email)')
-        .eq('payment_status', 'paid')
-        .order('id')
-    );
+    // attention_resolved_at comes from migration 14; before it is run, fall
+    // back to the same query without it so this page never breaks.
+    const orderQuery = (cols) => () =>
+      supabaseAdmin.from('orders').select(cols).eq('payment_status', 'paid').order('id');
+    let ordersRes = await fetchAll(orderQuery('id, amount_total, platform, paystack_reference, created_at, attention_resolved_at, clients(email)'));
+    if (ordersRes.error) ordersRes = await fetchAll(orderQuery('id, amount_total, platform, paystack_reference, created_at, clients(email)'));
+    const orders = (ordersRes.data || []).filter((o) => !o.attention_resolved_at);
     const { data: tasks } = await fetchAll(() =>
-      supabaseAdmin.from('tasks').select('id, order_id, quantity_needed, quantity_filled').order('id')
+      supabaseAdmin.from('tasks').select('id, order_id, status, quantity_needed, quantity_filled').order('id')
     );
     const byOrder = new Map();
     for (const t of tasks || []) {
       const g = byOrder.get(t.order_id) || { needed: 0, filled: 0, count: 0 };
-      g.needed += t.quantity_needed || 0;
-      g.filled += t.quantity_filled || 0;
+      // A closed task is settled (filled, or closed by an admin on purpose), so
+      // it never counts as undelivered.
+      if (t.status !== 'closed') {
+        g.needed += t.quantity_needed || 0;
+        g.filled += t.quantity_filled || 0;
+      }
       g.count += 1;
       byOrder.set(t.order_id, g);
     }
