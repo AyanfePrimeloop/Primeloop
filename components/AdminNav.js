@@ -11,6 +11,7 @@ const LINKS = [
   { href: '/admin/admins', label: 'Admins' },
   { href: '/admin/accounting', label: 'Accounting' },
   { href: '/admin/enable-mfa', label: '2FA' },
+  { href: '/admin/help', label: 'Help' },
 ];
 
 // Every admin page renders <AdminNav /> as its first child, inside .app.

@@ -4,6 +4,7 @@ import Head from 'next/head';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import SiteFaq from '../components/SiteFaq';
+import VideoCard from '../components/VideoCard';
 import SiteSticky from '../components/SiteSticky';
 import SiteWhatsApp from '../components/SiteWhatsApp';
 import Photo from '../components/Photo';
@@ -115,6 +116,16 @@ export default function JoinAsEngager() {
                 />
                 <ProofCard kind="payouts" rows={payouts} exampleText="₦4,200 paid to an engager" exampleWhen="e.g. last Friday" />
               </div>
+            </div>
+          </section>
+
+          <section className="s-section" id="watch">
+            <div className="s-wrap">
+              <div className="s-section-head">
+                <h2 className="s-h2">See it in under 4 minutes</h2>
+                <p>Sign-up, your first task and getting paid, start to finish.</p>
+              </div>
+              <VideoCard video="engager" />
             </div>
           </section>
 

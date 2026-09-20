@@ -4,6 +4,7 @@ import Head from 'next/head';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import SiteFaq from '../components/SiteFaq';
+import VideoCard from '../components/VideoCard';
 import SiteSticky from '../components/SiteSticky';
 import SiteWhatsApp from '../components/SiteWhatsApp';
 import Photo from '../components/Photo';
@@ -235,6 +236,16 @@ export default function ClientLanding() {
                 />
                 <ProofCard kind="activity" rows={activity} exampleText="Instagram comment verified" exampleWhen="e.g. 3m ago" />
               </div>
+            </div>
+          </section>
+
+          <section className="s-section" id="watch">
+            <div className="s-wrap">
+              <div className="s-section-head">
+                <h2 className="s-h2">Watch how it works</h2>
+                <p>Three minutes: ordering, paying and tracking real engagement.</p>
+              </div>
+              <VideoCard video="client" />
             </div>
           </section>
 

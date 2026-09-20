@@ -7,6 +7,7 @@ import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
 import EarnMore from '../../components/EarnMore';
+import VideoCard from '../../components/VideoCard';
 import QualityRules from '../../components/QualityRules';
 import { MIN_COMMENT_WORDS } from '../../lib/engagerRules';
 import { MIN_PAYOUT } from '../../lib/payoutRules';
@@ -136,6 +137,13 @@ export default function EngagerDashboard() {
         hasBank={!!me?.engager?.paystack_recipient_code}
         hasApprovedTask={approved.length > 0}
       />
+
+      {approved.length === 0 && (
+        <details className="section" style={{ padding: '14px 20px' }}>
+          <summary style={{ fontWeight: 700, cursor: 'pointer' }}>Watch: how to earn (under 4 minutes)</summary>
+          <div style={{ marginTop: 14 }}><VideoCard video="engager" /></div>
+        </details>
+      )}
 
       <EarnMore hasApprovedTask={approved.length > 0} statuses={platformStatuses} />
 
