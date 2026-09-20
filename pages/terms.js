@@ -42,6 +42,11 @@ export default function Terms() {
           <li>Never submit false, duplicated, reused, or AI-generated proof</li>
           <li>Register only social media pages/accounts you personally own and control</li>
           <li>Not register the same page/account under more than one Primeloop account</li>
+          <li>Do every engagement by hand from your own account. No bots, and no AI-written or copy-pasted text</li>
+          <li>Write comments that speak specifically about the post. Generic lines such as "this is awesome" or "I love this post" are not accepted</li>
+          <li>Write every comment with at least 4 words, unless the client's note on the task allows shorter ones</li>
+          <li>Watch a video to the end before commenting on it, and make your comment relate to its message</li>
+          <li>Never unfollow or unsubscribe after you have been paid for a follow or subscribe</li>
         </ul>
         <p>
           Violating these terms may result in a warning, forfeiture of the related payment,

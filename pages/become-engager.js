@@ -47,6 +47,9 @@ export default function BecomeEngager() {
           <label className="auth-label" htmlFor="be-wa">WhatsApp number</label>
           <input id="be-wa" className="auth-input" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} autoComplete="tel" inputMode="tel" placeholder="08012345678" />
         </div>
+        <p className="auth-hint" style={{ marginBottom: 12 }}>
+          By continuing you agree to the <a href="/terms" target="_blank" rel="noreferrer">Terms</a>, including our quality rules: genuine, specific comments and no unfollowing after payment.
+        </p>
         <button type="submit" className="btn accent auth-btn" disabled={busy || !fullName.trim() || !whatsapp}>
           {busy ? 'Creating...' : 'Create my engager profile'}
         </button>

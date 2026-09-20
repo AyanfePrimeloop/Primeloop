@@ -113,6 +113,7 @@ export default async function handler(req, res) {
       imageMediaType: imageMediaType || 'image/png',
       expectedAccountName: platformAccount.profile_name || engager.full_name,
       postLink: task.post_link,
+      specialInstructions: task.special_instructions,
       engagerId: engager.id,
     });
     verdict = result.verdict;

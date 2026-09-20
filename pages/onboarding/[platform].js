@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
+import QualityRules from '../../components/QualityRules';
 
 export default function OnboardingTest() {
   const router = useRouter();
@@ -115,6 +116,8 @@ export default function OnboardingTest() {
           : `Register your ${platform} page first — one page can only ever be linked to one engager account.`}
       </p>
       </div>
+
+      <QualityRules defaultOpen />
 
       <div className="section">
         <div className="section-head"><h2>Your {platform} page</h2></div>

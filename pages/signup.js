@@ -118,6 +118,9 @@ export default function Signup() {
             up your account.
           </p>
         </div>
+        <p className="auth-hint" style={{ marginBottom: 12 }}>
+          By creating an account you agree to the <a href="/terms" target="_blank" rel="noreferrer">Terms</a>, including our quality rules: genuine, specific comments and no unfollowing after payment.
+        </p>
         <button type="submit" className="btn accent auth-btn" disabled={loading}>
           {loading ? 'Creating account...' : 'Create account'}
         </button>

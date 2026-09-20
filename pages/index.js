@@ -22,6 +22,10 @@ const FAQ_ITEMS = [
     a: 'Every engagement is completed by a trained, verified engager account — never an automated script. Each one submits screenshot proof of the action, which is checked automatically for authenticity and duplicates. You see the same progress bar move in your dashboard as it happens.',
   },
   {
+    q: 'Will the comments be generic?',
+    a: 'No. Our rules require every comment to speak about your actual post, and generic lines like "this is awesome" are rejected. Comments must be at least 4 words unless you ask for shorter ones in the extra instructions when you order. On videos, engagers must watch to the end before commenting, and follows and subscribes must stay in place after they are paid.',
+  },
+  {
     q: 'Will this get my account flagged or banned?',
     a: "No — because nothing about it looks like bot activity to the platform. Real accounts, real devices, real behavior. That's the entire point of not using a bot panel.",
   },
@@ -41,7 +45,7 @@ const FAQ_ITEMS = [
 
 const STEPS = [
   { t: 'Choose what you need', d: 'Pick a platform, paste your post link and choose likes, comments, shares or follows.' },
-  { t: 'Real people do it', d: 'Verified engagers get an alert and complete each task from their own phones and accounts.' },
+  { t: 'Real people do it', d: 'Verified engagers complete each task by hand from their own accounts. Comments are written about your post, never generic.' },
   { t: 'Every one is checked', d: 'Each engager uploads a screenshot. It is checked automatically for the real action and for duplicates.' },
 ];
 
@@ -376,7 +380,7 @@ export default function ClientLanding() {
                     className="s-input"
                     value={specialInstructions}
                     onChange={(e) => setSpecialInstructions(e.target.value)}
-                    placeholder="e.g. comments should mention the product name, or focus on the first photo in the carousel"
+                    placeholder="e.g. comments should mention the product name. Comments are 4+ words and specific to your post unless you say short ones are fine."
                   />
                 </div>
 

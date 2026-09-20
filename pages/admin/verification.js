@@ -58,7 +58,7 @@ export default function VerificationSettings() {
       <p style={{ color: 'var(--ink-soft)', fontSize: 14 }}>
         <strong>Trust-based</strong> is the recommended setting. New engagers have every screenshot checked by AI.
         Once someone has 20 approved tasks and a clean record, most of their proof is approved automatically and
-        a random share is still checked. Follows and subscribes are always checked. If the AI is not sure, or
+        a random share is still checked. Follows, subscribes, comments and replies are always checked, because comment quality is what clients pay for. If the AI is not sure, or
         would reject, a person looks at it, so an honest engager is never turned down by a model's mistake.
       </p>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', margin: '12px 0 0' }}>

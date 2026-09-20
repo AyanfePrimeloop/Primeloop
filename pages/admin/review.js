@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
+import { ENGAGER_RULES } from '../../lib/engagerRules';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 export default function ReviewQueue() {
@@ -43,6 +44,13 @@ export default function ReviewQueue() {
         submissions land here when the verification setting is Manual, an AI-sampled check was
         skipped, or it's attempt 3+ on an onboarding action (forced manual after repeated tries).
       </p>
+
+      <details className="section" style={{ padding: '4px 20px' }}>
+        <summary style={{ cursor: 'pointer', padding: '12px 0', fontWeight: 600 }}>Reject if it breaks our quality rules (tap to see)</summary>
+        <ul style={{ margin: '0 0 14px', paddingLeft: 20, fontSize: 14.5, color: 'var(--ink-soft)' }}>
+          {ENGAGER_RULES.map((r) => <li key={r.title} style={{ marginBottom: 6 }}><strong>{r.title}.</strong> {r.body}</li>)}
+        </ul>
+      </details>
 
       <div className="section">
         <div className="section-head">
