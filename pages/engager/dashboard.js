@@ -6,6 +6,7 @@ import AppBar from '../../components/AppBar';
 import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
+import EarnMore from '../../components/EarnMore';
 
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
@@ -19,6 +20,7 @@ export default function EngagerDashboard() {
   const [totalPaid, setTotalPaid] = useState(0);
   const [referrals, setReferrals] = useState({ count: 0, earned: 0 });
   const [verifiedPlatforms, setVerifiedPlatforms] = useState(new Set());
+  const [platformStatuses, setPlatformStatuses] = useState({});
 
   useEffect(() => {
     if (!loading) {
@@ -32,6 +34,7 @@ export default function EngagerDashboard() {
   async function loadPlatformStatus() {
     const { data } = await supabase.from('engager_platform_accounts').select('platform, verification_status');
     setVerifiedPlatforms(new Set((data || []).filter((p) => p.verification_status === 'verified').map((p) => p.platform)));
+    setPlatformStatuses(Object.fromEntries((data || []).map((p) => [p.platform, p.verification_status])));
   }
 
   async function loadTasks() {
@@ -130,6 +133,8 @@ export default function EngagerDashboard() {
         hasBank={!!me?.engager?.paystack_recipient_code}
         hasApprovedTask={approved.length > 0}
       />
+
+      <EarnMore hasApprovedTask={approved.length > 0} statuses={platformStatuses} />
 
       {!me?.engager?.paystack_recipient_code && verifiedPlatforms.size > 0 && approved.length > 0 && (
         <div className="section" style={{ padding: '14px 20px', background: 'var(--warn-soft)', border: '1px solid var(--warn)' }}>
