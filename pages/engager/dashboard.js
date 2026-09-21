@@ -15,6 +15,7 @@ import { MIN_PAYOUT } from '../../lib/payoutRules';
 export default function EngagerDashboard() {
   const { loading, me } = useRequireRole('engager');
   const [tasks, setTasks] = useState([]);
+  const [hiddenOwn, setHiddenOwn] = useState(0); // open tasks hidden because they are on this login's own client orders
   const [taskCode, setTaskCode] = useState('');
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
@@ -53,6 +54,7 @@ export default function EngagerDashboard() {
     const ownClientId = me?.client?.id;
     const filtered = ownClientId ? (data || []).filter((t) => t.client_id !== ownClientId) : (data || []);
     setTasks(filtered);
+    setHiddenOwn((data || []).length - filtered.length);
   }
 
   async function loadEarnings() {
@@ -184,7 +186,18 @@ export default function EngagerDashboard() {
 
       <div className="section">
         <div className="section-head"><h2>Available now</h2></div>
-        {tasks.length === 0 && <p style={{ padding: 20, color: 'var(--ink-mute)' }}>No open tasks right now — check back soon.</p>}
+        {tasks.length === 0 && (
+          <p style={{ padding: 20, color: 'var(--ink-mute)' }}>
+            {hiddenOwn > 0
+              ? (hiddenOwn === 1 ? '1 open task is' : hiddenOwn + ' open tasks are') + ' on your own client order, so it is hidden from you. You cannot complete tasks on your own order. Check back soon for tasks from other clients.'
+              : 'No open tasks right now — check back soon.'}
+          </p>
+        )}
+        {tasks.length > 0 && hiddenOwn > 0 && (
+          <p style={{ padding: '10px 20px 0', fontSize: 13, color: 'var(--ink-mute)' }}>
+            {hiddenOwn} more open {hiddenOwn === 1 ? 'task is' : 'tasks are'} on your own client order and hidden from you.
+          </p>
+        )}
         {tasks.map((t) => (
           <div className="task-row" key={t.id}>
             <div>
