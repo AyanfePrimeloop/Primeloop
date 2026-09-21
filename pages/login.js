@@ -22,7 +22,7 @@ export default function Login() {
     if (roles.length > 1) {
       router.push('/choose-dashboard');
     } else if (roles.includes('admin')) {
-      router.push('/admin/pricing');
+      router.push('/admin/tasks');
     } else if (roles.includes('engager')) {
       router.push('/engager/dashboard');
     } else if (roles.includes('client')) {

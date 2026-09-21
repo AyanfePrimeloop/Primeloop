@@ -1,11 +1,11 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
-import { requireAdmin } from '../../../lib/requireAdmin';
+import { requireSuperAdmin } from '../../../lib/requireSuperAdmin';
 
 // GET  -> list settings (optionally ?platform=facebook)
 // PUT  -> body: { id, mode, sample_rate }
-// Admin-only — no public use case for this data.
+// Super-admin only — no public use case for this data.
 export default async function handler(req, res) {
-  const auth = await requireAdmin(req);
+  const auth = await requireSuperAdmin(req);
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
   if (req.method === 'GET') {

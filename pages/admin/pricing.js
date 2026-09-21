@@ -11,7 +11,7 @@ export default function AdminPricing() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || me?.admin?.role !== 'super_admin') return;
     authedFetch(`/api/admin/pricing?platform=${platform}`)
       .then((r) => r.json())
       .then((d) => setRules(d.rules || []));
@@ -32,6 +32,16 @@ export default function AdminPricing() {
   }
 
   if (loading) return <div className="app"><p style={{ padding: 20 }}>Loading...</p></div>;
+
+  if (!me?.admin || me.admin.role !== 'super_admin') {
+    return (
+      <div className="app">
+        <AdminNav />
+        <div className="section" style={{ padding: 20, color: 'var(--ink-mute)' }}>This page is restricted to super-admins.</div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="app">

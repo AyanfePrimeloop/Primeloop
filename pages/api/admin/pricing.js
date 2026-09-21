@@ -1,15 +1,16 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
-import { requireAdmin } from '../../../lib/requireAdmin';
+import { requireSuperAdmin } from '../../../lib/requireSuperAdmin';
 
 // GET  -> list pricing rules (optionally ?platform=facebook). The client order
 //         builder calls this without logging in, so anonymous callers only get
 //         what a client needs (the price they pay, active rules only) — never
 //         the engager payout, which is the business's margin. Admins get
 //         everything, since this is also how the pricing page loads.
-// PUT  -> body: { id, client_price, engager_payout } — admin only.
+// PUT  -> body: { id, client_price, engager_payout } — super-admin only. Regular admins
+//         get the same limited view as anonymous callers.
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const auth = await requireAdmin(req);
+    const auth = await requireSuperAdmin(req);
     const isAdmin = !auth.error;
 
     let query = supabaseAdmin.from('pricing_rules').select('*').order('platform');
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    const auth = await requireAdmin(req);
+    const auth = await requireSuperAdmin(req);
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
     const { id, client_price, engager_payout } = req.body;

@@ -5,7 +5,7 @@ import { authedFetch } from '../lib/authClient';
 import AuthShell from '../components/AuthShell';
 
 const ROLE_INFO = {
-  admin: { label: 'Admin dashboard', href: '/admin/pricing', desc: 'Manage pricing, engagers, and tasks.' },
+  admin: { label: 'Admin dashboard', href: '/admin/tasks', desc: 'Manage tasks, reviews, and engagers.' },
   engager: { label: 'Engager dashboard', href: '/engager/dashboard', desc: 'Find tasks and track your earnings.' },
   client: { label: 'Client dashboard', href: '/client/dashboard', desc: 'Track your orders.' },
 };
