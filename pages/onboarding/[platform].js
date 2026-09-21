@@ -107,6 +107,7 @@ export default function OnboardingTest() {
       { href: '/choose-dashboard', label: 'Switch dashboard' },
     ]} />
     <div className="app">
+      <a href="/engager/dashboard" style={{ display: 'inline-block', marginBottom: 10, fontSize: 14.5, color: 'var(--navy)', fontWeight: 600 }}>← Back to dashboard</a>
       <div className="page-head">
       <h1 style={{ textTransform: 'capitalize' }}>{platform} onboarding test</h1>
       <p>
@@ -173,6 +174,7 @@ export default function OnboardingTest() {
               <p style={{ color: 'var(--good)', fontWeight: 600, margin: 0 }}>
                 All actions verified — your {platform} account is confirmed. You can now claim real tasks on this platform.
               </p>
+              <a href="/engager/dashboard" className="btn primary" style={{ display: 'inline-block', marginTop: 14, textDecoration: 'none' }}>Back to dashboard</a>
             </div>
           ) : (
             remainingActions.map((action) => {
@@ -200,6 +202,12 @@ export default function OnboardingTest() {
                 </div>
               );
             })
+          )}
+          {!allDone && (
+            <p style={{ margin: '8px 0 0', fontSize: 14 }}>
+              <a href="/engager/dashboard" style={{ color: 'var(--navy)', fontWeight: 600 }}>← Back to dashboard</a>
+              <span style={{ color: 'var(--ink-mute)' }}> You can come back and finish this test any time.</span>
+            </p>
           )}
         </>
       )}
