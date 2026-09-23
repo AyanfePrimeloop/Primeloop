@@ -7,9 +7,9 @@ import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
 import EarnMore from '../../components/EarnMore';
+import { screenshotHint } from '../../lib/screenshotGuide';
 import VideoCard from '../../components/VideoCard';
 import QualityRules from '../../components/QualityRules';
-import { MIN_COMMENT_WORDS } from '../../lib/engagerRules';
 import { MIN_PAYOUT } from '../../lib/payoutRules';
 
 export default function EngagerDashboard() {
@@ -206,15 +206,9 @@ export default function EngagerDashboard() {
             </div>
             <div style={{ textTransform: 'capitalize' }}>
               {t.action}
-              {['comment', 'reply'].includes(t.action) && (
-                <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', textTransform: 'none' }}>Specific to the post, {MIN_COMMENT_WORDS}+ words</div>
-              )}
-              {['watch'].includes(t.action) && (
-                <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', textTransform: 'none' }}>Watch to the end</div>
-              )}
-              {['follow', 'subscribe'].includes(t.action) && (
-                <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', textTransform: 'none' }}>Keep it, never remove</div>
-              )}
+              <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', textTransform: 'none', maxWidth: 220 }} title="What to include in your screenshot">
+                {screenshotHint(t.action)}
+              </div>
             </div>
             <div><span className="badge">{t.quantity_filled}/{t.quantity_needed}</span></div>
             <div style={{ fontFamily: 'var(--mono)' }} title="What you earn for this task">₦{t.price_per_unit}</div>

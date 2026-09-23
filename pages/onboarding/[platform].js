@@ -4,6 +4,7 @@ import { compressImageFile } from '../../lib/compressImage';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
 import QualityRules from '../../components/QualityRules';
+import { screenshotHint } from '../../lib/screenshotGuide';
 
 export default function OnboardingTest() {
   const router = useRouter();
@@ -183,6 +184,9 @@ export default function OnboardingTest() {
                 <div className="section" key={action}>
                   <div className="section-head"><h2 style={{ textTransform: 'capitalize' }}>Submit proof: {action}</h2></div>
                   <div style={{ padding: 20 }}>
+                    <p style={{ fontSize: 14, color: 'var(--ink-soft)', background: 'var(--paper)', borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
+                      <strong>What to include: </strong>{screenshotHint(action)}
+                    </p>
                     <div style={{ marginBottom: 16 }}>
                       <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Screenshot of your {action}</label>
                       <input type="file" accept="image/*" onChange={(e) => setFileFor(action, e.target.files[0])} />
