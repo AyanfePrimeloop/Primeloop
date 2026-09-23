@@ -123,6 +123,7 @@ export default function EngagerDashboard() {
     <>
     <AppBar links={[
       { href: '/engager/dashboard', label: 'Tasks', current: true },
+      { href: '/engager/screenshot-guide', label: 'Screenshot guide' },
       { href: '/engager/bank-details', label: 'Bank details' },
       { href: '/engager/profile', label: 'Profile' },
       { href: '/choose-dashboard', label: 'Switch dashboard' },
@@ -207,7 +208,8 @@ export default function EngagerDashboard() {
             <div style={{ textTransform: 'capitalize' }}>
               {t.action}
               <div style={{ fontSize: 12.5, color: 'var(--ink-mute)', textTransform: 'none', maxWidth: 220 }} title="What to include in your screenshot">
-                {screenshotHint(t.action)}
+                {screenshotHint(t.action)}{' '}
+                <a href={`/engager/screenshot-guide#${t.platform}-${t.action}`} style={{ whiteSpace: 'nowrap' }}>See example</a>
               </div>
             </div>
             <div><span className="badge">{t.quantity_filled}/{t.quantity_needed}</span></div>

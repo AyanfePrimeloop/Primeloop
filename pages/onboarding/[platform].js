@@ -103,6 +103,7 @@ export default function OnboardingTest() {
     <>
     <AppBar links={[
       { href: '/engager/dashboard', label: 'Tasks' },
+      { href: '/engager/screenshot-guide', label: 'Screenshot guide' },
       { href: '/engager/bank-details', label: 'Bank details' },
       { href: '/engager/profile', label: 'Profile' },
       { href: '/choose-dashboard', label: 'Switch dashboard' },
@@ -185,7 +186,8 @@ export default function OnboardingTest() {
                   <div className="section-head"><h2 style={{ textTransform: 'capitalize' }}>Submit proof: {action}</h2></div>
                   <div style={{ padding: 20 }}>
                     <p style={{ fontSize: 14, color: 'var(--ink-soft)', background: 'var(--paper)', borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
-                      <strong>What to include: </strong>{screenshotHint(action)}
+                      <strong>What to include: </strong>{screenshotHint(action)}{' '}
+                      <a href={`/engager/screenshot-guide#${platform}-${action}`} target="_blank" rel="noreferrer">See example</a>
                     </p>
                     <div style={{ marginBottom: 16 }}>
                       <label style={{ fontSize: 14, display: 'block', marginBottom: 5 }}>Screenshot of your {action}</label>
