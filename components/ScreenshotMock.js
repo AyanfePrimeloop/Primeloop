@@ -5,8 +5,8 @@ import { Check, Cross } from './SiteIcons';
 // copy of any platform's actual interface. Used on /engager/screenshot-guide
 // and matched to lib/screenshotGuide.js's `mock` field per action.
 
-const frame = { background: '#fff', border: '1px solid var(--line)', borderRadius: 12, padding: 14, maxWidth: 320 };
-const row = { display: 'flex', alignItems: 'center', gap: 10 };
+const frame = { background: '#fff', border: '1px solid var(--line)', borderRadius: 12, padding: 14, width: '100%', maxWidth: 320, boxSizing: 'border-box' };
+const row = { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', minWidth: 0 };
 const avatar = (bg) => ({ width: 28, height: 28, borderRadius: '50%', background: bg || 'var(--paper)', flexShrink: 0 });
 const photo = { height: 70, borderRadius: 8, background: 'linear-gradient(135deg,#dfe3ee,#c9cee8)', marginBottom: 10 };
 const badge = (good) => ({
@@ -92,14 +92,17 @@ function CommentGood() {
 }
 
 function Share() {
+  // flex + wrap, not a fixed two-column grid, so the two cards stack on
+  // narrow screens instead of getting squeezed and clipped off the edge.
+  const card = { ...frame, maxWidth: 220, flex: '1 1 200px', minWidth: 0 };
   return (
-    <div style={{ display: 'grid', gap: 10, gridTemplateColumns: '1fr 1fr', maxWidth: 460 }}>
-      <div style={{ ...frame, maxWidth: 'none' }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, width: '100%' }}>
+      <div style={card}>
         <div style={badge(false)}><Cross size={12} color="var(--warn)" /> Not proof</div>
         <div style={photo} />
         <div style={{ fontSize: 12.5, color: 'var(--ink-mute)' }}>Just viewing the original post — this never shows that you shared it.</div>
       </div>
-      <div style={{ ...frame, maxWidth: 'none' }}>
+      <div style={card}>
         <div style={badge(true)}><Check size={12} color="var(--good)" /> Proof</div>
         <div style={row}>
           <div style={avatar('#e0632b')} />

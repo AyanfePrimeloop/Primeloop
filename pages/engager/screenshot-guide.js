@@ -41,7 +41,7 @@ export default function ScreenshotGuide() {
             <div style={{ padding: 20, display: 'grid', gap: 22 }}>
               {items.map((item) => (
                 <div key={item.action} id={`${platform}-${item.action}`} style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start', scrollMarginTop: 90 }}>
-                  <div style={{ flex: '0 0 auto' }}><ScreenshotMock type={item.mock} /></div>
+                  <div style={{ flex: '1 1 260px', minWidth: 0, maxWidth: 320 }}><ScreenshotMock type={item.mock} /></div>
                   <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                     <div style={{ fontWeight: 700, textTransform: 'capitalize', marginBottom: 4 }}>{item.action}</div>
                     <div style={{ fontSize: 14.5, color: 'var(--ink-soft)' }}>{item.how}</div>
