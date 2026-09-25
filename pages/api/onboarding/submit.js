@@ -86,6 +86,7 @@ export default async function handler(req, res) {
         imageBase64,
         imageMediaType: imageMediaType || 'image/png',
         expectedAccountName: platformAccount.profile_name || engager.full_name,
+        profileLink: platformAccount.profile_link,
         postLink: test.post_link,
       });
 
