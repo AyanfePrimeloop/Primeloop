@@ -44,7 +44,10 @@ export default function AdminClients() {
     <div className="app">
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <h1 style={{ fontSize: 30 }}>Clients</h1>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+          <h1 style={{ fontSize: 30 }}>Clients</h1>
+          {clients && <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)' }}>{clients.length} total</span>}
+        </div>
         <button className="btn" onClick={() => downloadCSV('primeloop-clients-' + new Date().toISOString().slice(0, 10), shown.map((c) => ({
           name: c.full_name, email: c.email, whatsapp: c.whatsapp, status: c.status, paid_orders: c.paid_orders, total_spent: c.total_spent, last_order: c.last_order_at || '', joined: c.created_at,
         })))}>Download CSV</button>

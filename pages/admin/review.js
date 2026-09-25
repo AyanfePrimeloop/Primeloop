@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
 import { ENGAGER_RULES } from '../../lib/engagerRules';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
+import { buildEngagerMessage, whatsappHref } from '../../lib/whatsappLink';
+
+// Opens WhatsApp with a ready-written message explaining why the automatic
+// check could not confirm this proof and what to send instead. The admin
+// reads it and presses Send. Hidden if the engager has no usable number.
+function WhatsAppButton({ engager, platform, action, taskCode, reason, isOnboarding }) {
+  const href = whatsappHref(engager?.whatsapp, buildEngagerMessage({ name: engager?.full_name, platform, action, taskCode, reason, isOnboarding }));
+  if (!href) return <span className="badge" title="This engager has no valid WhatsApp number on file">No WhatsApp number</span>;
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13, borderColor: '#25a55a', color: '#12703a' }}>
+      Message on WhatsApp
+    </a>
+  );
+}
 
 export default function ReviewQueue() {
   const { loading } = useRequireRole('admin');
@@ -100,6 +114,7 @@ export default function ReviewQueue() {
                 <img src={s.screenshot_url} alt="submission proof" style={{ maxWidth: 220, borderRadius: 6, marginTop: 8, border: '1px solid var(--line)' }} />
               )}
             </div>
+            <WhatsAppButton engager={s.engagers} platform={s.tasks?.platform} action={s.tasks?.action} taskCode={s.tasks?.task_code} reason={s.ai_reason} />
             <a href={s.tasks?.post_link} target="_blank" rel="noreferrer" className="btn" style={{ fontSize: 13 }}>View post</a>
             <button className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)' }} disabled={busyId === s.id} onClick={() => decide('regular', s.id, 'rejected')}>Reject</button>
             <button className="btn" style={{ borderColor: 'var(--good)', color: 'var(--good)' }} disabled={busyId === s.id} onClick={() => decide('regular', s.id, 'approved')}>Approve</button>
@@ -132,6 +147,7 @@ export default function ReviewQueue() {
                 <img src={s.screenshot_url} alt="onboarding proof" style={{ maxWidth: 220, borderRadius: 6, marginTop: 8, border: '1px solid var(--line)' }} />
               )}
             </div>
+            <WhatsAppButton engager={s.engagers} platform={s.platform} action={s.action} reason={s.ai_reason} isOnboarding />
             <button className="btn" style={{ borderColor: 'var(--warn)', color: 'var(--warn)' }} disabled={busyId === s.id} onClick={() => decide('onboarding', s.id, 'rejected')}>Reject</button>
             <button className="btn" style={{ borderColor: 'var(--good)', color: 'var(--good)' }} disabled={busyId === s.id} onClick={() => decide('onboarding', s.id, 'approved')}>Approve</button>
           </div>

@@ -9,6 +9,7 @@ const STATUSES = ['active', 'warned', 'dismissed'];
 export default function AdminEngagers() {
   const { loading } = useRequireRole('admin');
   const [engagers, setEngagers] = useState([]);
+  const [counts, setCounts] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [busyId, setBusyId] = useState(null);
 
@@ -21,6 +22,7 @@ export default function AdminEngagers() {
     const res = await authedFetch(url);
     const data = await res.json();
     setEngagers(data.engagers || []);
+    if (data.counts) setCounts(data.counts);
   }
 
   async function updateEngager(id, field, value) {
@@ -58,7 +60,10 @@ export default function AdminEngagers() {
     <div className="app">
       <AdminNav />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 30 }}>Engagers</h1>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+          <h1 style={{ fontSize: 30 }}>Engagers</h1>
+          {counts && <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)' }}>{counts.total} total</span>}
+        </div>
         <button className="btn" onClick={exportCSV}>Download CSV</button>
       </div>
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
@@ -67,10 +72,10 @@ export default function AdminEngagers() {
       </p>
 
       <div style={{ display: 'flex', gap: 6, margin: '16px 0', flexWrap: 'wrap' }}>
-        <button className="btn" style={!statusFilter ? { background: 'var(--navy)', color: '#fff' } : {}} onClick={() => setStatusFilter('')}>All</button>
+        <button className="btn" style={!statusFilter ? { background: 'var(--navy)', color: '#fff' } : {}} onClick={() => setStatusFilter('')}>All{counts ? ' (' + counts.total + ')' : ''}</button>
         {STATUSES.map((s) => (
           <button key={s} className="btn" style={statusFilter === s ? { background: 'var(--navy)', color: '#fff' } : {}} onClick={() => setStatusFilter(s)}>
-            {s[0].toUpperCase() + s.slice(1)}
+            {s[0].toUpperCase() + s.slice(1)}{counts ? ' (' + counts[s] + ')' : ''}
           </button>
         ))}
       </div>

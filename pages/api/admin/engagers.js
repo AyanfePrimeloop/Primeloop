@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { requireAdmin } from '../../../lib/requireAdmin';
+import { fetchAll } from '../../../lib/fetchAll';
 
 // GET  -> list all engagers (optionally ?status=active)
 // PUT  -> body: { id, status } to change active/warned/dismissed, or { id, tier }
@@ -15,7 +16,15 @@ export default async function handler(req, res) {
     if (req.query.status) query = query.eq('status', req.query.status);
     const { data, error } = await query;
     if (error) return res.status(500).json({ error: error.message });
-    return res.status(200).json({ engagers: data });
+
+    // Totals always cover EVERY engager, whatever filter the list is showing.
+    const all = await fetchAll(() => supabaseAdmin.from('engagers').select('status').order('id'));
+    const counts = { total: 0, active: 0, warned: 0, dismissed: 0 };
+    for (const e of all.data || []) {
+      counts.total += 1;
+      if (counts[e.status] !== undefined) counts[e.status] += 1;
+    }
+    return res.status(200).json({ engagers: data, counts });
   }
 
   if (req.method === 'PUT') {

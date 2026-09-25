@@ -13,14 +13,14 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { data: regular, error: regErr } = await supabaseAdmin
       .from('submissions')
-      .select('*, tasks(task_code, platform, action, post_link, quantity_needed, quantity_filled), engagers(code, full_name, tier)')
+      .select('*, tasks(task_code, platform, action, post_link, quantity_needed, quantity_filled), engagers(code, full_name, tier, whatsapp)')
       .eq('final_status', 'pending')
       .order('submitted_at', { ascending: true });
     if (regErr) return res.status(500).json({ error: regErr.message });
 
     const { data: onboarding, error: obErr } = await supabaseAdmin
       .from('onboarding_submissions')
-      .select('*, engagers(code, full_name)')
+      .select('*, engagers(code, full_name, whatsapp)')
       .eq('final_status', 'pending')
       .order('submitted_at', { ascending: true });
     if (obErr) return res.status(500).json({ error: obErr.message });
