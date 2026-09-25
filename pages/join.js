@@ -4,6 +4,7 @@ import Head from 'next/head';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import SiteFaq from '../components/SiteFaq';
+import { faqSchema } from '../lib/structuredData';
 import VideoCard from '../components/VideoCard';
 import SiteSticky from '../components/SiteSticky';
 import SiteWhatsApp from '../components/SiteWhatsApp';
@@ -74,6 +75,7 @@ export default function JoinAsEngager() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content="https://primeloop.app/og-image-join.png" />
         <link rel="canonical" href="https://primeloop.app/join" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(FAQ_ITEMS)) }} />
       </Head>
       <div className="site has-sticky">
         <SiteHeader

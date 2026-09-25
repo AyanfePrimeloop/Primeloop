@@ -4,6 +4,7 @@ import Head from 'next/head';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import SiteFaq from '../components/SiteFaq';
+import { organizationSchema, faqSchema } from '../lib/structuredData';
 import VideoCard from '../components/VideoCard';
 import SiteSticky from '../components/SiteSticky';
 import SiteWhatsApp from '../components/SiteWhatsApp';
@@ -192,6 +193,8 @@ export default function ClientLanding() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content="https://primeloop.app/og-image.png" />
         <link rel="canonical" href="https://primeloop.app/" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(FAQ_ITEMS)) }} />
       </Head>
       <div className="site has-sticky">
         <SiteHeader

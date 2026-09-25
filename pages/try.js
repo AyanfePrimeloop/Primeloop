@@ -4,6 +4,7 @@ import Head from 'next/head';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import SiteFaq from '../components/SiteFaq';
+import { faqSchema } from '../lib/structuredData';
 import VideoCard from '../components/VideoCard';
 import SiteSticky from '../components/SiteSticky';
 import SiteWhatsApp from '../components/SiteWhatsApp';
@@ -77,6 +78,7 @@ export default function TryFree() {
 
   const minPrice = useMinPrice();
   const fromText = minPrice ? `orders start from ₦${minPrice} per engagement` : 'you can order any time';
+  const resolvedFaqItems = FAQ_ITEMS.map((i) => ({ ...i, a: i.a.replace('{FROM}', fromText) }));
   const label = platformLabel(platform);
   const linkError =
     postLink && !linkMatchesPlatform(postLink, platform)
@@ -144,6 +146,7 @@ export default function TryFree() {
         <meta property="og:image" content="https://primeloop.app/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <link rel="canonical" href="https://primeloop.app/try" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(resolvedFaqItems)) }} />
       </Head>
       <div className="site has-sticky">
         <SiteHeader
@@ -318,7 +321,7 @@ export default function TryFree() {
                 <h2 className="s-h2">Questions before you start</h2>
                 <p>Anything else? Message an admin on WhatsApp and a person will reply.</p>
               </div>
-              <SiteFaq items={FAQ_ITEMS.map((i) => ({ ...i, a: i.a.replace('{FROM}', fromText) }))} />
+              <SiteFaq items={resolvedFaqItems} />
             </div>
           </section>
 
