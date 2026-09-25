@@ -10,6 +10,7 @@ const LINKS = [
   { href: '/admin/review', label: 'Review queue' },
   { href: '/admin/engagers', label: 'Engagers' },
   { href: '/admin/clients', label: 'Clients', superOnly: true },
+  { href: '/admin/broadcast', label: 'Broadcast', superOnly: true },
   { href: '/admin/pricing', label: 'Pricing', superOnly: true },
   { href: '/admin/verification', label: 'Verification', superOnly: true },
   { href: '/admin/onboarding-tests', label: 'Onboarding tests' },

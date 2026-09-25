@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
 import VideoCard from '../../components/VideoCard';
+import AnnouncementBanner from '../../components/AnnouncementBanner';
 import SiteWhatsApp from '../../components/SiteWhatsApp';
 import { platformLabel } from '../../lib/platformDomains';
 
@@ -47,6 +48,8 @@ export default function ClientDashboard() {
         <h1>Your orders</h1>
         {me?.client?.email && <p>{me.client.email}</p>}
       </div>
+
+      <AnnouncementBanner />
 
       <details className="section" style={{ padding: '14px 20px' }}>
         <summary style={{ fontWeight: 700, cursor: 'pointer' }}>Watch: how your order works (3 minutes)</summary>

@@ -7,6 +7,7 @@ import PushOptIn from '../../components/PushOptIn';
 import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
 import EarnMore from '../../components/EarnMore';
+import AnnouncementBanner from '../../components/AnnouncementBanner';
 import { screenshotHint } from '../../lib/screenshotGuide';
 import VideoCard from '../../components/VideoCard';
 import QualityRules from '../../components/QualityRules';
@@ -134,6 +135,8 @@ export default function EngagerDashboard() {
         <h1>Open tasks</h1>
         <p>{me?.engager?.full_name} · {me?.engager?.code}</p>
       </div>
+
+      <AnnouncementBanner />
 
       <GetStarted
         hasVerifiedPlatform={verifiedPlatforms.size > 0}
