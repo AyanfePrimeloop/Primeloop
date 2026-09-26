@@ -83,7 +83,10 @@ export default function ReferralGraphic({ graphic, linkText, code }) {
     }
   }
 
-  const canShareFiles = typeof navigator !== 'undefined' && !!navigator.canShare;
+  // Decided in the browser only, after the first render, so the server's HTML and the
+  // browser's first render always match (a button that exists only on one side is a hydration error).
+  const [canShareFiles, setCanShareFiles] = useState(false);
+  useEffect(() => { setCanShareFiles(typeof navigator !== 'undefined' && !!navigator.canShare); }, []);
 
   return (
     <div style={{ display: 'grid', gap: 8 }}>
