@@ -1,9 +1,7 @@
 import crypto from 'crypto';
 import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { verifyTransaction } from '../../../lib/paystack';
-import { checkPostLink } from '../../../lib/checkPostLink';
-import { notifyEngagersOfTask } from '../../../lib/notifyEngagersOfTask';
-import { generateTaskCode } from '../../../lib/taskCode';
+import { createTasksForOrder } from '../../../lib/orderTasks';
 
 // Paystack sends raw body — we need it unparsed to verify the signature.
 export const config = { api: { bodyParser: false } };
@@ -70,70 +68,11 @@ async function handleChargeSuccess(event) {
     .single();
   if (!order) return;
 
-  // 4. Check the post link once, before creating any tasks from this order —
-  //    a bad link should never reach engagers, and there's no reason to
-  //    check it once per action when it's the same link for every task.
-  const linkCheck = await checkPostLink(order.post_link, order.platform);
-
-  // 5. Create the tasks now that money has actually landed. Good links
-  //    open immediately; bad ones go straight to the admin link-review
-  //    queue instead of ever reaching an engager.
-  const lineItems = event.data.metadata?.line_items || [];
-  for (const item of lineItems) {
-    // Paystack re-sends a webhook whenever it doesn't get a fast 200 (and
-    // this handler does slow work: a link check plus WhatsApp alerts). A
-    // retry must never create a second copy of the same task — that would
-    // deliver, and pay engagers for, double what the client bought.
-    const { data: existing } = await supabaseAdmin
-      .from('tasks')
-      .select('id')
-      .eq('order_id', order.id)
-      .eq('action', item.action)
-      .limit(1);
-    if (existing?.length) continue;
-
-    // task_code is unique; on the (rare) chance of a collision, try a new
-    // code rather than silently losing a task the client has already paid for.
-    let task = null;
-    for (let attempt = 0; attempt < 5 && !task; attempt++) {
-      const { data, error } = await supabaseAdmin
-        .from('tasks')
-        .insert({
-          task_code: generateTaskCode(order.platform),
-          order_id: order.id,
-          client_id: order.client_id,
-          platform: order.platform,
-          post_link: order.post_link,
-          action: item.action,
-          quantity_needed: item.quantity,
-          price_per_unit: item.engager_payout,
-          target_account_handle: item.targetAccountHandle || null,
-          special_instructions: order.special_instructions,
-          // Gold/Platinum get a 15-minute head start before the task opens to everyone
-          tier_gate_until: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-          status: linkCheck.ok ? 'open' : 'pending_review',
-          link_check_reason: linkCheck.ok ? null : linkCheck.reason,
-        })
-        .select()
-        .single();
-      if (data) {
-        task = data;
-      } else if (error?.code !== '23505') {
-        console.error(`Could not create ${item.action} task for order ${order.id}:`, error?.message);
-        break;
-      }
-    }
-
-    // 6. Alert eligible engagers now — failures here never block the
-    //    payment/order flow, since the task is already live either way.
-    if (task && linkCheck.ok) {
-      try {
-        await notifyEngagersOfTask(supabaseAdmin, task);
-      } catch (e) {
-        console.error('WhatsApp notify failed:', e.message);
-      }
-    }
-  }
+  // 4. Create the tasks now that money has actually landed (shared with the
+  //    admin "payment received" path, see lib/orderTasks.js). The link is
+  //    checked once first: good links open immediately, bad ones go straight
+  //    to the admin link-review queue instead of ever reaching an engager.
+  await createTasksForOrder(supabaseAdmin, order, event.data.metadata?.line_items || []);
 }
 
 // Paystack tells us, after the fact, whether a payout transfer really

@@ -2,18 +2,14 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 import { initializeTransaction } from '../../../lib/paystack';
 import { getOrCreateClient } from '../../../lib/clientRecord';
 import { isValidEmail, normalizeEmail } from '../../../lib/validation';
-import { MIN_ORDER } from '../../../lib/payoutRules';
 import { checkRateLimit, getClientIp } from '../../../lib/rateLimit';
-import { isKnownPlatform, linkMismatchMessage, normalizeLink, linkMatchesPlatform, extractProfileHandle } from '../../../lib/platformDomains';
-
-const MAX_ITEMS = 12;
-const MAX_QUANTITY = 10000; // per line item
+import { buildOrder } from '../../../lib/orderBuilder';
 
 // Body: { email, platform, postLink, items: [{ action, quantity }] }
 // items' prices are looked up server-side from pricing_rules — never trust
-// a price sent from the browser. Quantities are validated here too: the
-// order form enforces them, but anyone can call this endpoint directly, and
-// a negative quantity on one line would quietly discount every other line.
+// a price sent from the browser (see lib/orderBuilder.js, which also validates
+// quantities: anyone can call this endpoint directly, and a negative quantity
+// on one line would quietly discount every other line).
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -31,91 +27,11 @@ export default async function handler(req, res) {
   if (!isValidEmail(cleanEmail)) {
     return res.status(400).json({ error: 'Please enter a valid email address.' });
   }
-  if (!isKnownPlatform(platform)) {
-    return res.status(400).json({ error: 'Please choose a platform.' });
-  }
-  const link = normalizeLink(postLink);
-  if (!link) {
-    return res.status(400).json({ error: 'Please enter a valid post link.' });
-  }
-  if (!linkMatchesPlatform(link, platform)) {
-    return res.status(400).json({ error: linkMismatchMessage(platform) });
-  }
 
-  if (items.length > MAX_ITEMS) {
-    return res.status(400).json({ error: 'Too many items in one order.' });
-  }
-  // Merge repeated actions, and reject anything that isn't a whole number
-  // of engagements from 1 up to a sane maximum.
-  const merged = new Map();
-  for (const item of items) {
-    const q = item?.quantity;
-    if (typeof item?.action !== 'string' || !Number.isInteger(q) || q < 1 || q > MAX_QUANTITY) {
-      return res.status(400).json({ error: `Each engagement needs a whole-number quantity between 1 and ${MAX_QUANTITY.toLocaleString()}.` });
-    }
-    const existing = merged.get(item.action);
-    merged.set(item.action, {
-      action: item.action,
-      quantity: (existing?.quantity || 0) + q,
-      targetAccountHandle: existing?.targetAccountHandle || cleanHandle(item.targetAccountHandle),
-    });
-  }
-  const orderItems = [...merged.values()];
-  if (orderItems.some((i) => i.quantity > MAX_QUANTITY)) {
-    return res.status(400).json({ error: `Each engagement needs a whole-number quantity between 1 and ${MAX_QUANTITY.toLocaleString()}.` });
-  }
-
-  const extraInstructions = typeof specialInstructions === 'string' ? specialInstructions.trim().slice(0, 500) : '';
-
-  // 1. Look up real prices and check Follow capacity for any follow/subscribe items
-  const { data: rules, error: rulesErr } = await supabaseAdmin
-    .from('pricing_rules')
-    .select('*')
-    .eq('platform', platform)
-    .eq('active', true)
-    .in('action', orderItems.map((i) => i.action));
-  if (rulesErr) return res.status(500).json({ error: rulesErr.message });
-
-  let amountTotal = 0;
-  const lineItems = [];
-  for (const item of orderItems) {
-    const rule = rules.find((r) => r.action === item.action);
-    if (!rule) return res.status(400).json({ error: `Unknown action: ${item.action}` });
-
-    let targetAccountHandle = null;
-    if (['follow', 'subscribe'].includes(item.action)) {
-      // The follow ledger ("this engager already follows that account") can
-      // only work if we know which account. The order form never asks for it
-      // separately, so read it off the profile link they pasted.
-      targetAccountHandle = item.targetAccountHandle || extractProfileHandle(platform, link);
-      const capacity = await getFollowCapacity(platform, targetAccountHandle);
-      if (item.quantity > capacity) {
-        return res.status(409).json({
-          error: `Only ${capacity} unique engagers on ${platform} haven't already followed this account. Reduce quantity or choose a different order type.`,
-          maxAvailable: capacity,
-        });
-      }
-    }
-
-    amountTotal += rule.client_price * item.quantity;
-    // IMPORTANT: engager_payout is what becomes tasks.price_per_unit later,
-    // which is what engagers see and what the weekly payout pays them —
-    // it must be the engager's rate, never the client's price.
-    lineItems.push({
-      action: item.action,
-      quantity: item.quantity,
-      targetAccountHandle,
-      engager_payout: rule.engager_payout,
-    });
-  }
-  if (!(amountTotal > 0)) {
-    return res.status(400).json({ error: 'This order has no payable items.' });
-  }
-  if (amountTotal < MIN_ORDER) {
-    return res.status(400).json({
-      error: `The minimum order is ₦${MIN_ORDER.toLocaleString()}. Add a little more, or choose a starter pack.`,
-    });
-  }
+  // 1. Validate and price the order (real prices, follow capacity, minimum order)
+  const built = await buildOrder(supabaseAdmin, { platform, postLink, items, specialInstructions });
+  if (built.fail) return res.status(built.fail.status).json(built.fail.body);
+  const { link, amountTotal, lineItems, extraInstructions } = built;
 
   // 2. Find or create the client record — also creates a real login for them
   //    (no password needed, they'll use a magic link at /client-login later)
@@ -159,28 +75,4 @@ export default async function handler(req, res) {
     await supabaseAdmin.from('orders').update({ payment_status: 'failed' }).eq('id', order.id);
     return res.status(502).json({ error: "We couldn't start the payment just now. Please try again in a minute, or message us on WhatsApp." });
   }
-}
-
-function cleanHandle(handle) {
-  return typeof handle === 'string' && handle.trim() ? handle.trim().toLowerCase().slice(0, 100) : null;
-}
-
-async function getFollowCapacity(platform, targetAccountHandle) {
-  const { count: totalEngagers } = await supabaseAdmin
-    .from('engagers')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'active');
-
-  let alreadyFollowed = 0;
-  if (targetAccountHandle) {
-    const { count } = await supabaseAdmin
-      .from('follow_ledger')
-      .select('id', { count: 'exact', head: true })
-      .eq('platform', platform)
-      .eq('target_account_handle', targetAccountHandle)
-      .eq('still_following', true);
-    alreadyFollowed = count || 0;
-  }
-
-  return Math.max(0, (totalEngagers || 0) - alreadyFollowed);
 }

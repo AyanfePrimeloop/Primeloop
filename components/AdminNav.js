@@ -8,6 +8,7 @@ import { authedFetch } from '../lib/authClient';
 const LINKS = [
   { href: '/admin/tasks', label: 'Task board' },
   { href: '/admin/review', label: 'Review queue' },
+  { href: '/admin/place-order', label: 'Place order' },
   { href: '/admin/engagers', label: 'Engagers' },
   { href: '/admin/clients', label: 'Clients', superOnly: true },
   { href: '/admin/broadcast', label: 'Broadcast', superOnly: true },
