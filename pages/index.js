@@ -206,7 +206,7 @@ export default function ClientLanding() {
     <>
       <Head>
         <title>Primeloop — Real Facebook, Instagram & TikTok Engagement | No Bots</title>
-        <meta name="description" content="Get real likes, comments, shares and follows from trained Nigerian engagers — not bots. Live tracking, 100% money-back guarantee. Starting from ₦5 per engagement." />
+        <meta name="description" content="Get real likes, comments, shares and follows from trained Nigerian engagers — not bots. Live tracking, 100% money-back guarantee. Starting from ₦9 per engagement." />
         <meta property="og:title" content="Primeloop — Real Social Media Engagement, No Bots" />
         <meta property="og:description" content="Real people. Real engagement. Watch it happen live on Facebook, Instagram, TikTok, YouTube and X." />
         <meta property="og:type" content="website" />
