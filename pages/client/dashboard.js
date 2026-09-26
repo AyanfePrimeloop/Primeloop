@@ -4,6 +4,7 @@ import { useRequireRole, authedFetch } from '../../lib/authClient';
 import AppBar from '../../components/AppBar';
 import VideoCard from '../../components/VideoCard';
 import AnnouncementBanner from '../../components/AnnouncementBanner';
+import WatchHow from '../../components/WatchHow';
 import SiteWhatsApp from '../../components/SiteWhatsApp';
 import { platformLabel } from '../../lib/platformDomains';
 
@@ -50,6 +51,8 @@ export default function ClientDashboard() {
       </div>
 
       <AnnouncementBanner />
+
+      <WatchHow video="teamOrder" label="Watch: when our team places your order (2 minutes)" />
 
       <details className="section" style={{ padding: '14px 20px' }}>
         <summary style={{ fontWeight: 700, cursor: 'pointer' }}>Watch: how your order works (3 minutes)</summary>

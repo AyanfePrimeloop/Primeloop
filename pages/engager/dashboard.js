@@ -296,7 +296,7 @@ export default function EngagerDashboard() {
               value={referralLinks(me?.engager?.code)?.short || ''}
               onClick={(e) => e.target.select()}
             />
-            <a href="/engager/referrals" className="btn primary">Get graphics &amp; captions</a>
+            <a href="/engager/referrals" className="btn primary">Graphics, captions &amp; video guide</a>
           </div>
           <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
             <div><strong>{referrals.count}</strong> people referred</div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
+import WatchHow from '../../components/WatchHow';
 import { AnnouncementCard } from '../../components/AnnouncementBanner';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import { TITLE_MAX, BODY_MAX, safeLink, announcementStatus, whatsappText } from '../../lib/announcements';
@@ -99,6 +100,8 @@ export default function AdminBroadcast() {
         Send a message to everyone in a group. It shows as a banner at the top of their dashboard
         until it expires or you stop it. Engagers who have browser alerts on can also get it as a notification.
       </p>
+
+      <WatchHow video="adminTools" chapter="broadcast" label="Watch: how to send a broadcast (1 minute)" />
 
       {!ready && (
         <div className="section" style={{ padding: 20, background: 'var(--warn-soft)' }}>

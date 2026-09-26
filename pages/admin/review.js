@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminNav from '../../components/AdminNav';
+import WatchHow from '../../components/WatchHow';
 import { ENGAGER_RULES } from '../../lib/engagerRules';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import { buildEngagerMessage, whatsappHref } from '../../lib/whatsappLink';
@@ -58,6 +59,8 @@ export default function ReviewQueue() {
         submissions land here when the verification setting is Manual, an AI-sampled check was
         skipped, or it's attempt 3+ on an onboarding action (forced manual after repeated tries).
       </p>
+
+      <WatchHow video="adminTools" chapter="review" label="Watch: how to message an engager about their proof (20 seconds)" />
 
       <details className="section" style={{ padding: '4px 20px' }}>
         <summary style={{ cursor: 'pointer', padding: '12px 0', fontWeight: 600 }}>Reject if it breaks our quality rules (tap to see)</summary>

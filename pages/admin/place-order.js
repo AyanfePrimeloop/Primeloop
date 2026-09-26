@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import AdminNav from '../../components/AdminNav';
+import WatchHow from '../../components/WatchHow';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 import { platformLabel, isKnownPlatform, normalizeLink, linkMatchesPlatform, linkMismatchMessage } from '../../lib/platformDomains';
 import { MIN_ORDER } from '../../lib/payoutRules';
@@ -135,6 +136,8 @@ export default function AdminPlaceOrder() {
       <p style={{ color: 'var(--ink-soft)', fontSize: 13.5 }}>
         For clients who would rather not do it themselves. Same prices and rules as the website. The client gets their own login (by email) to watch the order live.
       </p>
+
+      <WatchHow video="adminTools" chapter="order" label="Watch: how to place an order for a client (1.5 minutes)" />
 
       {recent && recent.ready === false && (
         <div className="section" style={{ padding: 20, background: 'var(--warn-soft)' }}>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AppBar from '../../components/AppBar';
 import ReferralHub from '../../components/ReferralHub';
+import WatchHow from '../../components/WatchHow';
 import { useRequireRole, authedFetch } from '../../lib/authClient';
 
 export default function Referrals() {
@@ -32,6 +33,7 @@ export default function Referrals() {
           <h1>Refer &amp; earn</h1>
           <p>Bring people to Primeloop and earn when they start doing tasks.</p>
         </div>
+        <WatchHow video="referral" label="Watch: how to earn with referrals (3 minutes)" open />
         <ReferralHub code={me?.engager?.code} stats={stats} />
       </div>
     </>
