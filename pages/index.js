@@ -76,6 +76,7 @@ export default function ClientLanding() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [activity, setActivity] = useState([]);
+  const [capacity, setCapacity] = useState({}); // { like: 21, ... } how many can be delivered right now
   const [pack, setPack] = useState(null); // id of the pack that filled the form, cleared on manual edits
 
   useEffect(() => {
@@ -90,6 +91,21 @@ export default function ClientLanding() {
       })
       .catch(() => {});
   }, [platform]);
+
+  // How many of each engagement can be delivered right now (updates once a
+  // valid link is pasted, since a post that already has engagement has fewer left).
+  useEffect(() => {
+    let stale = false;
+    const linkOk = !!postLink && linkMatchesPlatform(postLink, platform);
+    const q = new URLSearchParams({ platform, ...(linkOk ? { link: normalizeLink(postLink) || postLink } : {}) });
+    const t = setTimeout(() => {
+      fetch(`/api/orders/capacity?${q}`)
+        .then((r) => r.json())
+        .then((d) => { if (!stale) setCapacity(d.capacity || {}); })
+        .catch(() => {});
+    }, 400);
+    return () => { stale = true; clearTimeout(t); };
+  }, [platform, postLink]);
 
   // Deep links (e.g. from the free-trial success screen) can pre-fill the
   // order form: /?platform=instagram&link=...&email=...#order
@@ -127,7 +143,12 @@ export default function ClientLanding() {
   const belowMinimum = total > 0 && total < MIN_ORDER;
   // A ticked line with an empty or zero quantity (someone is mid-typing) cannot be ordered yet.
   const hasBlankQty = rules.some((r) => selected[r.action]?.checked && !(selected[r.action].qty >= 1));
-  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError && !belowMinimum && !hasBlankQty;
+  const overCapacity = rules.filter((r) => selected[r.action]?.checked && r.action in capacity && selected[r.action].qty > capacity[r.action]);
+  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError && !belowMinimum && !hasBlankQty && overCapacity.length === 0;
+
+  // A pack that asks for more of any action than we can deliver right now is
+  // switched off rather than sold and then stalled.
+  const packFits = (pk) => buildPack(rules, platform, pk.budget).every((l) => !(l.action in capacity) || l.qty <= capacity[l.action]);
 
   function applyPack(id) {
     const def = PACKS.find((x) => x.id === id);
@@ -332,7 +353,7 @@ export default function ClientLanding() {
                     <span className="s-label" id="pack-label">Start with a pack, or build your own below</span>
                     <div className="s-packs" role="group" aria-labelledby="pack-label">
                       {PACKS.map((pk) => (
-                        <button key={pk.id} type="button" className="s-pack" aria-pressed={pack === pk.id} onClick={() => applyPack(pk.id)}>
+                        <button key={pk.id} type="button" className="s-pack" aria-pressed={pack === pk.id} disabled={!packFits(pk)} title={packFits(pk) ? undefined : 'Too large for the engagers available right now. Build your own below.'} style={packFits(pk) ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={() => applyPack(pk.id)}>
                           <span className="s-pack-name">{pk.name}</span>
                           <span className="s-pack-price">₦{pk.budget.toLocaleString()}</span>
                         </button>
@@ -413,7 +434,14 @@ export default function ClientLanding() {
                         }
                       />
                       <label htmlFor={`engage-${r.action}`}>{r.action}</label>
-                      <div className="price">₦{r.client_price}/unit</div>
+                      <div className="price">
+                        ₦{r.client_price}/unit
+                        {r.action in capacity && (
+                          <div style={{ fontSize: 12, fontWeight: 500, color: selected[r.action]?.checked && selected[r.action].qty > capacity[r.action] ? 'var(--warn, #b42318)' : undefined, opacity: 0.85 }}>
+                            {capacity[r.action] > 0 ? `up to ${capacity[r.action]} now` : 'none available now'}
+                          </div>
+                        )}
+                      </div>
                       {/* Text box, not a number spinner: lets the box be cleared and retyped freely. Digits only; an empty box counts as 0 until they leave it, then it settles at 1. */}
                       <input
                         type="text"
@@ -454,6 +482,11 @@ export default function ClientLanding() {
                     {loading ? 'Redirecting...' : 'Pay with Paystack'}
                   </button>
                 </div>
+                {overCapacity.length > 0 && (
+                  <p className="s-error" role="alert">
+                    We can deliver {overCapacity.map((r) => `up to ${capacity[r.action]} ${r.action}${capacity[r.action] === 1 ? '' : 's'}`).join(', ')} right now. Please lower {overCapacity.length === 1 ? 'that quantity' : 'those quantities'}, or message us on WhatsApp for a larger order.
+                  </p>
+                )}
                 {belowMinimum && (
                   <p className="s-error" role="status">
                     The minimum order is ₦{MIN_ORDER.toLocaleString()}. Add ₦{(MIN_ORDER - total).toLocaleString()} more, or pick a pack above.
