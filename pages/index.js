@@ -14,6 +14,7 @@ import { Check, Cross, Arrow } from '../components/SiteIcons';
 import { useMinPrice } from '../lib/useMinPrice';
 import { PACKS, buildPack, packLineLabel } from '../lib/packs';
 import { MIN_ORDER } from '../lib/payoutRules';
+import { MAX_QUANTITY } from '../lib/orderBuilder';
 import { linkMatchesPlatform, isKnownPlatform, normalizeLink, platformLabel, linkMismatchMessage, PLATFORM_DOMAINS } from '../lib/platformDomains';
 
 const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'x'];
@@ -68,7 +69,7 @@ export default function ClientLanding() {
   const [trialOpen, setTrialOpen] = useState(true);
   const [platform, setPlatform] = useState('facebook');
   const [rules, setRules] = useState([]);
-  const [selected, setSelected] = useState({}); // { like: { checked, qty } }
+  const [selected, setSelected] = useState({}); // { like: { checked, qty, qtyText? } } (qtyText is what is typed while editing)
   const [postLink, setPostLink] = useState('');
   const [email, setEmail] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
@@ -124,7 +125,9 @@ export default function ClientLanding() {
     : '';
   const hasFollowSelected = rules.some((r) => ['follow', 'subscribe'].includes(r.action) && selected[r.action]?.checked);
   const belowMinimum = total > 0 && total < MIN_ORDER;
-  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError && !belowMinimum;
+  // A ticked line with an empty or zero quantity (someone is mid-typing) cannot be ordered yet.
+  const hasBlankQty = rules.some((r) => selected[r.action]?.checked && !(selected[r.action].qty >= 1));
+  const canCheckout = !!email && !!postLink && hasSelection && !postLinkError && !belowMinimum && !hasBlankQty;
 
   function applyPack(id) {
     const def = PACKS.find((x) => x.id === id);
@@ -411,16 +414,32 @@ export default function ClientLanding() {
                       />
                       <label htmlFor={`engage-${r.action}`}>{r.action}</label>
                       <div className="price">₦{r.client_price}/unit</div>
+                      {/* Text box, not a number spinner: lets the box be cleared and retyped freely. Digits only; an empty box counts as 0 until they leave it, then it settles at 1. */}
                       <input
-                        type="number"
-                        min="1"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        autoComplete="off"
                         className="s-input"
                         aria-label={`${r.action} quantity`}
                         style={{ padding: '9px 10px' }}
-                        value={selected[r.action]?.qty || 30}
-                        onChange={(e) =>
-                          { setPack(null); setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: Math.max(1, Math.floor(+e.target.value || 1)) } })); }
-                        }
+                        value={selected[r.action]?.qtyText ?? String(selected[r.action]?.qty ?? 30)}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          let digits = e.target.value.replace(/\D/g, '').slice(0, 5);
+                          const n = digits ? Math.min(MAX_QUANTITY, parseInt(digits, 10)) : 0;
+                          if (digits && parseInt(digits, 10) > MAX_QUANTITY) digits = String(MAX_QUANTITY); // never show more than can be ordered
+                          setPack(null);
+                          // Typing a quantity means they want it, so tick the line for them (otherwise the total stays at ₦0).
+                          setSelected((s) => ({ ...s, [r.action]: { ...s[r.action], qty: n, qtyText: digits, checked: n > 0 ? true : s[r.action]?.checked } }));
+                        }}
+                        onBlur={() => {
+                          setSelected((s) => {
+                            const cur = s[r.action];
+                            if (!cur) return s;
+                            return { ...s, [r.action]: { checked: cur.checked, qty: Math.min(MAX_QUANTITY, Math.max(1, cur.qty || 1)) } };
+                          });
+                        }}
                       />
                     </div>
                   ))}
@@ -439,6 +458,9 @@ export default function ClientLanding() {
                   <p className="s-error" role="status">
                     The minimum order is ₦{MIN_ORDER.toLocaleString()}. Add ₦{(MIN_ORDER - total).toLocaleString()} more, or pick a pack above.
                   </p>
+                )}
+                {hasBlankQty && (
+                  <p className="s-error" role="status">Enter how many you want for each ticked type.</p>
                 )}
                 {errorMsg && <p className="s-error" role="alert">{errorMsg}</p>}
                 <p className="s-note">Undelivered after 5 days? Full refund for that portion — no questions asked.</p>
