@@ -13,6 +13,7 @@ export default function ScreenshotGuide() {
     <>
       <AppBar links={[
         { href: '/engager/dashboard', label: 'Tasks' },
+        { href: '/engager/referrals', label: 'Refer & earn' },
         { href: '/engager/screenshot-guide', label: 'Screenshot guide', current: true },
         { href: '/engager/bank-details', label: 'Bank details' },
         { href: '/engager/profile', label: 'Profile' },

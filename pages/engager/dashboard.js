@@ -8,6 +8,7 @@ import ChannelInvite from '../../components/ChannelInvite';
 import GetStarted from '../../components/GetStarted';
 import EarnMore from '../../components/EarnMore';
 import AnnouncementBanner from '../../components/AnnouncementBanner';
+import { referralLinks, REFERRAL_BONUS, REFERRAL_MILESTONE } from '../../lib/referral';
 import { screenshotHint } from '../../lib/screenshotGuide';
 import VideoCard from '../../components/VideoCard';
 import QualityRules from '../../components/QualityRules';
@@ -124,6 +125,7 @@ export default function EngagerDashboard() {
     <>
     <AppBar links={[
       { href: '/engager/dashboard', label: 'Tasks', current: true },
+      { href: '/engager/referrals', label: 'Refer & earn' },
       { href: '/engager/screenshot-guide', label: 'Screenshot guide' },
       { href: '/engager/bank-details', label: 'Bank details' },
       { href: '/engager/profile', label: 'Profile' },
@@ -280,19 +282,21 @@ export default function EngagerDashboard() {
       </div>
 
       <div className="section">
-        <div className="section-head"><h2>Refer other engagers</h2></div>
+        <div className="section-head"><h2>Refer &amp; earn more</h2></div>
         <div style={{ padding: 20 }}>
           <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 12 }}>
-            Share your link. Once someone you refer completes 10 approved tasks, you earn a bonus —
-            paid automatically with your next weekly payout.
+            Earn ₦{REFERRAL_BONUS} for every person you refer who completes {REFERRAL_MILESTONE} approved tasks,
+            paid with your next Friday payout. We made graphics with your link already on them.
           </p>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
             <input
               readOnly
-              style={{ flex: 1, fontFamily: 'var(--mono)', fontSize: 14 }}
-              value={typeof window !== 'undefined' ? `${window.location.origin}/join?ref=${me?.engager?.code}` : ''}
+              aria-label="Your referral link"
+              style={{ flex: 1, minWidth: 200, fontFamily: 'var(--mono)', fontSize: 14 }}
+              value={referralLinks(me?.engager?.code)?.short || ''}
               onClick={(e) => e.target.select()}
             />
+            <a href="/engager/referrals" className="btn primary">Get graphics &amp; captions</a>
           </div>
           <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
             <div><strong>{referrals.count}</strong> people referred</div>
